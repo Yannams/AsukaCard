@@ -192,9 +192,42 @@ function getInitialData(): DatabaseSchema {
     updatedAt: new Date().toISOString(),
   };
 
+  const demoCardRichard: Card = {
+    id: "crd_rk8m4x29",
+    userId: defaultUserId,
+    slug: "richard-odjrado",
+    firstName: "Richard",
+    lastName: "Odjrado",
+    title: "Fondateur & CEO",
+    company: "AS World Tech & Asuka",
+    logoUrl: "",
+    avatarUrl: "/images/richard-odjrado.jpg",
+    phone: "+229 67 08 83 03",
+    whatsapp: "+22967088303",
+    email: "rodjrado-ceo@asworld.tech",
+    website: "https://asukaspirit.com",
+    address: "Cotonou, Bénin - Paris, France",
+    bio: "Entrepreneur & Innovateur Tech. Concepteur d'objets connectés et solutions technologiques souveraines. Fondateur d'AS World Tech et créateur de la marque Asuka.",
+    socials: {
+      facebook: "https://www.facebook.com/rodjrado",
+      instagram: "https://www.instagram.com/richardodjrado",
+      linkedin: "https://www.linkedin.com/in/richard-g-odjrado-660a08179/",
+      youtube: "https://www.youtube.com/@asworldtech7517",
+      snapchat: "https://www.snapchat.com/@rodjrado",
+      tiktok: "https://www.tiktok.com/@richardodjrado",
+    },
+    dominantColor: "black",
+    template: "premium",
+    fieldVisibility: { ...defaultVisibility },
+    viewsCount: 440,
+    contactClicks: 120,
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
   return {
     users: [demoUser],
-    cards: [demoCard1, demoCard2, demoCard3],
+    cards: [demoCardRichard, demoCard1, demoCard2, demoCard3],
     analytics: [],
   };
 }

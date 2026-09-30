@@ -15,6 +15,9 @@ import {
   Download,
   ArrowUpRight,
   Sparkles,
+  X,
+  Compass,
+  Check,
 } from "lucide-react";
 import { Card } from "@/lib/db";
 
@@ -195,12 +198,117 @@ export default function CardPreview({
     }
   };
 
-  const handleVCard = () => {
+  const [showToast, setShowToast] = useState(false);
+  const [inAppNotice, setInAppNotice] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleVCardClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (onContactClick) onContactClick("vcard");
-    if (!interactive) return;
-    if (card.slug) {
-      window.location.href = `/api/vcard/${card.slug}`;
+    if (!interactive || !card.slug) {
+      e.preventDefault();
+      return;
     }
+
+    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+      const ua = navigator.userAgent || "";
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+      // Detect in-app browsers on iOS that restrict direct vCard downloads
+      const isInstagram = /Instagram/i.test(ua);
+      const isLinkedIn = /LinkedInApp/i.test(ua);
+      const isWhatsApp = /WhatsApp/i.test(ua);
+      const isFacebook = /FBAN|FBAV/i.test(ua);
+      const isTikTok = /TikTok|musical_ly/i.test(ua);
+      const isTwitter = /Twitter/i.test(ua);
+
+      let appName: string | null = null;
+      if (isInstagram) appName = "Instagram";
+      else if (isWhatsApp) appName = "WhatsApp";
+      else if (isLinkedIn) appName = "LinkedIn";
+      else if (isFacebook) appName = "Facebook";
+      else if (isTikTok) appName = "TikTok";
+      else if (isTwitter) appName = "X (Twitter)";
+      else if (isIOS && /WebView/i.test(ua)) appName = "l'application";
+
+      if (appName) {
+        setInAppNotice(appName);
+      } else if (isIOS) {
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 4500);
+      }
+    }
+  };
+
+  const vcardDownloadUrl = card.slug ? `/api/vcard/${card.slug}.vcf` : "#";
+  const vcardFilename = card.slug ? `${card.slug}.vcf` : "contact.vcf";
+
+  const renderIosGuideModal = () => {
+    return (
+      <>
+        {/* Subtle, floating non-blocking notification for iOS Safari */}
+        {showToast && (
+          <div className="fixed top-4 inset-x-4 max-w-sm mx-auto z-50 bg-[#111111]/95 text-white backdrop-blur-md px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-neutral-800 animate-in fade-in slide-in-from-top-4 duration-200">
+            <div className="w-8 h-8 rounded-xl bg-[#FF6B00] text-white flex items-center justify-center shrink-0 font-bold text-sm">
+              ⬇️
+            </div>
+            <div className="flex-1 text-xs">
+              <p className="font-semibold text-white">Fiche contact prête !</p>
+              <p className="text-neutral-300 text-[11px] leading-snug">
+                Touchez <strong>Télécharger</strong>, puis l'icône <strong>⬇️</strong> en haut pour l'ajouter.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowToast(false)}
+              className="text-neutral-400 hover:text-white p-1 rounded-lg"
+              aria-label="Fermer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* In-App Browser modal only if in WhatsApp/Instagram */}
+        {inAppNotice && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+            <div className="bg-white text-neutral-900 rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-neutral-200 relative animate-in slide-in-from-bottom-4 duration-150">
+              <button
+                onClick={() => setInAppNotice(null)}
+                className="absolute top-4 right-4 p-1 rounded-full text-neutral-400 hover:text-neutral-900"
+                aria-label="Fermer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Compass className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-neutral-900">
+                  Ouvrir dans Safari
+                </h3>
+              </div>
+              <p className="text-xs text-neutral-600 mb-3.5 leading-relaxed">
+                <strong>{inAppNotice}</strong> bloque le téléchargement direct sur iPhone.
+                Appuyez sur <strong>•••</strong> puis <strong>« Ouvrir dans Safari »</strong> pour enregistrer en 1 clic.
+              </p>
+              <button
+                onClick={() => {
+                  if (typeof window !== "undefined" && navigator.clipboard && card.slug) {
+                    navigator.clipboard.writeText(`${window.location.origin}/${card.slug}`);
+                    setCopiedLink(true);
+                    setTimeout(() => setCopiedLink(false), 2000);
+                  }
+                }}
+                className="w-full py-2.5 px-3 rounded-xl bg-neutral-900 text-white font-semibold text-xs flex items-center justify-center gap-1.5 active:scale-98"
+              >
+                {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : null}
+                <span>{copiedLink ? "Lien copié !" : "Copier le lien"}</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
   };
 
   // Avatar initials fallback
@@ -447,14 +555,18 @@ export default function CardPreview({
 
         {/* Bottom CTA Pill Button (Minimalist, No Clutter) */}
         <div className="pt-2 w-full">
-          <button
-            onClick={handleVCard}
-            className="w-full py-3.5 px-6 rounded-full bg-[#111111] hover:bg-neutral-800 text-white font-semibold text-sm flex items-center justify-center gap-2.5 transition-all active:scale-[0.98]"
+          <a
+            href={vcardDownloadUrl}
+            download={vcardFilename}
+            onClick={handleVCardClick}
+            className="w-full py-3.5 px-6 rounded-full bg-[#111111] hover:bg-neutral-800 text-white font-semibold text-sm flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer"
           >
             <UserPlus className="w-4 h-4 stroke-[2.2]" />
             <span>Ajouter aux contacts</span>
-          </button>
+          </a>
         </div>
+
+        {renderIosGuideModal()}
       </div>
     );
   }
@@ -633,13 +745,15 @@ export default function CardPreview({
 
           {/* Primary CTA Button: Ajouter aux contacts */}
           <div>
-            <button
-              onClick={handleVCard}
-              className="w-full py-3.5 px-6 rounded-full bg-white hover:bg-neutral-200 text-black font-semibold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-white/5 transition-all duration-150 active:scale-[0.98]"
+            <a
+              href={vcardDownloadUrl}
+              download={vcardFilename}
+              onClick={handleVCardClick}
+              className="w-full py-3.5 px-6 rounded-full bg-white hover:bg-neutral-200 text-black font-semibold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-white/5 transition-all duration-150 active:scale-[0.98] cursor-pointer"
             >
               <UserPlus className="w-4 h-4 stroke-[2.2]" />
               <span>Ajouter aux contacts</span>
-            </button>
+            </a>
           </div>
 
           {/* Direct Action Buttons / Pills (Phone, WhatsApp, Email, Site) */}
@@ -762,6 +876,8 @@ export default function CardPreview({
               asuka-card.com{card.slug ? `/${card.slug}` : ""}
             </span>
           </div>
+
+          {renderIosGuideModal()}
         </div>
       </div>
     );
@@ -919,13 +1035,15 @@ export default function CardPreview({
 
         {/* Primary Action Button: Ajouter aux contacts */}
         <div className="mb-6">
-          <button
-            onClick={handleVCard}
-            className={`w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-150 active:scale-[0.99] ${colorStyles.primaryBtn}`}
+          <a
+            href={vcardDownloadUrl}
+            download={vcardFilename}
+            onClick={handleVCardClick}
+            className={`w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-150 active:scale-[0.99] cursor-pointer ${colorStyles.primaryBtn}`}
           >
             <UserPlus className="w-4 h-4" />
             <span>Ajouter aux contacts</span>
-          </button>
+          </a>
         </div>
 
         {/* Direct Action Grid (Appeler, Email, WhatsApp, Site) */}
@@ -1195,6 +1313,8 @@ export default function CardPreview({
             asuka-card.com{card.slug ? `/${card.slug}` : ""}
           </span>
         </div>
+
+        {renderIosGuideModal()}
       </div>
     </div>
   );

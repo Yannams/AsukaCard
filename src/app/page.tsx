@@ -20,13 +20,13 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
-  const georgesCard = getCardBySlug("georges-ale");
+  const richardCard = getCardBySlug("richard-odjrado");
   const jeanCard = getCardBySlug("jean-dupont");
   const sophieCard = getCardBySlug("sophie-martin");
   const alexCard = getCardBySlug("alexandre-leroy");
 
-  const demoCard = georgesCard || jeanCard;
-  const demoCards = [georgesCard, sophieCard, alexCard].filter(Boolean) as NonNullable<typeof demoCard>[];
+  const demoCard = richardCard || jeanCard;
+  const demoCards = [richardCard, sophieCard, alexCard].filter(Boolean) as NonNullable<typeof demoCard>[];
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#111111]">

@@ -192,7 +192,7 @@
         "bio": true,
         "socials": true
       },
-      "viewsCount": 431,
+      "viewsCount": 439,
       "contactClicks": 118,
       "createdAt": "2026-09-28T09:00:00.000Z",
       "updatedAt": "2026-09-30T11:17:31.260Z"
@@ -267,8 +267,8 @@
         "bio": true,
         "socials": true
       },
-      "viewsCount": 196,
-      "contactClicks": 57,
+      "viewsCount": 207,
+      "contactClicks": 60,
       "createdAt": "2026-09-29T14:00:00.000Z",
       "updatedAt": "2026-09-30T09:26:49.926Z"
     }
@@ -642,6 +642,153 @@
       "type": "contact_click",
       "meta": "social_linkedin",
       "createdAt": "2026-09-30T11:32:19.517Z"
+    },
+    {
+      "id": "evt_1790773317196_oojzz",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T13:01:57.196Z"
+    },
+    {
+      "id": "evt_1790773317212_y0dy4",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T13:01:57.212Z"
+    },
+    {
+      "id": "evt_1790773320020_tc33m",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T13:02:00.020Z"
+    },
+    {
+      "id": "evt_1790773320032_4u8y3",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T13:02:00.032Z"
+    },
+    {
+      "id": "evt_1790776348921_mmagy",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T13:52:28.921Z"
+    },
+    {
+      "id": "evt_1790776348932_hux43",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T13:52:28.932Z"
+    },
+    {
+      "id": "evt_1790777236768_50t03",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "vcard",
+      "createdAt": "2026-09-30T14:07:16.768Z"
+    },
+    {
+      "id": "evt_1790777237699_sokvn",
+      "cardId": "crd_ga9m3x7w",
+      "type": "vcard",
+      "createdAt": "2026-09-30T14:07:17.699Z"
+    },
+    {
+      "id": "evt_1790777264395_2sqjl",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T14:07:44.395Z"
+    },
+    {
+      "id": "evt_1790777264408_1ygfc",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T14:07:44.408Z"
+    },
+    {
+      "id": "evt_1790781591806_vpg4j",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:19:51.806Z"
+    },
+    {
+      "id": "evt_1790781591843_5j5pi",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:19:51.843Z"
+    },
+    {
+      "id": "evt_1790781591862_1txl4",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:19:51.862Z"
+    },
+    {
+      "id": "evt_1790781591884_bujmz",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T15:19:51.884Z"
+    },
+    {
+      "id": "evt_1790781591903_5zb9f",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:19:51.903Z"
+    },
+    {
+      "id": "evt_1790781591922_lnvvr",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T15:19:51.922Z"
+    },
+    {
+      "id": "evt_1790781743535_8dpf7",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:22:23.535Z"
+    },
+    {
+      "id": "evt_1790781743591_mb62b",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:22:23.591Z"
+    },
+    {
+      "id": "evt_1790781743621_qq0ce",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T15:22:23.621Z"
+    },
+    {
+      "id": "evt_1790781743644_d2qil",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T15:22:23.644Z"
+    },
+    {
+      "id": "evt_1790781743660_oxhhc",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T15:22:23.660Z"
+    },
+    {
+      "id": "evt_1790783524088_bk9pf",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "vcard",
+      "createdAt": "2026-09-30T15:52:04.088Z"
+    },
+    {
+      "id": "evt_1790783524823_ar6ei",
+      "cardId": "crd_ga9m3x7w",
+      "type": "vcard",
+      "createdAt": "2026-09-30T15:52:04.823Z"
+    },
+    {
+      "id": "evt_1790783637525_jupsq",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "phone",
+      "createdAt": "2026-09-30T15:53:57.525Z"
     }
   ]
 }

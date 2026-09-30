@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCardBySlug } from "@/lib/db";
 import PublicCardClient from "@/components/PublicCardClient";
 
@@ -10,7 +10,8 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const card = getCardBySlug(slug);
+  const cleanSlug = slug.replace(/\.vcf$/i, "");
+  const card = getCardBySlug(cleanSlug);
 
   if (!card) {
     return {
@@ -45,6 +46,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PublicCardPage({ params }: PageProps) {
   const { slug } = await params;
+
+  if (slug.endsWith(".vcf")) {
+    redirect(`/api/vcard/${slug}`);
+  }
+
   const card = getCardBySlug(slug);
 
   if (!card) {
