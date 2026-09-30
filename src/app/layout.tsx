@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Asuka Card — Cartes de visite digitales haut de gamme",
+  title: "Asuka Card - Cartes de visite digitales haut de gamme",
   description:
     "Créez, personnalisez et partagez vos cartes de visite numériques élégantes. Partage instantané par QR code, téléchargement direct vCard (.vcf) et URL personnalisée.",
   keywords: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Asuka Card" }],
   openGraph: {
-    title: "Asuka Card — Cartes de visite digitales haut de gamme",
+    title: "Asuka Card - Cartes de visite digitales haut de gamme",
     description:
       "Créez, personnalisez et partagez votre identité professionnelle en quelques clics avec une URL unique.",
     siteName: "Asuka Card",

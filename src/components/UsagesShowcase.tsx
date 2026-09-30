@@ -108,7 +108,7 @@ export default function UsagesShowcase({ demoCards }: UsagesShowcaseProps) {
               />
               <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-[11px] font-medium flex items-center gap-2">
                 <Radio className="w-3.5 h-3.5 text-white animate-pulse" />
-                <span>NFC Tap & Go — Détection immédiate</span>
+                <span>NFC Tap & Go - Détection immédiate</span>
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function UsagesShowcase({ demoCards }: UsagesShowcaseProps) {
               />
               <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-[11px] font-medium flex items-center gap-2">
                 <QrCode className="w-3.5 h-3.5 text-white" />
-                <span>Scan caméra optique — 0 friction</span>
+                <span>Scan caméra optique - 0 friction</span>
               </div>
             </div>
           </div>

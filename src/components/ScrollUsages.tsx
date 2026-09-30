@@ -140,6 +140,23 @@ export default function ScrollUsages({ demoCard }: ScrollUsagesProps) {
   const currentPhoneX = phoneX + phoneDeltaX;
   const currentPhoneY = phoneY + phoneDeltaY;
 
+  // Phase 2 (QR Code Scan): Normalized progress from 0.52 to 0.74
+  const rawStep2 = Math.max(0, Math.min(1, (progress - 0.52) / 0.20));
+  const step2Norm = 1 - Math.pow(1 - rawStep2, 3);
+
+  // Scan Hand sizing (emerging from top edge)
+  const scanHandWidth = isMobile
+    ? Math.min(270, viewport.width * 0.72)
+    : isTablet
+    ? Math.min(330, viewport.width * 0.45)
+    : isLaptop
+    ? Math.min(360, viewport.width * 0.30)
+    : 380;
+
+  // The hand smoothly slides down from top into scanning position
+  const scanHandOffset = -100 * (1 - step2Norm);
+  const cardShiftY = 20 * (1 - step2Norm);
+
   return (
     <div
       ref={containerRef}
@@ -212,40 +229,52 @@ export default function ScrollUsages({ demoCard }: ScrollUsagesProps) {
 
           </div>
 
-          {/* ================= STEP 2: SCANNER (CARD & PHONE WITH LASER SCAN) ================= */}
+          {/* ================= STEP 2: SCANNER (HAND FROM TOP SCANNING CARD) ================= */}
           <div
-            className={`absolute inset-0 flex items-center justify-center gap-6 sm:gap-12 transition-all duration-500 ${
+            className={`absolute inset-0 transition-opacity duration-500 ${
               activeStep === 2
-                ? "opacity-100 scale-100 pointer-events-auto"
-                : "opacity-0 scale-95 pointer-events-none"
+                ? "opacity-100 pointer-events-auto"
+                : "opacity-0 pointer-events-none"
             }`}
           >
-            {/* The Black Card with QR Code */}
-            <div className="relative w-[190px] sm:w-[240px] h-[260px] sm:h-[310px] rounded-2xl bg-gradient-to-br from-[#1a1a1a] via-[#111111] to-[#090909] text-white p-5 shadow-2xl border border-neutral-800 flex flex-col items-center justify-center text-center space-y-4">
-              <div className="relative p-3 bg-white rounded-xl shadow-lg border border-neutral-200">
-                <QrCode className="w-24 h-24 sm:w-28 sm:h-28 text-black" />
-                <div className="absolute left-0 right-0 h-1 bg-[#FF6B00] shadow-[0_0_12px_#FF6B00] animate-bounce top-1/2" />
-              </div>
-              <div className="space-y-0.5">
-                <p className="text-xs font-semibold text-white">QR Code Laser</p>
-                <p className="text-[10px] text-neutral-400">Gravure HD inaltérable</p>
-              </div>
+            {/* HAND HOLDING SMARTPHONE COMING FROM THE TOP */}
+            <div
+              style={{
+                width: `${scanHandWidth}px`,
+                transform: `translate(-50%, ${scanHandOffset}px)`,
+              }}
+              className="absolute left-1/2 top-0 z-20 will-change-transform pointer-events-none select-none"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/hand-scan-top.png"
+                alt="Main tenant le smartphone pour scanner le QR code"
+                className="w-full h-auto object-contain select-none pointer-events-none drop-shadow-2xl"
+                draggable={false}
+              />
             </div>
 
-            {/* Smartphone Camera Viewfinder */}
-            <div className="relative w-[170px] sm:w-[210px] h-[280px] sm:h-[320px] rounded-[36px] bg-[#0d0d0d] border-4 border-neutral-800 shadow-2xl p-3 flex flex-col justify-between">
-              <div className="w-16 h-3.5 bg-black rounded-full mx-auto border border-neutral-800" />
+            {/* The physical card positioned on the surface directly beneath the scanner */}
+            <div
+              style={{
+                transform: `translate(-50%, ${cardShiftY}px) scale(${0.96 + step2Norm * 0.04})`,
+              }}
+              className="absolute left-1/2 bottom-20 sm:bottom-24 md:bottom-28 z-10 flex flex-col items-center justify-center will-change-transform"
+            >
+              <div className="relative group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/black-card-back.png"
+                  alt="Carte de visite Asuka avec QR code gravé"
+                  className="w-[200px] sm:w-[250px] md:w-[290px] h-auto object-contain select-none pointer-events-none drop-shadow-2xl"
+                  draggable={false}
+                />
 
-              <div className="relative w-full h-44 rounded-2xl border border-dashed border-neutral-600/80 bg-neutral-950 flex flex-col items-center justify-center p-3 text-center space-y-2">
-                <div className="w-12 h-12 rounded-lg border-2 border-white/80 flex items-center justify-center relative">
-                  <div className="w-2 h-2 bg-[#FF6B00] rounded-full animate-ping" />
-                </div>
-                <span className="text-[10px] text-neutral-300 font-mono">
-                  Scan en direct...
-                </span>
+                {/* Animated laser scan beam across the card QR code */}
+                <div className="absolute top-[38%] left-[13%] w-[30%] h-1 bg-[#FF6B00] shadow-[0_0_14px_#FF6B00] animate-bounce pointer-events-none rounded-full" />
               </div>
-
-              <div className="w-20 h-1 bg-neutral-600 rounded-full mx-auto" />
+              {/* Ambient ground shadow */}
+              <div className="w-[170px] sm:w-[220px] md:w-[260px] h-5 bg-black/15 blur-xl rounded-full mt-2" />
             </div>
           </div>
 

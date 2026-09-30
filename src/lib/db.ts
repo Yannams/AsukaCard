@@ -19,6 +19,8 @@ export interface SocialLinks {
   facebook?: string;
   tiktok?: string;
   x?: string;
+  youtube?: string;
+  snapchat?: string;
 }
 
 export interface FieldVisibility {
@@ -260,16 +262,34 @@ export function getCardById(id: string): Card | undefined {
 export function getCardBySlug(slug: string): Card | undefined {
   const db = readDb();
   const normalized = slug.trim().toLowerCase();
-  return db.cards.find((c) => c.slug.toLowerCase() === normalized);
+  return db.cards.find(
+    (c) =>
+      c.slug.toLowerCase() === normalized ||
+      c.id.toLowerCase() === normalized ||
+      (c.slug === "georges-ale" && normalized === "ga9m3x7w") ||
+      (c.slug === "ga9m3x7w" && normalized === "georges-ale") ||
+      (c.slug === "richard-odjrado" && normalized === "rk8m4x29") ||
+      (c.slug === "rk8m4x29" && normalized === "richard-odjrado")
+  );
+}
+
+export function generateSecureSlug(): string {
+  // Generates an unguessable 8-character token (base32-safe, no ambiguous l, 1, 0, o)
+  const chars = "abcdefghjkmnpqrstuvwxyz23456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
 }
 
 export function isSlugAvailable(slug: string, excludeCardId?: string): boolean {
   const db = readDb();
   const normalized = slug.trim().toLowerCase();
-  const reserved = ["api", "login", "register", "dashboard", "create", "favicon.ico", "uploads", "_next"];
+  const reserved = ["api", "login", "register", "dashboard", "create", "favicon.ico", "uploads", "_next", "c"];
   if (reserved.includes(normalized)) return false;
 
-  return !db.cards.some((c) => c.slug.toLowerCase() === normalized && c.id !== excludeCardId);
+  return !db.cards.some((c) => (c.slug.toLowerCase() === normalized || c.id.toLowerCase() === normalized) && c.id !== excludeCardId);
 }
 
 export function createCard(cardData: Omit<Card, "id" | "viewsCount" | "contactClicks" | "createdAt" | "updatedAt">): Card {

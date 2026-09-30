@@ -61,7 +61,7 @@ export default function SlugNotFound() {
 
           <div className="pt-4 border-t border-neutral-100 flex items-center justify-center gap-2 text-[11px] text-neutral-400">
             <CreditCard className="w-3.5 h-3.5 text-neutral-400" />
-            <span>Asuka Card — Identité digitale</span>
+            <span>Asuka Card - Identité digitale</span>
           </div>
         </div>
       </main>

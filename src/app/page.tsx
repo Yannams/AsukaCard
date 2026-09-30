@@ -20,17 +20,19 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
-  const demoCard = getCardBySlug("jean-dupont");
+  const georgesCard = getCardBySlug("georges-ale");
+  const jeanCard = getCardBySlug("jean-dupont");
   const sophieCard = getCardBySlug("sophie-martin");
   const alexCard = getCardBySlug("alexandre-leroy");
 
-  const demoCards = [demoCard, sophieCard, alexCard].filter(Boolean) as NonNullable<typeof demoCard>[];
+  const demoCard = georgesCard || jeanCard;
+  const demoCards = [georgesCard, sophieCard, alexCard].filter(Boolean) as NonNullable<typeof demoCard>[];
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#111111]">
       <Navbar theme="dark" />
 
-      {/* HERO SECTION — PURE LUXURY DEEP BLACK BACKGROUND */}
+      {/* HERO SECTION - PURE LUXURY DEEP BLACK BACKGROUND */}
       <section className="relative h-[calc(100dvh-4rem)] min-h-[600px] flex flex-col justify-center items-center py-6 sm:py-8 overflow-hidden border-b border-neutral-800 bg-black text-white">
         {/* Animated 3D white particle wave flowing strictly in the background behind the card */}
         <ParticleWave />
@@ -168,7 +170,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FINAL CTA SECTION — N26 MONOCHROME METAL STYLE */}
+      {/* FINAL CTA SECTION - N26 MONOCHROME METAL STYLE */}
       <section className="py-24 bg-[#111111] text-white relative overflow-hidden">
         {/* Dark dot pattern background */}
         <div className="absolute inset-0 bg-dot-pattern-dark opacity-20 pointer-events-none" />

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Créer ma carte de visite digitale — Asuka Card",
+  title: "Créer ma carte de visite digitale - Asuka Card",
   description: "Configurez et personnalisez votre carte de visite numérique avec Asuka Card.",
 };
 

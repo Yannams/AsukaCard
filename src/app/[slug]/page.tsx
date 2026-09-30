@@ -14,13 +14,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!card) {
     return {
-      title: "Carte non trouvée — Asuka Card",
+      title: "Carte non trouvée - Asuka Card",
       description: "Cette carte de visite digitale n'existe pas ou a été supprimée.",
     };
   }
 
   const fullName = `${card.firstName} ${card.lastName}`.trim();
-  const titleText = `${fullName}${card.title ? ` — ${card.title}` : ""}${card.company ? ` | ${card.company}` : ""} — Asuka Card`;
+  const titleText = `${fullName}${card.title ? ` - ${card.title}` : ""}${card.company ? ` | ${card.company}` : ""} - Asuka Card`;
   const descText = card.bio || `Retrouvez les coordonnées et le profil de ${fullName} sur Asuka Card.`;
 
   return {

@@ -137,7 +137,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 mt-8 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 gap-4">
           <p>© {new Date().getFullYear()} Asuka Card. Tous droits réservés.</p>
-          <p>Identité visuelle Orange, Noir & Blanc — 100% en Français.</p>
+          <p>Identité visuelle Orange, Noir & Blanc - 100% en Français.</p>
         </div>
       </div>
 

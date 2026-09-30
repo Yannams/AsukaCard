@@ -8,7 +8,7 @@ import { getCardById } from "@/lib/db";
 import { notFound } from "next/navigation";
 
 export const metadata = {
-  title: "Modifier ma carte de visite — Asuka Card",
+  title: "Modifier ma carte de visite - Asuka Card",
 };
 
 export default async function EditCardPage({

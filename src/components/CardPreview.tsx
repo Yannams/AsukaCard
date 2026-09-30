@@ -65,6 +65,24 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
+// Minimalist SVG for YouTube
+function YouTubeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  );
+}
+
+// Minimalist SVG for Snapchat
+function SnapchatIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.001 2.002c-4.062 0-6.75 3.03-6.75 6.094 0 1.25.438 2.5 1.156 3.25-.125.438-.594.844-1.281 1.031-.344.094-.656.313-.656.656 0 .5.531.844 1.094.75.938-.156 1.875-.75 2.156-1.125.75.5 1.719.813 2.781.813.25 0 .5-.031.75-.063.25.031.5.063.75.063 1.063 0 2.031-.313 2.781-.813.281.375 1.219.969 2.156 1.125.563.094 1.094-.25 1.094-.75 0-.344-.313-.563-.656-.656-.688-.188-1.156-.594-1.281-1.031.719-.75 1.156-2 1.156-3.25 0-3.063-2.688-6.094-6.75-6.094z"/>
+    </svg>
+  );
+}
+
 // Minimalist SVG for Contactless NFC wave
 function NfcContactlessIcon({ className }: { className?: string }) {
   return (
@@ -406,6 +424,24 @@ export default function CardPreview({
                 <TikTokIcon className="w-4 h-4" />
               </button>
             )}
+            {socials.youtube && (
+              <button
+                onClick={() => handleAction("social_youtube", socials.youtube)}
+                className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
+                title="YouTube"
+              >
+                <YouTubeIcon className="w-4 h-4" />
+              </button>
+            )}
+            {socials.snapchat && (
+              <button
+                onClick={() => handleAction("social_snapchat", socials.snapchat)}
+                className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
+                title="Snapchat"
+              >
+                <SnapchatIcon className="w-4 h-4" />
+              </button>
+            )}
           </div>
         )}
 
@@ -525,6 +561,28 @@ export default function CardPreview({
                 aria-label="TikTok"
               >
                 <TikTokIcon className="w-5 h-5" />
+              </button>
+            )}
+
+            {socials.youtube && (
+              <button
+                onClick={() => handleAction("social_youtube", socials.youtube)}
+                className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
+                title="YouTube"
+                aria-label="YouTube"
+              >
+                <YouTubeIcon className="w-5 h-5" />
+              </button>
+            )}
+
+            {socials.snapchat && (
+              <button
+                onClick={() => handleAction("social_snapchat", socials.snapchat)}
+                className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
+                title="Snapchat"
+                aria-label="Snapchat"
+              >
+                <SnapchatIcon className="w-5 h-5" />
               </button>
             )}
 
@@ -1094,6 +1152,36 @@ export default function CardPreview({
                   aria-label="TikTok"
                 >
                   <TikTokIcon className="w-4 h-4" />
+                </button>
+              )}
+
+              {socials.youtube && (
+                <button
+                  onClick={() => handleAction("social_youtube", socials.youtube)}
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
+                    isExecutive
+                      ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
+                      : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
+                  }`}
+                  title="YouTube"
+                  aria-label="YouTube"
+                >
+                  <YouTubeIcon className="w-4 h-4" />
+                </button>
+              )}
+
+              {socials.snapchat && (
+                <button
+                  onClick={() => handleAction("social_snapchat", socials.snapchat)}
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
+                    isExecutive
+                      ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
+                      : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
+                  }`}
+                  title="Snapchat"
+                  aria-label="Snapchat"
+                >
+                  <SnapchatIcon className="w-4 h-4" />
                 </button>
               )}
             </div>

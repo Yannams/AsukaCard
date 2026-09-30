@@ -156,6 +156,121 @@
       "contactClicks": 85,
       "createdAt": "2026-09-21T10:00:00.000Z",
       "updatedAt": "2026-09-23T18:00:00.000Z"
+    },
+    {
+      "id": "crd_rk8m4x29",
+      "userId": "usr_demo_1",
+      "slug": "richard-odjrado",
+      "firstName": "Richard",
+      "lastName": "Odjrado",
+      "title": "Fondateur & CEO",
+      "company": "AS World Tech & Asuka",
+      "logoUrl": "",
+      "avatarUrl": "/images/richard-odjrado.jpg",
+      "phone": "+229 67 08 83 03",
+      "whatsapp": "+22967088303",
+      "email": "rodjrado-ceo@asworld.tech",
+      "website": "https://asukaspirit.com",
+      "address": "Cotonou, Bénin - Paris, France",
+      "bio": "Entrepreneur & Innovateur Tech. Concepteur d'objets connectés et solutions technologiques souveraines. Fondateur d'AS World Tech et créateur de la marque Asuka.",
+      "socials": {
+        "facebook": "https://www.facebook.com/rodjrado",
+        "instagram": "https://www.instagram.com/richardodjrado",
+        "linkedin": "https://www.linkedin.com/in/richard-g-odjrado-660a08179/",
+        "youtube": "https://www.youtube.com/@asworldtech7517",
+        "snapchat": "https://www.snapchat.com/@rodjrado",
+        "tiktok": "https://www.tiktok.com/@richardodjrado"
+      },
+      "dominantColor": "black",
+      "template": "premium",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 431,
+      "contactClicks": 118,
+      "createdAt": "2026-09-28T09:00:00.000Z",
+      "updatedAt": "2026-09-30T11:17:31.260Z"
+    },
+    {
+      "id": "crd_v7p1k3d8",
+      "userId": "usr_demo_1",
+      "slug": "v7p1k3d8",
+      "firstName": "Richard",
+      "lastName": "Odjrado",
+      "title": "CEO & Lead Product Architect",
+      "company": "Asuka Card",
+      "logoUrl": "",
+      "avatarUrl": "/images/richard-odjrado.jpg",
+      "phone": "+229 67 08 83 03",
+      "whatsapp": "+22967088303",
+      "email": "rodjrado-ceo@asworld.tech",
+      "website": "https://asukaspirit.com",
+      "address": "Cotonou, Bénin - Paris, France",
+      "bio": "Pionnier de la carte de visite sans contact NFC de nouvelle génération. Connecter le monde physique et digital en un seul tap.",
+      "socials": {
+        "facebook": "https://www.facebook.com/rodjrado",
+        "instagram": "https://www.instagram.com/richardodjrado",
+        "linkedin": "https://www.linkedin.com/in/richard-g-odjrado-660a08179/",
+        "youtube": "https://www.youtube.com/@asworldtech7517",
+        "snapchat": "https://www.snapchat.com/@rodjrado",
+        "tiktok": "https://www.tiktok.com/@richardodjrado"
+      },
+      "dominantColor": "orange",
+      "template": "modern",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 315,
+      "contactClicks": 92,
+      "createdAt": "2026-09-28T11:30:00.000Z",
+      "updatedAt": "2026-09-30T11:17:31.260Z"
+    },
+    {
+      "id": "crd_ga9m3x7w",
+      "userId": "usr_demo_1",
+      "slug": "georges-ale",
+      "firstName": "Georges",
+      "lastName": "ALÉ",
+      "title": "Ministre",
+      "company": "Ministère de Cadre de Vie et des Transports",
+      "logoUrl": "",
+      "avatarUrl": "/images/georges-ale.jpg",
+      "phone": "+229 01 98 99 89 77",
+      "whatsapp": "+2290198998977",
+      "email": "georges.ale@gouv.bj",
+      "website": "https://www.cadredevie.gouv.bj",
+      "address": "Cotonou - Bénin",
+      "bio": "Ministre de Cadre de Vie et des Transports, en charge du Développement Durable - République du Bénin.",
+      "socials": {
+        "linkedin": "https://www.linkedin.com/in/georges-al%C3%A9-5a78a726/"
+      },
+      "dominantColor": "black",
+      "template": "executive",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 196,
+      "contactClicks": 57,
+      "createdAt": "2026-09-29T14:00:00.000Z",
+      "updatedAt": "2026-09-30T09:26:49.926Z"
     }
   ],
   "analytics": [
@@ -390,6 +505,143 @@
       "cardId": "crd_demo_4",
       "type": "view",
       "createdAt": "2026-09-25T17:02:06.606Z"
+    },
+    {
+      "id": "evt_1790758652545_kbpoj",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T08:57:32.545Z"
+    },
+    {
+      "id": "evt_1790758652556_zeqgg",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T08:57:32.556Z"
+    },
+    {
+      "id": "evt_1790758727622_g9t4b",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T08:58:47.622Z"
+    },
+    {
+      "id": "evt_1790758727638_5s3vq",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T08:58:47.638Z"
+    },
+    {
+      "id": "evt_1790758979106_24z2z",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "social_linkedin",
+      "createdAt": "2026-09-30T09:02:59.106Z"
+    },
+    {
+      "id": "evt_1790759759410_rwjry",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "social_linkedin",
+      "createdAt": "2026-09-30T09:15:59.410Z"
+    },
+    {
+      "id": "evt_1790759767734_1apqu",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "social_linkedin",
+      "createdAt": "2026-09-30T09:16:07.734Z"
+    },
+    {
+      "id": "evt_1790760467088_87j7k",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T09:27:47.088Z"
+    },
+    {
+      "id": "evt_1790760580095_yyndk",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "social_linkedin",
+      "createdAt": "2026-09-30T09:29:40.095Z"
+    },
+    {
+      "id": "evt_1790760893655_wtd8h",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "website",
+      "createdAt": "2026-09-30T09:34:53.655Z"
+    },
+    {
+      "id": "evt_1790761230096_kcec2",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "website",
+      "createdAt": "2026-09-30T09:40:30.096Z"
+    },
+    {
+      "id": "evt_1790761866436_a4p4x",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "website",
+      "createdAt": "2026-09-30T09:51:06.436Z"
+    },
+    {
+      "id": "evt_1790767185425_nugqq",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-09-30T11:19:45.425Z"
+    },
+    {
+      "id": "evt_1790767228078_cz863",
+      "cardId": "crd_rk8m4x29",
+      "type": "contact_click",
+      "meta": "social_snapchat",
+      "createdAt": "2026-09-30T11:20:28.078Z"
+    },
+    {
+      "id": "evt_1790767233429_izb3w",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T11:20:33.429Z"
+    },
+    {
+      "id": "evt_1790767233441_z9jcj",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T11:20:33.441Z"
+    },
+    {
+      "id": "evt_1790767340968_vr0bh",
+      "cardId": "crd_rk8m4x29",
+      "type": "contact_click",
+      "meta": "website",
+      "createdAt": "2026-09-30T11:22:20.968Z"
+    },
+    {
+      "id": "evt_1790767919564_auv3e",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T11:31:59.564Z"
+    },
+    {
+      "id": "evt_1790767919580_in0c9",
+      "cardId": "crd_ga9m3x7w",
+      "type": "view",
+      "createdAt": "2026-09-30T11:31:59.580Z"
+    },
+    {
+      "id": "evt_1790767933886_ucrh5",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "phone",
+      "createdAt": "2026-09-30T11:32:13.886Z"
+    },
+    {
+      "id": "evt_1790767939517_nvr5b",
+      "cardId": "crd_ga9m3x7w",
+      "type": "contact_click",
+      "meta": "social_linkedin",
+      "createdAt": "2026-09-30T11:32:19.517Z"
     }
   ]
 }
