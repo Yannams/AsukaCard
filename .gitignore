@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent artifacts & generated test images
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.gif
+/agent-artifacts/
+/screenshots/

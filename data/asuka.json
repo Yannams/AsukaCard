@@ -1,0 +1,395 @@
+{
+  "users": [
+    {
+      "id": "usr_demo_1",
+      "name": "Jean Dupont",
+      "email": "demo@asukacard.fr",
+      "passwordHash": "7a0f04efeaa3a71227e943488ba3ae7e:4522999befda2ce8dd31c4d6ce8f04600391ab2be5583894a3ab6ef641373324b702c8f277cca88e9ff2e636eb3dd949f91e6c9620500364dcd2606d8835d396",
+      "createdAt": "2026-09-22T15:34:22.484Z"
+    }
+  ],
+  "cards": [
+    {
+      "id": "crd_demo_1",
+      "userId": "usr_demo_1",
+      "slug": "jean-dupont",
+      "firstName": "Jean",
+      "lastName": "Dupont",
+      "title": "Directeur de Création & Stratégie",
+      "company": "Asuka Studio Paris",
+      "logoUrl": "",
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "phone": "+33 6 12 34 56 78",
+      "whatsapp": "+33612345678",
+      "email": "jean.dupont@asuka-studio.fr",
+      "website": "https://asuka-card.com",
+      "address": "14 Rue de Rivoli, 75001 Paris, France",
+      "bio": "Spécialiste en identité de marque et direction artistique. J'accompagne les maisons d'exception et startups ambitieuses dans leur déploiement visuel.",
+      "socials": {
+        "linkedin": "https://linkedin.com/in/jeandupont",
+        "instagram": "https://instagram.com/jeandupont",
+        "x": "https://x.com/jeandupont"
+      },
+      "dominantColor": "orange",
+      "template": "modern",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 193,
+      "contactClicks": 47,
+      "createdAt": "2026-09-15T15:34:22.485Z",
+      "updatedAt": "2026-09-22T15:34:22.485Z"
+    },
+    {
+      "id": "crd_demo_2",
+      "userId": "usr_demo_1",
+      "slug": "sophie-martin",
+      "firstName": "Sophie",
+      "lastName": "Martin",
+      "title": "Architecte & Designer d'Espace",
+      "company": "Atelier Martin",
+      "logoUrl": "",
+      "avatarUrl": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?w=800&auto=format&fit=crop&q=80",
+      "phone": "+33 7 98 76 54 32",
+      "whatsapp": "+33798765432",
+      "email": "contact@atelier-martin.fr",
+      "website": "https://atelier-martin.fr",
+      "address": "28 Boulevard Saint-Germain, 75005 Paris",
+      "bio": "Conception de lieux de vie et d'espaces professionnels épurés, alliant matériaux nobles, lumière naturelle et sobriété contemporaine.",
+      "socials": {
+        "linkedin": "https://linkedin.com/in/sophiemartin",
+        "instagram": "https://instagram.com/sophiemartin_arch"
+      },
+      "dominantColor": "orange",
+      "template": "creative",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 122,
+      "contactClicks": 31,
+      "createdAt": "2026-09-18T15:34:22.485Z",
+      "updatedAt": "2026-09-22T15:34:22.485Z"
+    },
+    {
+      "id": "crd_demo_3",
+      "userId": "usr_demo_1",
+      "slug": "alexandre-leroy",
+      "firstName": "Alexandre",
+      "lastName": "Leroy",
+      "title": "Partner & Consultant FinTech",
+      "company": "Kuro Capital Advisors",
+      "logoUrl": "",
+      "avatarUrl": "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=800&auto=format&fit=crop&q=80",
+      "phone": "+33 1 40 20 30 40",
+      "whatsapp": "+33140203040",
+      "email": "a.leroy@kurocapital.com",
+      "website": "https://kurocapital.com",
+      "address": "42 Place de la Madeleine, 75008 Paris",
+      "bio": "Conseil en levée de fonds et fusions-acquisitions pour entreprises technologiques à forte croissance.",
+      "socials": {
+        "linkedin": "https://linkedin.com/in/alexandreleroy",
+        "x": "https://x.com/alexandreleroy"
+      },
+      "dominantColor": "black",
+      "template": "premium",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 77,
+      "contactClicks": 23,
+      "createdAt": "2026-09-20T15:34:22.485Z",
+      "updatedAt": "2026-09-22T15:34:22.485Z"
+    },
+    {
+      "id": "crd_demo_4",
+      "userId": "usr_demo_1",
+      "slug": "rebecca-taylor",
+      "firstName": "Rebecca",
+      "lastName": "Taylor",
+      "title": "Fitness Coach",
+      "company": "Taylor Studio",
+      "logoUrl": "",
+      "avatarUrl": "/images/rebecca-portrait.png",
+      "phone": "+33 6 89 01 23 45",
+      "whatsapp": "+33689012345",
+      "email": "rebecca@taylor-fitness.com",
+      "website": "https://taylor-fitness.com",
+      "address": "8 Rue de la Paix, 75002 Paris",
+      "bio": "Coach sportive certifiée & préparatrice physique. Programmes d'entraînement sur-mesure, haute intensité et bien-être global.",
+      "socials": {
+        "instagram": "https://instagram.com/rebeccataylor",
+        "tiktok": "https://tiktok.com/@rebeccataylor",
+        "x": "https://x.com/rebeccataylor",
+        "facebook": "https://facebook.com/rebeccataylor",
+        "linkedin": "https://linkedin.com/in/rebeccataylor"
+      },
+      "dominantColor": "black",
+      "template": "premium",
+      "fieldVisibility": {
+        "phone": true,
+        "whatsapp": true,
+        "email": true,
+        "website": true,
+        "address": true,
+        "bio": true,
+        "socials": true
+      },
+      "viewsCount": 242,
+      "contactClicks": 85,
+      "createdAt": "2026-09-21T10:00:00.000Z",
+      "updatedAt": "2026-09-23T18:00:00.000Z"
+    }
+  ],
+  "analytics": [
+    {
+      "id": "evt_1790091312013_534lj",
+      "cardId": "crd_demo_1",
+      "type": "vcard",
+      "createdAt": "2026-09-22T15:35:12.013Z"
+    },
+    {
+      "id": "evt_1790091312074_465c8",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-22T15:35:12.074Z"
+    },
+    {
+      "id": "evt_1790091867616_aatsr",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-22T15:44:27.616Z"
+    },
+    {
+      "id": "evt_1790091867636_rdjvm",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-22T15:44:27.636Z"
+    },
+    {
+      "id": "evt_1790095006339_cakk3",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-22T16:36:46.339Z"
+    },
+    {
+      "id": "evt_1790095006365_1444r",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-22T16:36:46.365Z"
+    },
+    {
+      "id": "evt_1790182472887_bym36",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:32.887Z"
+    },
+    {
+      "id": "evt_1790182472898_yst04",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:32.898Z"
+    },
+    {
+      "id": "evt_1790182486819_x3xqc",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:46.819Z"
+    },
+    {
+      "id": "evt_1790182486834_26nid",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:46.834Z"
+    },
+    {
+      "id": "evt_1790182492237_s0uia",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:52.237Z"
+    },
+    {
+      "id": "evt_1790182492250_l2e7n",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:52.250Z"
+    },
+    {
+      "id": "evt_1790182497713_whf3w",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:57.713Z"
+    },
+    {
+      "id": "evt_1790182497725_mbclg",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-23T16:54:57.725Z"
+    },
+    {
+      "id": "evt_1790188972165_g9zpd",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T18:42:52.165Z"
+    },
+    {
+      "id": "evt_1790188972177_85i1s",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T18:42:52.177Z"
+    },
+    {
+      "id": "evt_1790189049451_9stgq",
+      "cardId": "crd_demo_3",
+      "type": "contact_click",
+      "meta": "email",
+      "createdAt": "2026-09-23T18:44:09.452Z"
+    },
+    {
+      "id": "evt_1790189051518_9mqna",
+      "cardId": "crd_demo_3",
+      "type": "contact_click",
+      "meta": "website",
+      "createdAt": "2026-09-23T18:44:11.518Z"
+    },
+    {
+      "id": "evt_1790189070097_68dht",
+      "cardId": "crd_demo_3",
+      "type": "contact_click",
+      "meta": "whatsapp",
+      "createdAt": "2026-09-23T18:44:30.097Z"
+    },
+    {
+      "id": "evt_1790189094536_q1l52",
+      "cardId": "crd_demo_3",
+      "type": "contact_click",
+      "meta": "social_linkedin",
+      "createdAt": "2026-09-23T18:44:54.536Z"
+    },
+    {
+      "id": "evt_1790189651149_ec0og",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T18:54:11.149Z"
+    },
+    {
+      "id": "evt_1790189651166_8t1o7",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T18:54:11.166Z"
+    },
+    {
+      "id": "evt_1790189695308_an4ru",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T18:54:55.308Z"
+    },
+    {
+      "id": "evt_1790189695417_4udsl",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-23T18:54:55.418Z"
+    },
+    {
+      "id": "evt_1790190393086_d7rqg",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-23T19:06:33.086Z"
+    },
+    {
+      "id": "evt_1790190393101_p9461",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-23T19:06:33.101Z"
+    },
+    {
+      "id": "evt_1790245453117_ycyqn",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-24T10:24:13.117Z"
+    },
+    {
+      "id": "evt_1790245453139_xip0l",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-24T10:24:13.139Z"
+    },
+    {
+      "id": "evt_1790245515710_shf08",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-24T10:25:15.710Z"
+    },
+    {
+      "id": "evt_1790245515726_08fbc",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-24T10:25:15.726Z"
+    },
+    {
+      "id": "evt_1790245940486_6os85",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-24T10:32:20.486Z"
+    },
+    {
+      "id": "evt_1790245940506_k0idb",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-09-24T10:32:20.506Z"
+    },
+    {
+      "id": "evt_1790246152124_7nqws",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-24T10:35:52.124Z"
+    },
+    {
+      "id": "evt_1790246152139_dgv34",
+      "cardId": "crd_demo_2",
+      "type": "view",
+      "createdAt": "2026-09-24T10:35:52.139Z"
+    },
+    {
+      "id": "evt_1790246159367_k9t4s",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-24T10:35:59.367Z"
+    },
+    {
+      "id": "evt_1790246159380_acmbr",
+      "cardId": "crd_demo_3",
+      "type": "view",
+      "createdAt": "2026-09-24T10:35:59.380Z"
+    },
+    {
+      "id": "evt_1790355726593_aorjy",
+      "cardId": "crd_demo_4",
+      "type": "view",
+      "createdAt": "2026-09-25T17:02:06.593Z"
+    },
+    {
+      "id": "evt_1790355726606_5x1uj",
+      "cardId": "crd_demo_4",
+      "type": "view",
+      "createdAt": "2026-09-25T17:02:06.606Z"
+    }
+  ]
+}
