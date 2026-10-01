@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  cards     Card[]
+}
+
+model Card {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  nfcTagId    String?  @unique
+  
+  firstName   String
+  lastName    String
+  jobTitle    String?
+  company     String?
+  bio         String?
+  
+  phone       String?
+  contactEmail String?
+  website     String?
+  
+  avatarUrl   String?
+  coverUrl    String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  socialLinks SocialLink[]
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  
+  platform  String
+  url       String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

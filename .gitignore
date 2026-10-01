@@ -48,3 +48,5 @@ next-env.d.ts
 /*.gif
 /agent-artifacts/
 /screenshots/
+
+/src/generated/prisma
