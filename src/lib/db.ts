@@ -199,7 +199,7 @@ function getInitialData(): DatabaseSchema {
     firstName: "Richard",
     lastName: "Odjrado",
     title: "Fondateur & CEO",
-    company: "AS World Tech & Asuka",
+    company: "AS WORLD TECH",
     logoUrl: "",
     avatarUrl: "/images/richard-odjrado.jpg",
     phone: "+229 67 08 83 03",
@@ -207,7 +207,7 @@ function getInitialData(): DatabaseSchema {
     email: "rodjrado-ceo@asworld.tech",
     website: "https://asukaspirit.com",
     address: "Cotonou, Bénin - Paris, France",
-    bio: "Entrepreneur & Innovateur Tech. Concepteur d'objets connectés et solutions technologiques souveraines. Fondateur d'AS World Tech et créateur de la marque Asuka.",
+    bio: "Entrepreneur & Innovateur Tech. Fondateur & CEO d'AS WORLD TECH, société conceptrice de solutions technologiques souveraines et propriétaire des marques ASUKA SPIRIT, Docteur Asuka et Asuka Card.",
     socials: {
       facebook: "https://www.facebook.com/rodjrado",
       instagram: "https://www.instagram.com/richardodjrado",

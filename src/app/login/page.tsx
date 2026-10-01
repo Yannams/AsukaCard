@@ -93,7 +93,7 @@ export default function LoginPage() {
             href="/register"
             className="font-medium text-[#FF6B00] hover:underline"
           >
-            créer un compte gratuitement
+            créer un compte
           </Link>
         </p>
       </div>

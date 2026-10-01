@@ -164,7 +164,7 @@
       "firstName": "Richard",
       "lastName": "Odjrado",
       "title": "Fondateur & CEO",
-      "company": "AS World Tech & Asuka",
+      "company": "AS WORLD TECH",
       "logoUrl": "",
       "avatarUrl": "/images/richard-odjrado.jpg",
       "phone": "+229 67 08 83 03",
@@ -172,7 +172,7 @@
       "email": "rodjrado-ceo@asworld.tech",
       "website": "https://asukaspirit.com",
       "address": "Cotonou, Bénin - Paris, France",
-      "bio": "Entrepreneur & Innovateur Tech. Concepteur d'objets connectés et solutions technologiques souveraines. Fondateur d'AS World Tech et créateur de la marque Asuka.",
+      "bio": "Entrepreneur & Innovateur Tech. Fondateur & CEO d'AS WORLD TECH, société conceptrice de solutions technologiques souveraines et propriétaire des marques ASUKA SPIRIT, Docteur Asuka et Asuka Card.",
       "socials": {
         "facebook": "https://www.facebook.com/rodjrado",
         "instagram": "https://www.instagram.com/richardodjrado",
@@ -192,8 +192,8 @@
         "bio": true,
         "socials": true
       },
-      "viewsCount": 439,
-      "contactClicks": 118,
+      "viewsCount": 441,
+      "contactClicks": 119,
       "createdAt": "2026-09-28T09:00:00.000Z",
       "updatedAt": "2026-09-30T11:17:31.260Z"
     },
@@ -789,6 +789,25 @@
       "type": "contact_click",
       "meta": "phone",
       "createdAt": "2026-09-30T15:53:57.525Z"
+    },
+    {
+      "id": "evt_1790868714449_jfvmc",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-01T15:31:54.449Z"
+    },
+    {
+      "id": "evt_1790868714470_mpqli",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-01T15:31:54.470Z"
+    },
+    {
+      "id": "evt_1790868761229_at23k",
+      "cardId": "crd_rk8m4x29",
+      "type": "contact_click",
+      "meta": "social_instagram",
+      "createdAt": "2026-10-01T15:32:41.229Z"
     }
   ]
 }

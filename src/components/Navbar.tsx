@@ -136,19 +136,9 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
               <div className="flex items-center gap-3">
                 <Link
                   href="/login"
-                  className={`text-sm font-medium px-3.5 py-2 rounded-lg transition-colors ${
-                    isDark
-                      ? "text-neutral-300 hover:text-white hover:bg-neutral-800"
-                      : "text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
-                >
-                  Connexion
-                </Link>
-                <Link
-                  href="/create"
                   className="text-sm font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-4 py-2 rounded-lg transition-colors shadow-sm"
                 >
-                  Créer ma carte
+                  Connexion Espace Client
                 </Link>
               </div>
             )}
@@ -241,20 +231,9 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
                 <Link
                   href="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block text-center px-3 py-2 rounded-md text-base font-medium border ${
-                    isDark
-                      ? "text-neutral-200 border-neutral-700 hover:bg-neutral-800"
-                      : "text-neutral-700 border-neutral-200 hover:bg-neutral-50"
-                  }`}
-                >
-                  Connexion
-                </Link>
-                <Link
-                  href="/create"
-                  onClick={() => setIsMenuOpen(false)}
                   className="block text-center px-3 py-2 rounded-md text-base font-medium text-white bg-[#FF6B00]"
                 >
-                  Créer ma carte
+                  Connexion Espace Client
                 </Link>
               </>
             )}

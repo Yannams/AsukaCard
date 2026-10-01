@@ -186,21 +186,21 @@ export default function HomePage() {
           </h2>
 
           <p className="text-neutral-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Créez votre page publique en moins de deux minutes, choisissez votre finition et commencez à partager vos coordonnées avec style.
+            Configurez votre profil professionnel, choisissez vos finitions haut de gamme et partagez vos coordonnées avec distinction.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/create"
+              href="/dashboard"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-neutral-100 text-[#111111] font-semibold text-sm shadow-md transition-all active:scale-[0.98]"
             >
-              Créer ma carte gratuitement
+              Accéder au tableau de bord
             </Link>
             <Link
-              href="/dashboard"
+              href="/login"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-sm border border-neutral-800 transition-all"
             >
-              Accéder au tableau de bord
+              Connexion à l&apos;espace
             </Link>
           </div>
         </div>

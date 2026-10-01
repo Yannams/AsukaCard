@@ -60,8 +60,8 @@ export default function Footer() {
             <h4 className="text-white font-medium text-sm mb-3">Produit</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/create" className="hover:text-white transition-colors">
-                  Créer ma carte
+                <Link href="/login" className="hover:text-white transition-colors">
+                  Espace Client
                 </Link>
               </li>
               <li>
