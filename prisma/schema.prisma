@@ -11,49 +11,47 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   
-  cards     Card[]
+  cards        Card[]
 }
 
 model Card {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  nfcTagId    String?  @unique
+  slug            String   @unique
   
-  firstName   String
-  lastName    String
-  jobTitle    String?
-  company     String?
-  bio         String?
+  firstName       String
+  lastName        String
+  title           String?
+  company         String?
+  bio             String?
   
-  phone       String?
-  contactEmail String?
-  website     String?
+  phone           String?
+  whatsapp        String?
+  email           String?
+  website         String?
+  address         String?
   
-  avatarUrl   String?
-  coverUrl    String?
+  avatarUrl       String?
+  logoUrl         String?
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  socialLinks SocialLink[]
-}
-
-model SocialLink {
-  id        String   @id @default(cuid())
-  cardId    String
-  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  socials         Json?
   
-  platform  String
-  url       String
+  dominantColor   String?
+  template        String?
+  fieldVisibility Json?
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  viewsCount      Int      @default(0)
+  contactClicks   Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
