@@ -50,3 +50,9 @@ next-env.d.ts
 /screenshots/
 
 /src/generated/prisma
+
+# Prisma AI skills
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
