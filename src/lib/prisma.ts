@@ -1,13 +1,12 @@
-import { neonConfig } from '@neondatabase/serverless';
-import { PrismaNeon } from '@prisma/adapter-neon';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
-import ws from 'ws';
-
-neonConfig.webSocketConstructor = ws;
 
 const prismaClientSingleton = () => {
   const connectionString = `${process.env.DATABASE_URL}`;
-  const adapter = new PrismaNeon({ connectionString });
+  // Use standard TCP connection (pg adapter) which bypasses WSL HTTP fetch issues
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaPg(pool);
   
   return new PrismaClient({ adapter });
 }

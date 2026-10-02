@@ -10,12 +10,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Données incomplètes" }, { status: 400 });
     }
 
-    const card = getCardBySlug(slug);
+    const card = await getCardBySlug(slug);
     if (!card) {
       return NextResponse.json({ error: "Carte non trouvée" }, { status: 404 });
     }
 
-    recordCardAnalytics(card.id, type, meta);
+    await recordCardAnalytics(card.id, type, meta);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/db";
-import { hashPassword, signSessionToken, COOKIE_NAME } from "@/lib/auth";
+import { hashPassword, createSession, setAuthCookies } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,19 +19,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Le mot de passe doit comporter au moins 6 caractères." }, { status: 400 });
     }
 
-    const existingUser = findUserByEmail(email);
+    const existingUser = await findUserByEmail(email);
     if (existingUser) {
       return NextResponse.json({ error: "Un compte existe déjà avec cette adresse e-mail." }, { status: 409 });
     }
 
     const passwordHash = hashPassword(password);
-    const user = createUser(name.trim(), email, passwordHash);
+    const user = await createUser(name.trim(), email, passwordHash);
 
-    const token = signSessionToken({
-      userId: user.id,
-      email: user.email,
-      name: user.name,
-    });
+    // Generate VIP enterprise tokens
+    const { accessToken, refreshToken } = await createSession(user);
 
     const response = NextResponse.json({
       success: true,
@@ -42,13 +39,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    response.cookies.set(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
-    });
+    // Set secure HTTP-only cookies
+    setAuthCookies(response, accessToken, refreshToken);
 
     return response;
   } catch (err) {

@@ -14,7 +14,7 @@ export function generateVCard(card: Card): string {
   const firstName = card.firstName || "";
   const lastName = card.lastName || "";
   const fullName = `${firstName} ${lastName}`.trim() || "Contact";
-  const visibility = card.fieldVisibility || {
+  const visibility = (card.fieldVisibility as any) || {
     phone: true,
     whatsapp: true,
     email: true,
@@ -95,13 +95,13 @@ export function generateVCard(card: Card): string {
       itemIdx++;
     };
 
-    if (card.socials.linkedin) addSocial("LinkedIn", card.socials.linkedin, "linkedin");
-    if (card.socials.instagram) addSocial("Instagram", card.socials.instagram, "instagram");
-    if (card.socials.x) addSocial("X (Twitter)", card.socials.x, "twitter");
-    if (card.socials.facebook) addSocial("Facebook", card.socials.facebook, "facebook");
-    if (card.socials.tiktok) addSocial("TikTok", card.socials.tiktok, "tiktok");
-    if (card.socials.youtube) addSocial("YouTube", card.socials.youtube, "youtube");
-    if (card.socials.snapchat) addSocial("Snapchat", card.socials.snapchat, "snapchat");
+    if ((card.socials as any).linkedin) addSocial("LinkedIn", (card.socials as any).linkedin, "linkedin");
+    if ((card.socials as any).instagram) addSocial("Instagram", (card.socials as any).instagram, "instagram");
+    if ((card.socials as any).x) addSocial("X (Twitter)", (card.socials as any).x, "twitter");
+    if ((card.socials as any).facebook) addSocial("Facebook", (card.socials as any).facebook, "facebook");
+    if ((card.socials as any).tiktok) addSocial("TikTok", (card.socials as any).tiktok, "tiktok");
+    if ((card.socials as any).youtube) addSocial("YouTube", (card.socials as any).youtube, "youtube");
+    if ((card.socials as any).snapchat) addSocial("Snapchat", (card.socials as any).snapchat, "snapchat");
   }
 
   lines.push("END:VCARD");

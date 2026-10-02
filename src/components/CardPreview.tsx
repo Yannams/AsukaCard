@@ -125,8 +125,8 @@ export default function CardPreview({
   const email = card.email || "";
   const website = card.website || "";
   const address = card.address || "";
-  const socials = card.socials || {};
-  const visibility = card.fieldVisibility || {
+  const socials = (card.socials as any) || {};
+  const visibility = (card.fieldVisibility as any) || {
     phone: true,
     whatsapp: true,
     email: true,
@@ -496,54 +496,54 @@ export default function CardPreview({
         {/* Social dock pills */}
         {visibility.socials && Object.values(socials).some(Boolean) && (
           <div className="flex items-center justify-center gap-3 py-1">
-            {socials.instagram && (
+            {(socials as any).instagram && (
               <button
-                onClick={() => handleAction("social_instagram", socials.instagram)}
+                onClick={() => handleAction("social_instagram", (socials as any).instagram)}
                 className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
                 title="Instagram"
               >
                 <InstagramIcon className="w-4 h-4" />
               </button>
             )}
-            {socials.linkedin && (
+            {(socials as any).linkedin && (
               <button
-                onClick={() => handleAction("social_linkedin", socials.linkedin)}
+                onClick={() => handleAction("social_linkedin", (socials as any).linkedin)}
                 className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
                 title="LinkedIn"
               >
                 <LinkedInIcon className="w-4 h-4" />
               </button>
             )}
-            {socials.x && (
+            {(socials as any).x && (
               <button
-                onClick={() => handleAction("social_x", socials.x)}
+                onClick={() => handleAction("social_x", (socials as any).x)}
                 className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
                 title="X (Twitter)"
               >
                 <XTwitterIcon className="w-4 h-4" />
               </button>
             )}
-            {socials.tiktok && (
+            {(socials as any).tiktok && (
               <button
-                onClick={() => handleAction("social_tiktok", socials.tiktok)}
+                onClick={() => handleAction("social_tiktok", (socials as any).tiktok)}
                 className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
                 title="TikTok"
               >
                 <TikTokIcon className="w-4 h-4" />
               </button>
             )}
-            {socials.youtube && (
+            {(socials as any).youtube && (
               <button
-                onClick={() => handleAction("social_youtube", socials.youtube)}
+                onClick={() => handleAction("social_youtube", (socials as any).youtube)}
                 className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
                 title="YouTube"
               >
                 <YouTubeIcon className="w-4 h-4" />
               </button>
             )}
-            {socials.snapchat && (
+            {(socials as any).snapchat && (
               <button
-                onClick={() => handleAction("social_snapchat", socials.snapchat)}
+                onClick={() => handleAction("social_snapchat", (socials as any).snapchat)}
                 className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-black hover:border-neutral-400 hover:scale-110 active:scale-90 transition-all"
                 title="Snapchat"
               >
@@ -654,9 +654,9 @@ export default function CardPreview({
 
           {/* Minimalist White Icon Dock */}
           <div className="flex items-center justify-center gap-6 py-1">
-            {socials.instagram && (
+            {(socials as any).instagram && (
               <button
-                onClick={() => handleAction("social_instagram", socials.instagram)}
+                onClick={() => handleAction("social_instagram", (socials as any).instagram)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="Instagram"
                 aria-label="Instagram"
@@ -665,9 +665,9 @@ export default function CardPreview({
               </button>
             )}
 
-            {socials.tiktok && (
+            {(socials as any).tiktok && (
               <button
-                onClick={() => handleAction("social_tiktok", socials.tiktok)}
+                onClick={() => handleAction("social_tiktok", (socials as any).tiktok)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="TikTok"
                 aria-label="TikTok"
@@ -676,9 +676,9 @@ export default function CardPreview({
               </button>
             )}
 
-            {socials.youtube && (
+            {(socials as any).youtube && (
               <button
-                onClick={() => handleAction("social_youtube", socials.youtube)}
+                onClick={() => handleAction("social_youtube", (socials as any).youtube)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="YouTube"
                 aria-label="YouTube"
@@ -687,9 +687,9 @@ export default function CardPreview({
               </button>
             )}
 
-            {socials.snapchat && (
+            {(socials as any).snapchat && (
               <button
-                onClick={() => handleAction("social_snapchat", socials.snapchat)}
+                onClick={() => handleAction("social_snapchat", (socials as any).snapchat)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="Snapchat"
                 aria-label="Snapchat"
@@ -698,9 +698,9 @@ export default function CardPreview({
               </button>
             )}
 
-            {socials.x && (
+            {(socials as any).x && (
               <button
-                onClick={() => handleAction("social_x", socials.x)}
+                onClick={() => handleAction("social_x", (socials as any).x)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="X (Twitter)"
                 aria-label="X (Twitter)"
@@ -709,9 +709,9 @@ export default function CardPreview({
               </button>
             )}
 
-            {socials.facebook && (
+            {(socials as any).facebook && (
               <button
-                onClick={() => handleAction("social_facebook", socials.facebook)}
+                onClick={() => handleAction("social_facebook", (socials as any).facebook)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="Facebook"
                 aria-label="Facebook"
@@ -720,9 +720,9 @@ export default function CardPreview({
               </button>
             )}
 
-            {socials.linkedin && (
+            {(socials as any).linkedin && (
               <button
-                onClick={() => handleAction("social_linkedin", socials.linkedin)}
+                onClick={() => handleAction("social_linkedin", (socials as any).linkedin)}
                 className="text-white/80 hover:text-white transition-all transform hover:scale-115 active:scale-90 p-1"
                 title="LinkedIn"
                 aria-label="LinkedIn"
@@ -900,7 +900,7 @@ export default function CardPreview({
             ? "bg-neutral-900 border-b border-neutral-800"
             : isCreative
             ? "bg-gradient-to-r from-[#FF6B00] via-[#111111] to-[#FF6B00]"
-            : colorStyles.bannerBg
+            : colorStyles?.bannerBg
         }`}
       >
         {/* Top actions (Share & QR Code) */}
@@ -992,7 +992,7 @@ export default function CardPreview({
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium truncate ${
                   isExecutive
                     ? "bg-neutral-800 text-neutral-300 border border-neutral-700"
-                    : colorStyles.badge
+                    : colorStyles?.badge
                 }`}
               >
                 <Building className="w-3 h-3 shrink-0" />
@@ -1039,7 +1039,7 @@ export default function CardPreview({
             href={vcardDownloadUrl}
             download={vcardFilename}
             onClick={handleVCardClick}
-            className={`w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-150 active:scale-[0.99] cursor-pointer ${colorStyles.primaryBtn}`}
+            className={`w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-150 active:scale-[0.99] cursor-pointer ${colorStyles?.primaryBtn}`}
           >
             <UserPlus className="w-4 h-4" />
             <span>Ajouter aux contacts</span>
@@ -1198,9 +1198,9 @@ export default function CardPreview({
               Réseaux professionnels & sociaux
             </span>
             <div className="flex flex-wrap gap-2">
-              {socials.linkedin && (
+              {(socials as any).linkedin && (
                 <button
-                  onClick={() => handleAction("social_linkedin", socials.linkedin)}
+                  onClick={() => handleAction("social_linkedin", (socials as any).linkedin)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -1213,9 +1213,9 @@ export default function CardPreview({
                 </button>
               )}
 
-              {socials.x && (
+              {(socials as any).x && (
                 <button
-                  onClick={() => handleAction("social_x", socials.x)}
+                  onClick={() => handleAction("social_x", (socials as any).x)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -1228,9 +1228,9 @@ export default function CardPreview({
                 </button>
               )}
 
-              {socials.instagram && (
+              {(socials as any).instagram && (
                 <button
-                  onClick={() => handleAction("social_instagram", socials.instagram)}
+                  onClick={() => handleAction("social_instagram", (socials as any).instagram)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -1243,9 +1243,9 @@ export default function CardPreview({
                 </button>
               )}
 
-              {socials.facebook && (
+              {(socials as any).facebook && (
                 <button
-                  onClick={() => handleAction("social_facebook", socials.facebook)}
+                  onClick={() => handleAction("social_facebook", (socials as any).facebook)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -1258,9 +1258,9 @@ export default function CardPreview({
                 </button>
               )}
 
-              {socials.tiktok && (
+              {(socials as any).tiktok && (
                 <button
-                  onClick={() => handleAction("social_tiktok", socials.tiktok)}
+                  onClick={() => handleAction("social_tiktok", (socials as any).tiktok)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -1273,9 +1273,9 @@ export default function CardPreview({
                 </button>
               )}
 
-              {socials.youtube && (
+              {(socials as any).youtube && (
                 <button
-                  onClick={() => handleAction("social_youtube", socials.youtube)}
+                  onClick={() => handleAction("social_youtube", (socials as any).youtube)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -1288,9 +1288,9 @@ export default function CardPreview({
                 </button>
               )}
 
-              {socials.snapchat && (
+              {(socials as any).snapchat && (
                 <button
-                  onClick={() => handleAction("social_snapchat", socials.snapchat)}
+                  onClick={() => handleAction("social_snapchat", (socials as any).snapchat)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
                     isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"

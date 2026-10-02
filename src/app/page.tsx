@@ -19,11 +19,11 @@ import {
   Share2,
 } from "lucide-react";
 
-export default function HomePage() {
-  const richardCard = getCardBySlug("richard-odjrado");
-  const jeanCard = getCardBySlug("jean-dupont");
-  const sophieCard = getCardBySlug("sophie-martin");
-  const alexCard = getCardBySlug("alexandre-leroy");
+export default async function HomePage() {
+  const richardCard = await getCardBySlug("richard-odjrado");
+  const jeanCard = await getCardBySlug("jean-dupont");
+  const sophieCard = await getCardBySlug("sophie-martin");
+  const alexCard = await getCardBySlug("alexandre-leroy");
 
   const demoCard = richardCard || jeanCard;
   const demoCards = [richardCard, sophieCard, alexCard].filter(Boolean) as NonNullable<typeof demoCard>[];

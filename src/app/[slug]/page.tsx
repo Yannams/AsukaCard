@@ -11,7 +11,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const cleanSlug = slug.replace(/\.vcf$/i, "");
-  const card = getCardBySlug(cleanSlug);
+  const card = await getCardBySlug(cleanSlug);
 
   if (!card) {
     return {
@@ -51,7 +51,7 @@ export default async function PublicCardPage({ params }: PageProps) {
     redirect(`/api/vcard/${slug}`);
   }
 
-  const card = getCardBySlug(slug);
+  const card = await getCardBySlug(slug);
 
   if (!card) {
     notFound();

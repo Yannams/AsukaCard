@@ -9,14 +9,14 @@ export async function GET(
   const { slug } = await params;
   // Support both /api/vcard/john and /api/vcard/john.vcf
   const cleanSlug = decodeURIComponent(slug).replace(/\.vcf$/i, "").trim();
-  const card = getCardBySlug(cleanSlug);
+  const card = await getCardBySlug(cleanSlug);
 
   if (!card) {
     return new NextResponse("Carte non trouvée", { status: 404 });
   }
 
   // Record vCard download analytics
-  recordCardAnalytics(card.id, "vcard");
+  
 
   const vCardData = generateVCard(card);
 

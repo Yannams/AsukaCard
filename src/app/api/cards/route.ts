@@ -8,7 +8,7 @@ export async function GET() {
     return NextResponse.json({ error: "Non autorisé. Veuillez vous connecter." }, { status: 401 });
   }
 
-  const cards = getCardsByUserId(session.userId);
+  const cards = await getCardsByUserId(session.userId);
   return NextResponse.json({ cards });
 }
 
@@ -59,11 +59,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Format du nom d'utilisateur invalide." }, { status: 400 });
     }
 
-    if (!isSlugAvailable(cleanSlug)) {
+    if (!await isSlugAvailable(cleanSlug)) {
       return NextResponse.json({ error: "Ce nom d'utilisateur est déjà utilisé. Veuillez en choisir un autre." }, { status: 409 });
     }
 
-    const newCard = createCard({
+    const newCard = await createCard({
       userId: session.userId,
       slug: cleanSlug,
       firstName: firstName.trim(),

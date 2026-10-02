@@ -12,7 +12,7 @@ export async function GET(
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  const card = getCardById(id);
+  const card = await getCardById(id);
   if (!card) {
     return NextResponse.json({ error: "Carte non trouvée" }, { status: 404 });
   }
@@ -35,7 +35,7 @@ export async function PUT(
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
-    const card = getCardById(id);
+    const card = await getCardById(id);
     if (!card) {
       return NextResponse.json({ error: "Carte introuvable" }, { status: 404 });
     }
@@ -73,12 +73,12 @@ export async function PUT(
         return NextResponse.json({ error: "Format du nom d'utilisateur invalide." }, { status: 400 });
       }
 
-      if (!isSlugAvailable(cleanSlug, card.id)) {
+      if (!await isSlugAvailable(cleanSlug, card.id)) {
         return NextResponse.json({ error: "Ce nom d'utilisateur est déjà utilisé par une autre carte." }, { status: 409 });
       }
     }
 
-    const updated = updateCard(id, {
+    const updated = await updateCard(id, {
       ...(slug && { slug: slug.trim().toLowerCase() }),
       ...(firstName !== undefined && { firstName: firstName.trim() }),
       ...(lastName !== undefined && { lastName: lastName.trim() }),
@@ -116,7 +116,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
-    const card = getCardById(id);
+    const card = await getCardById(id);
     if (!card) {
       return NextResponse.json({ error: "Carte introuvable" }, { status: 404 });
     }
@@ -125,7 +125,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
     }
 
-    const deleted = deleteCard(id, session.userId);
+    const deleted = await deleteCard(id, session.userId);
     if (!deleted) {
       return NextResponse.json({ error: "Erreur lors de la suppression." }, { status: 500 });
     }

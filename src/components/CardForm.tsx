@@ -105,24 +105,24 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
     setFormData((prev) => ({
       ...prev,
       socials: {
-        ...prev.socials,
+        ...(prev.socials as any),
         [network]: value,
       },
     }));
   };
 
-  const toggleVisibility = (field: keyof Card["fieldVisibility"]) => {
+  const toggleVisibility = (field: string) => {
     setFormData((prev) => ({
       ...prev,
       fieldVisibility: {
-        phone: prev.fieldVisibility?.phone ?? true,
-        whatsapp: prev.fieldVisibility?.whatsapp ?? true,
-        email: prev.fieldVisibility?.email ?? true,
-        website: prev.fieldVisibility?.website ?? true,
-        address: prev.fieldVisibility?.address ?? true,
-        bio: prev.fieldVisibility?.bio ?? true,
-        socials: prev.fieldVisibility?.socials ?? true,
-        [field]: !prev.fieldVisibility?.[field],
+        phone: (prev.fieldVisibility as any)?.phone ?? true,
+        whatsapp: (prev.fieldVisibility as any)?.whatsapp ?? true,
+        email: (prev.fieldVisibility as any)?.email ?? true,
+        website: (prev.fieldVisibility as any)?.website ?? true,
+        address: (prev.fieldVisibility as any)?.address ?? true,
+        bio: (prev.fieldVisibility as any)?.bio ?? true,
+        socials: (prev.fieldVisibility as any)?.socials ?? true,
+        [field]: !(prev.fieldVisibility as any)?.[field],
       },
     }));
   };
@@ -412,7 +412,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                     onClick={() => toggleVisibility("bio")}
                     className="text-[11px] text-neutral-500 hover:text-neutral-900 flex items-center gap-1"
                   >
-                    {formData.fieldVisibility?.bio ? (
+                    {(formData.fieldVisibility as any)?.bio ? (
                       <>
                         <Eye className="w-3 h-3 text-[#FF6B00]" />
                         <span>Visible</span>
@@ -586,7 +586,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       onClick={() => toggleVisibility("phone")}
                       className="text-[10px] text-neutral-500 flex items-center gap-1"
                     >
-                      {formData.fieldVisibility?.phone ? (
+                      {(formData.fieldVisibility as any)?.phone ? (
                         <Eye className="w-3 h-3 text-[#FF6B00]" />
                       ) : (
                         <EyeOff className="w-3 h-3 text-neutral-400" />
@@ -615,7 +615,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       onClick={() => toggleVisibility("whatsapp")}
                       className="text-[10px] text-neutral-500 flex items-center gap-1"
                     >
-                      {formData.fieldVisibility?.whatsapp ? (
+                      {(formData.fieldVisibility as any)?.whatsapp ? (
                         <Eye className="w-3 h-3 text-[#FF6B00]" />
                       ) : (
                         <EyeOff className="w-3 h-3 text-neutral-400" />
@@ -647,7 +647,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       onClick={() => toggleVisibility("email")}
                       className="text-[10px] text-neutral-500 flex items-center gap-1"
                     >
-                      {formData.fieldVisibility?.email ? (
+                      {(formData.fieldVisibility as any)?.email ? (
                         <Eye className="w-3 h-3 text-[#FF6B00]" />
                       ) : (
                         <EyeOff className="w-3 h-3 text-neutral-400" />
@@ -676,7 +676,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       onClick={() => toggleVisibility("website")}
                       className="text-[10px] text-neutral-500 flex items-center gap-1"
                     >
-                      {formData.fieldVisibility?.website ? (
+                      {(formData.fieldVisibility as any)?.website ? (
                         <Eye className="w-3 h-3 text-[#FF6B00]" />
                       ) : (
                         <EyeOff className="w-3 h-3 text-neutral-400" />
@@ -707,7 +707,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                     onClick={() => toggleVisibility("address")}
                     className="text-[10px] text-neutral-500 flex items-center gap-1"
                   >
-                    {formData.fieldVisibility?.address ? (
+                    {(formData.fieldVisibility as any)?.address ? (
                       <Eye className="w-3 h-3 text-[#FF6B00]" />
                     ) : (
                       <EyeOff className="w-3 h-3 text-neutral-400" />
@@ -737,7 +737,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                     onClick={() => toggleVisibility("socials")}
                     className="text-[10px] text-neutral-500 flex items-center gap-1"
                   >
-                    {formData.fieldVisibility?.socials ? (
+                    {(formData.fieldVisibility as any)?.socials ? (
                       <Eye className="w-3 h-3 text-[#FF6B00]" />
                     ) : (
                       <EyeOff className="w-3 h-3 text-neutral-400" />
@@ -748,35 +748,35 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                 <div className="space-y-3">
                   <input
                     type="url"
-                    value={formData.socials?.linkedin || ""}
+                    value={(formData.socials as any)?.linkedin || ""}
                     onChange={(e) => updateSocial("linkedin", e.target.value)}
                     placeholder="LinkedIn (ex: https://linkedin.com/in/profil)"
                     className="w-full px-3.5 py-2 rounded-xl border border-neutral-200 text-xs focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00]"
                   />
                   <input
                     type="url"
-                    value={formData.socials?.x || ""}
+                    value={(formData.socials as any)?.x || ""}
                     onChange={(e) => updateSocial("x", e.target.value)}
                     placeholder="X / Twitter (ex: https://x.com/pseudo)"
                     className="w-full px-3.5 py-2 rounded-xl border border-neutral-200 text-xs focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00]"
                   />
                   <input
                     type="url"
-                    value={formData.socials?.instagram || ""}
+                    value={(formData.socials as any)?.instagram || ""}
                     onChange={(e) => updateSocial("instagram", e.target.value)}
                     placeholder="Instagram (ex: https://instagram.com/pseudo)"
                     className="w-full px-3.5 py-2 rounded-xl border border-neutral-200 text-xs focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00]"
                   />
                   <input
                     type="url"
-                    value={formData.socials?.facebook || ""}
+                    value={(formData.socials as any)?.facebook || ""}
                     onChange={(e) => updateSocial("facebook", e.target.value)}
                     placeholder="Facebook (ex: https://facebook.com/page)"
                     className="w-full px-3.5 py-2 rounded-xl border border-neutral-200 text-xs focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00]"
                   />
                   <input
                     type="url"
-                    value={formData.socials?.tiktok || ""}
+                    value={(formData.socials as any)?.tiktok || ""}
                     onChange={(e) => updateSocial("tiktok", e.target.value)}
                     placeholder="TikTok (ex: https://tiktok.com/@pseudo)"
                     className="w-full px-3.5 py-2 rounded-xl border border-neutral-200 text-xs focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00]"

@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const available = isSlugAvailable(slug, cardId);
+  const available = await isSlugAvailable(slug, cardId);
 
   return NextResponse.json({
     available,

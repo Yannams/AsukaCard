@@ -17,7 +17,7 @@ export default async function EditCardPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const card = getCardById(id);
+  const card = await getCardById(id);
 
   if (!card) {
     notFound();

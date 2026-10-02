@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findUserByEmail } from "@/lib/db";
-import { verifyPassword, signSessionToken, COOKIE_NAME } from "@/lib/auth";
+import { verifyPassword, createSession, setAuthCookies } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "L'adresse e-mail et le mot de passe sont requis." }, { status: 400 });
     }
 
-    const user = findUserByEmail(email);
+    const user = await findUserByEmail(email);
     if (!user) {
       return NextResponse.json({ error: "Identifiants incorrects." }, { status: 401 });
     }
@@ -21,11 +21,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Identifiants incorrects." }, { status: 401 });
     }
 
-    const token = signSessionToken({
-      userId: user.id,
-      email: user.email,
-      name: user.name,
-    });
+    // Generate VIP enterprise tokens
+    const { accessToken, refreshToken } = await createSession(user);
 
     const response = NextResponse.json({
       success: true,
@@ -36,13 +33,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    response.cookies.set(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    });
+    // Set secure HTTP-only cookies
+    setAuthCookies(response, accessToken, refreshToken);
 
     return response;
   } catch (err) {
