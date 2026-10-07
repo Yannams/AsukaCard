@@ -161,7 +161,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
                   Connexion
                 </Link>
                 <Link
-                  href="#commander"
+                  href="/create"
                   className="text-xs font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-4 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
                 >
                   Commander
@@ -269,7 +269,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
             ) : (
               <div className="flex flex-col gap-2 pt-1">
                 <Link
-                  href="#commander"
+                  href="/create"
                   onClick={() => setIsMenuOpen(false)}
                   className="block text-center px-4 py-2.5 rounded-full text-sm font-medium text-white bg-[#FF6B00]"
                 >

@@ -55,7 +55,7 @@ export default function Footer() {
             <h4 className="text-[#1d1d1f] font-semibold text-xs mb-3">Produit</h4>
             <ul className="space-y-2.5">
               <li>
-                <Link href="#commander" className="hover:text-[#1d1d1f] hover:underline transition-colors">
+                <Link href="/create" className="hover:text-[#1d1d1f] hover:underline transition-colors">
                   Commander une carte
                 </Link>
               </li>
