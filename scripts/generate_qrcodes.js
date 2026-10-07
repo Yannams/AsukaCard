@@ -20,7 +20,7 @@ const targets = [
   },
   {
     name: 'qr-georges-ale',
-    title: 'Georges Alé (Executive)',
+    title: 'Georges Alé (Executive Token)',
     url: 'https://asukacard.com/ga9m3x7w',
   },
 ];

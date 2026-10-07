@@ -202,8 +202,8 @@ function getInitialData(): DatabaseSchema {
     company: "AS WORLD TECH",
     logoUrl: "",
     avatarUrl: "/images/richard-odjrado.jpg",
-    phone: "+229 67 08 83 03",
-    whatsapp: "+22967088303",
+    phone: "+229 97 00 00 00",
+    whatsapp: "",
     email: "rodjrado-ceo@asworld.tech",
     website: "https://asukaspirit.com",
     address: "Cotonou, Bénin - Paris, France",
@@ -218,7 +218,7 @@ function getInitialData(): DatabaseSchema {
     },
     dominantColor: "black",
     template: "premium",
-    fieldVisibility: { ...defaultVisibility },
+    fieldVisibility: { ...defaultVisibility, whatsapp: false },
     viewsCount: 440,
     contactClicks: 120,
     createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
@@ -299,8 +299,6 @@ export function getCardBySlug(slug: string): Card | undefined {
     (c) =>
       c.slug.toLowerCase() === normalized ||
       c.id.toLowerCase() === normalized ||
-      (c.slug === "georges-ale" && normalized === "ga9m3x7w") ||
-      (c.slug === "ga9m3x7w" && normalized === "georges-ale") ||
       (c.slug === "richard-odjrado" && normalized === "rk8m4x29") ||
       (c.slug === "rk8m4x29" && normalized === "richard-odjrado")
   );
