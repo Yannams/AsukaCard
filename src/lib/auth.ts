@@ -101,6 +101,28 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
     if (decoded && decoded.type === "access") return decoded;
   }
   
-  // If no valid access token, client must call /api/auth/refresh to rotate
+  // Fallback: Check if refresh token is valid and unrevoked in the database
+  const refreshCookie = cookieStore.get(REFRESH_COOKIE);
+  if (refreshCookie && refreshCookie.value) {
+    const decodedRefresh = verifyToken(refreshCookie.value);
+    if (decodedRefresh && decodedRefresh.type === "refresh") {
+      try {
+        const storedToken = await prisma.refreshToken.findUnique({
+          where: { token: refreshCookie.value },
+        });
+        if (storedToken && storedToken.expiresAt > new Date()) {
+          return {
+            userId: decodedRefresh.userId,
+            email: decodedRefresh.email,
+            name: decodedRefresh.name,
+            type: "access",
+          };
+        }
+      } catch {
+        return null;
+      }
+    }
+  }
+  
   return null;
 }
