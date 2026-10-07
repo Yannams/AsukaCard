@@ -10,7 +10,22 @@ export const metadata = {
   description: "Configurez et personnalisez votre carte de visite numérique avec Asuka Card.",
 };
 
-export default function CreateCardPage() {
+interface CreateCardPageProps {
+  searchParams: Promise<{ couleur?: string; color?: string }>;
+}
+
+export default async function CreateCardPage({ searchParams }: CreateCardPageProps) {
+  const params = await searchParams;
+  const rawColor = (params?.couleur || params?.color || "").toLowerCase();
+  const dominantColor =
+    rawColor === "black" || rawColor === "noir"
+      ? "black"
+      : rawColor === "white" || rawColor === "blanc"
+      ? "white"
+      : rawColor === "orange"
+      ? "orange"
+      : undefined;
+
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 text-[#111111]">
       <Navbar />
@@ -38,7 +53,7 @@ export default function CreateCardPage() {
         </div>
 
         {/* Card Form with Live Preview */}
-        <CardForm />
+        <CardForm initialData={dominantColor ? { dominantColor } : undefined} />
       </main>
 
       <Footer />

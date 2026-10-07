@@ -75,7 +75,7 @@ export default function ColorOrder() {
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
         <Link
-          href={`/dashboard?couleur=${c.id}`}
+          href={`/create?couleur=${c.id === "noir" ? "black" : c.id === "blanc" ? "white" : "orange"}`}
           className="rounded-full bg-[#FF6B00] px-7 py-3 text-base font-medium text-white transition hover:bg-[#E55F00] active:scale-95"
         >
           Commander la carte {c.name.toLowerCase()}
