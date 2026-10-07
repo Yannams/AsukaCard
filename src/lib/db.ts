@@ -129,10 +129,6 @@ export async function deleteCard(id: string, userId: string): Promise<boolean> {
 
 // Analytics Helpers
 export async function recordCardAnalytics(cardId: string, type: "view" | "contact_click", meta?: string) {
-  // In the real DB, we would ideally have an Analytics table, 
-  // but since we omitted it for MVP and just kept viewsCount / contactClicks,
-  // we will just increment the counters on the Card model!
-  
   if (type === "view") {
     await prisma.card.update({
       where: { id: cardId },

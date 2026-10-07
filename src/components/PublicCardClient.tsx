@@ -81,21 +81,20 @@ export default function PublicCardClient({ card }: PublicCardClientProps) {
         </div>
       </main>
 
-      {/* Bottom subtle banner */}
-      <footer className="max-w-md w-full mx-auto text-center pt-4 pb-2 relative z-10">
-        <Link
-          href="/create"
-          className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full border shadow-xs text-xs font-medium transition-all ${
+      {/* Bottom subtle watermark */}
+      <footer className="max-w-md w-full mx-auto text-center pt-4 pb-3 relative z-10">
+        <div
+          className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-medium tracking-wide ${
             isPremium
-              ? "bg-neutral-900/90 border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700"
+              ? "bg-neutral-900/60 border-neutral-800 text-neutral-400"
               : isCreative
-              ? "bg-white border-neutral-200 text-neutral-700 hover:text-black hover:border-neutral-300 hover:shadow-sm"
-              : "bg-white border-neutral-200 text-neutral-700 hover:text-[#FF6B00]"
+              ? "bg-white/80 border-neutral-200 text-neutral-500"
+              : "bg-white/80 border-neutral-200 text-neutral-500"
           }`}
         >
-          <span>Créer votre propre Asuka Card</span>
-          <span className="text-[#111111] font-semibold">Gratuitement →</span>
-        </Link>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
+          <span>Asuka Card • AS WORLD TECH</span>
+        </div>
       </footer>
 
       {/* Share & QR Code Modal */}

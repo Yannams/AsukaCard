@@ -1,211 +1,286 @@
 import React from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import NfcCardShowcase from "@/components/NfcCardShowcase";
-import CardPreview from "@/components/CardPreview";
-import ParticleWave from "@/components/ParticleWave";
-import ScrollUsages from "@/components/ScrollUsages";
-import { getCardBySlug } from "@/lib/db";
 import {
-  Radio,
-  QrCode,
+  ChevronRight,
+  Nfc,
   Smartphone,
+  Infinity as InfinityIcon,
   Sparkles,
-  ShieldCheck,
-  Zap,
-  Layers,
-  Sliders,
+  QrCode,
   Share2,
 } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import GalaxyHero from "@/components/GalaxyHero";
+import HowItWorksInteractive from "@/components/HowItWorksInteractive";
+import ColorOrder from "@/components/ColorOrder";
+import FaqSection from "@/components/FaqSection";
+import Reveal from "@/components/Reveal";
+import { AnimatedLockCard } from "@/components/AnimatedLockCard";
 
-export default async function HomePage() {
-  const richardCard = await getCardBySlug("richard-odjrado");
-  const jeanCard = await getCardBySlug("jean-dupont");
-  const sophieCard = await getCardBySlug("sophie-martin");
-  const alexCard = await getCardBySlug("alexandre-leroy");
 
-  const demoCard = richardCard || jeanCard;
-  const demoCards = [richardCard, sophieCard, alexCard].filter(Boolean) as NonNullable<typeof demoCard>[];
 
+export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-white text-[#111111]">
+    <div className="flex min-h-screen flex-col bg-[#fbfbfd] text-[#1d1d1f] selection:bg-[#FF6B00] selection:text-white">
       <Navbar theme="dark" />
 
-      {/* HERO SECTION - PURE LUXURY DEEP BLACK BACKGROUND */}
-      <section className="relative h-[calc(100dvh-4rem)] min-h-[600px] flex flex-col justify-center items-center py-6 sm:py-8 overflow-hidden border-b border-neutral-800 bg-black text-white">
-        {/* Animated 3D white particle wave flowing strictly in the background behind the card */}
-        <ParticleWave />
+      {/* HERO SECTION STYLE APPLE PAY */}
+      <GalaxyHero />
 
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center justify-center">
-          <div className="text-center max-w-3xl mx-auto">
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.08]">
-              La carte de visite réinventée.
-            </h1>
-          </div>
-
-          {/* Interactive Floating NFC Card Showcase */}
-          <div className="mt-20 sm:mt-28 md:mt-36 relative z-20">
-            <NfcCardShowcase />
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 2 : TROIS FAÇONS (SCROLL-DRIVEN EXPERIENCE) */}
-      <ScrollUsages demoCard={demoCard || undefined} />
-
-      {/* SECTION 3 : LES CARTES FLOTTANTES & MATÉRIAUX */}
-      <section className="py-20 sm:py-28 bg-neutral-50 border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Visual banner of floating cards render */}
-            <div className="lg:col-span-6">
-              <div className="relative rounded-3xl overflow-hidden border border-neutral-200 shadow-xl bg-white group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/floating-cards.jpg"
-                  alt="Cartes de visite NFC Asuka flottantes avec points et finitions haut de gamme"
-                  className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-103"
-                />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-neutral-200 text-xs font-semibold text-neutral-900 shadow-xs">
-                  Série Métal & Finition Mate
-                </div>
-              </div>
-            </div>
-
-            {/* Description & Finishes details */}
-            <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                Design & Matériaux
+      {/* BENTO GRID INNOVATIONS */}
+      <section className="bg-[#fbfbfd] py-20 sm:py-32">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6B00]">
+                Expérience sans couture
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] leading-tight">
-                Une présence physique incomparable.
+              <h2 className="mt-2 text-4xl sm:text-5xl font-semibold tracking-[-0.03em] text-[#1d1d1f]">
+                Pensée pour aller vite.
               </h2>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Chaque carte physique Asuka Card est façonnée avec des matériaux rigoureusement sélectionnés. La surface texturée intègre une matrice de micro-points tactiles et une puce NFC haute fréquence pour un contact mémorable.
-              </p>
-
-              <div className="space-y-4 pt-2">
-                <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-xl bg-[#111111] text-white flex items-center justify-center shrink-0 text-xs font-bold">
-                    01
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#111111]">
-                      Noir Obsidienne & Micro-points
-                    </h3>
-                    <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                      Finition mate soft-touch avec motif tactile à picots. Ne retient pas les traces de doigts et résiste aux rayures du quotidien.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-xl bg-neutral-200 text-[#111111] flex items-center justify-center shrink-0 text-xs font-bold">
-                    02
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#111111]">
-                      Blanc Céramique Épuré
-                    </h3>
-                    <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                      Sobriété absolue, typographie fine et symbole contactless gravé avec une précision au micron.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center shrink-0 text-xs font-bold">
-                    03
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#111111]">
-                      Titane Brossé Haute Résistance
-                    </h3>
-                    <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                      Pour ceux qui recherchent le prestige du métal lourd et la finesse d&apos;une carte bancaire d&apos;exception.
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </Reveal>
 
-      {/* SECTION 4 : GALERIE DE PROFILS DIGITAUX */}
-      <section id="modeles" className="py-20 sm:py-28 bg-white border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              Identités Visuelles
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111]">
-              Découvrez les profils digitaux
-            </h2>
-            <p className="text-sm text-neutral-600">
-              Personnalisez votre page selon votre univers : minimaliste, contrasté, exécutif ou créatif.
-            </p>
-          </div>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+            {/* CARTE 1 : TECHNOLOGIE NFC (col-span-2, DARK, CARTE BLANCHE + HAUT DE L'IPHONE SANS BORDURES NI CONTENEURS BIZARRES) */}
+            <Reveal delay={0} className="md:col-span-2">
+              <div className="relative flex min-h-[420px] lg:min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] bg-black p-8 sm:p-10 text-[#f5f5f7] transition-transform duration-300 hover:-translate-y-1">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start z-10">
+                  <div className="lg:col-span-6 flex flex-col justify-between h-full space-y-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold tracking-wider uppercase text-[#86868b]">
+                        Technologie NFC
+                      </span>
+                      <Nfc className="h-7 w-7 text-[#FF6B00]" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white leading-tight">
+                        Détection en 0,2 s.
+                      </h3>
+                      <p className="mt-3 text-base sm:text-lg leading-relaxed text-[#a1a1a6]">
+                        Un simple effleurement suffit. La puce intégrée transmet instantanément l&apos;adresse sécurisée de votre profil.
+                      </p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 text-xs text-[#FF9A4D] font-medium pt-2">
+                      <span className="h-2 w-2 rounded-full bg-[#FF6B00] animate-pulse" />
+                      <span>Sans contact instantané • Puce haute fréquence</span>
+                    </div>
+                  </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {demoCards.map((c) => (
-              <div key={c.id} className="space-y-4">
-                <div className="flex items-center justify-between px-2">
-                  <span className="text-xs font-semibold text-neutral-900">
-                    {c.firstName} {c.lastName} ({c.company})
-                  </span>
-                  <Link
-                    href={`/${c.slug}`}
-                    className="text-xs text-neutral-700 hover:text-black font-semibold underline underline-offset-4"
-                  >
-                    Voir la page live
-                  </Link>
+                  {/* VISUEL ÉPURÉ : IPHONE DIRECT ET CARTE BLANCHE ORIGINALE */}
+                  <div className="lg:col-span-6 relative h-[280px] sm:h-[320px] -mb-10 -mr-6 sm:-mr-8 flex items-end justify-center pointer-events-none">
+                    {/* Carte Asuka Blanche redressée (sans -12deg) et proportionnelle au téléphone */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/white-card-front.png"
+                      alt="Carte Asuka Blanche sans contact"
+                      className="absolute bottom-16 sm:bottom-20 left-2 sm:left-6 w-[200px] sm:w-[230px] drop-shadow-2xl z-10 transition-transform duration-500 hover:-translate-y-1"
+                    />
+
+                    {/* Haut de l'iPhone avec la notification NFC qui émerge du bas de la carte */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/iphone-nfc-notification.png"
+                      alt="Notification NFC Safari sur iPhone"
+                      className="relative z-20 w-[270px] sm:w-[300px] h-auto object-contain -mb-40 sm:-mb-44 drop-shadow-[0_-10px_30px_rgba(0,0,0,0.9)]"
+                    />
+                  </div>
                 </div>
-                <CardPreview card={c} interactive={false} />
               </div>
-            ))}
+            </Reveal>
+
+            {/* CARTE 2 : UNIVERSALITÉ (col-span-1, LIGHT, VRAIS HAUTS DE TÉLÉPHONES SANS CONTENEURS BIZARRES) */}
+            <Reveal delay={70} className="md:col-span-1">
+              <div className="relative flex min-h-[420px] lg:min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#f5f5f7] p-8 sm:p-10 text-[#1d1d1f] transition-transform duration-300 hover:-translate-y-1">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold tracking-wider uppercase text-[#6e6e73]">
+                      Universalité
+                    </span>
+                    <Smartphone className="h-7 w-7 text-[#FF6B00]" strokeWidth={1.8} />
+                  </div>
+                  <div className="mt-8">
+                    <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+                      iOS & Android.
+                    </h3>
+                    <p className="mt-2 text-base text-[#6e6e73] leading-relaxed">
+                      Fonctionne nativement sur des centaines de millions d&apos;appareils, sans application tierce.
+                    </p>
+                  </div>
+                </div>
+
+                {/* VISUEL ÉPURÉ : LES DEUX HAUTS DE SMARTPHONES ÉMERGEANT DU BAS */}
+                <div className="relative h-[210px] -mb-10 -mx-6 flex items-end justify-center gap-3 overflow-hidden pointer-events-none">
+                  {/* Smartphone 1 (iOS) */}
+                  <div className="w-[130px] flex flex-col items-center -mb-48">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/iphone-nfc-notification.png"
+                      alt="Haut iPhone iOS"
+                      className="w-full h-auto object-cover object-top drop-shadow-xl"
+                    />
+                  </div>
+
+                  {/* Smartphone 2 (Android) */}
+                  <div className="w-[130px] flex flex-col items-center -mb-48 opacity-90">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/iphone-nfc-notification.png"
+                      alt="Haut smartphone Android"
+                      className="w-full h-auto object-cover object-top drop-shadow-xl brightness-95"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* CARTE 3 : SECOURS GARANTI (col-span-1, LIGHT, VERSO CARTE SANS BORDURES NI BOÎTE BIZARRE) */}
+            <Reveal delay={140} className="md:col-span-1">
+              <div className="relative flex min-h-[420px] lg:min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#f5f5f7] p-8 sm:p-10 text-[#1d1d1f] transition-transform duration-300 hover:-translate-y-1">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold tracking-wider uppercase text-[#6e6e73]">
+                      Secours garanti
+                    </span>
+                    <QrCode className="h-7 w-7 text-[#FF6B00]" strokeWidth={1.8} />
+                  </div>
+                  <div className="mt-8">
+                    <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+                      QR Code gravé.
+                    </h3>
+                    <p className="mt-2 text-base text-[#6e6e73] leading-relaxed">
+                      Au verso, un QR Code haute définition prend le relais pour les appareils non équipés de NFC.
+                    </p>
+                  </div>
+                </div>
+
+                {/* VISUEL ÉPURÉ : CARTE NOIRE REDRESSÉE À LA VERTICALE SANS OMBRE GRISE DIFFUSE */}
+                <div className="relative h-[190px] -mb-10 -mx-6 flex items-end justify-center overflow-hidden pointer-events-none">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/black-card-vertical-qr.png"
+                    alt="Verso de la carte Asuka avec QR Code gravé"
+                    className="w-[170px] sm:w-[185px] h-auto object-contain translate-y-10 sm:translate-y-12 -mb-14 transition-transform duration-500 hover:translate-y-8"
+                  />
+                </div>
+              </div>
+            </Reveal>
+
+            {/* CARTE 4 : ÉCONOMIQUE & DURABLE (col-span-2, DARK, CARTE ASUKA BLANCHE PURE SANS BORDURES BIZARRES) */}
+            <Reveal delay={210} className="md:col-span-2">
+              <div className="relative flex min-h-[420px] lg:min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] bg-black p-8 sm:p-10 text-[#f5f5f7] transition-transform duration-300 hover:-translate-y-1">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start z-10">
+                  <div className="lg:col-span-6 flex flex-col justify-between h-full space-y-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold tracking-wider uppercase text-[#86868b]">
+                        Économique & Durable
+                      </span>
+                      <InfinityIcon className="h-7 w-7 text-[#FF6B00]" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white leading-tight">
+                        Une seule carte. Pour toujours.
+                      </h3>
+                      <p className="mt-3 text-base sm:text-lg leading-relaxed text-[#a1a1a6]">
+                        Fini les boîtes de 500 cartes papier jetées à chaque changement de poste. Mettez vos coordonnées à jour en ligne à volonté, sans frais.
+                      </p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 text-xs text-neutral-400 font-mono tracking-wider uppercase pt-2">
+                      <span className="text-[#FF6B00]">✓</span>
+                      <span>Zéro réimpression • Finition premium • À vie</span>
+                    </div>
+                  </div>
+
+                  {/* VISUEL ÉPURÉ : CARTE BLANCHE PURE SANS BORDURES NI CONTENEURS */}
+                  <div className="lg:col-span-6 relative h-[280px] sm:h-[320px] -mb-10 -mr-6 sm:-mr-8 flex items-end justify-end pointer-events-none">
+                    {/* Carte Asuka Blanche avec son logo bien net qui déborde du bas-droit */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/white-card-front.png"
+                      alt="Carte Asuka Blanche avec logo gravé"
+                      className="w-[340px] sm:w-[390px] h-auto -rotate-6 translate-x-4 sm:translate-x-8 -mb-12 sm:-mb-14 drop-shadow-[0_25px_50px_rgba(255,255,255,0.12)] transition-transform duration-500 hover:rotate-0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA SECTION - N26 MONOCHROME METAL STYLE */}
-      <section className="py-24 bg-[#111111] text-white relative overflow-hidden">
-        {/* Dark dot pattern background */}
-        <div className="absolute inset-0 bg-dot-pattern-dark opacity-20 pointer-events-none" />
+      {/* COMMENT ÇA MARCHE : AMBIANCE SOMBRE APPLE PAY */}
+      <section id="usages" className="bg-black py-24 sm:py-36 text-[#f5f5f7] isolate relative">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6B00]">
+              Facile comme bonjour
+            </span>
+            <h2 className="mt-3 text-4xl sm:text-6xl font-semibold leading-[1.06] tracking-[-0.035em]">
+              Trois secondes.
+              <br />
+              <span className="text-[#86868b]">Zéro friction.</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={150} className="mt-16 sm:mt-20">
+            <HowItWorksInteractive />
+          </Reveal>
+        </div>
+      </section>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-300">
-            <Radio className="w-3.5 h-3.5 text-white" />
-            <span>Disponible dès aujourd&apos;hui en France & Europe</span>
-          </div>
+      {/* SÉCURITÉ ET CONFIDENTIALITÉ : GRANDE CARTE GRISE STYLE APPLE BENTO */}
+      <section id="securite" className="bg-[#fbfbfd] py-16 sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <AnimatedLockCard />
+          </Reveal>
+        </div>
+      </section>
 
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
-            Passez au networking nouvelle génération.
+      {/* COULEURS ET COMMANDE PRODUIT */}
+      <section id="commander" className="bg-[#fbfbfd] py-24 sm:py-36">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div id="modeles" />
+            <ColorOrder />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* BANNIÈRE PASSEZ AU SANS CONTACT */}
+      <section className="bg-black py-20 sm:py-28 text-center text-white">
+        <Reveal className="mx-auto max-w-4xl px-4 sm:px-6">
+          <h2 className="text-4xl sm:text-6xl font-semibold tracking-[-0.035em] leading-[1.08]">
+            Prêt à faire passer votre networking{" "}
+            <span className="bg-gradient-to-r from-[#FF6B00] via-[#FF9A4D] to-[#FFB347] bg-clip-text text-transparent">
+              dans une nouvelle dimension ?
+            </span>
           </h2>
-
-          <p className="text-neutral-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Créez votre page publique en moins de deux minutes, choisissez votre finition et commencez à partager vos coordonnées avec style.
+          <p className="mt-5 text-base sm:text-xl text-[#a1a1a6] max-w-xl mx-auto">
+            Commandez votre carte dès aujourd&apos;hui et commencez à partager vos coordonnées avec style.
           </p>
-
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/create"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-neutral-100 text-[#111111] font-semibold text-sm shadow-md transition-all active:scale-[0.98]"
+              href="#commander"
+              className="rounded-full bg-[#FF6B00] px-8 py-3.5 text-base font-medium text-white transition hover:bg-[#E55F00] active:scale-95 shadow-lg shadow-[#FF6B00]/20"
             >
-              Créer ma carte gratuitement
+              Commander maintenant
             </Link>
             <Link
-              href="/dashboard"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-sm border border-neutral-800 transition-all"
+              href="/richard-odjrado"
+              className="group inline-flex items-center rounded-full bg-white/10 px-7 py-3.5 text-base font-medium text-white transition hover:bg-white/15"
             >
-              Accéder au tableau de bord
+              Voir un profil démo
+              <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
+      {/* FAQ SECTION STYLE APPLE */}
+      <FaqSection />
+
+      {/* FOOTER OFFICIEL APPLE STYLE */}
       <Footer />
     </div>
   );

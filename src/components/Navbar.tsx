@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { CreditCard, Menu, X, User as UserIcon, LogOut, Plus } from "lucide-react";
+import { Menu, X, User as UserIcon, LogOut, Plus } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -50,46 +50,62 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-colors ${
+      className={`sticky top-0 z-40 transition-colors backdrop-blur-xl ${
         isDark
-          ? "bg-black text-white"
-          : "bg-white/95 border-b border-neutral-200 text-[#111111] backdrop-blur-md"
+          ? "bg-black/60 text-white"
+          : "bg-[rgba(255,255,255,0.82)] border-b border-black/[0.08] text-[#1d1d1f]"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-13 sm:h-14">
+          {/* Brand Logo / Sub-brand */}
+          <Link href="/" className="flex items-center gap-2 group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={isDark ? "/images/logo-asuka-white.png" : "/images/logo-asuka-black.png"}
               alt="Asuka Card"
-              className="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-105"
+              className="h-5 sm:h-5.5 w-auto object-contain transition-opacity group-hover:opacity-80"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-7">
             <Link
               href="/#usages"
-              className={`text-sm font-medium transition-colors ${
-                isDark ? "text-neutral-400 hover:text-white" : "text-neutral-600 hover:text-[#111111]"
+              className={`text-xs tracking-tight transition-colors ${
+                isDark ? "text-neutral-400 hover:text-white" : "text-[#6e6e73] hover:text-[#1d1d1f]"
               }`}
             >
-              Usages
+              Comment ça marche
             </Link>
             <Link
               href="/#modeles"
-              className={`text-sm font-medium transition-colors ${
-                isDark ? "text-neutral-400 hover:text-white" : "text-neutral-600 hover:text-[#111111]"
+              className={`text-xs tracking-tight transition-colors ${
+                isDark ? "text-neutral-400 hover:text-white" : "text-[#6e6e73] hover:text-[#1d1d1f]"
               }`}
             >
-              Modèles
+              Finitions
             </Link>
             <Link
-              href="/jean-dupont"
-              className={`text-sm font-medium transition-colors ${
-                isDark ? "text-neutral-400 hover:text-white" : "text-neutral-600 hover:text-[#111111]"
+              href="/#securite"
+              className={`text-xs tracking-tight transition-colors ${
+                isDark ? "text-neutral-400 hover:text-white" : "text-[#6e6e73] hover:text-[#1d1d1f]"
+              }`}
+            >
+              Sécurité
+            </Link>
+            <Link
+              href="/#faq"
+              className={`text-xs tracking-tight transition-colors ${
+                isDark ? "text-neutral-400 hover:text-white" : "text-[#6e6e73] hover:text-[#1d1d1f]"
+              }`}
+            >
+              Questions
+            </Link>
+            <Link
+              href="/richard-odjrado"
+              className={`text-xs tracking-tight transition-colors ${
+                isDark ? "text-neutral-400 hover:text-white" : "text-[#6e6e73] hover:text-[#1d1d1f]"
               }`}
             >
               Exemple live
@@ -99,56 +115,56 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <Link
                   href="/dashboard"
-                  className={`flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
                     isDark
-                      ? "text-neutral-200 hover:text-white border-neutral-700 hover:border-neutral-500 bg-neutral-900/60"
-                      : "text-neutral-700 hover:text-[#111111] border-neutral-200 hover:border-neutral-300"
+                      ? "text-neutral-200 hover:text-white border-neutral-700 bg-neutral-900/60"
+                      : "text-neutral-700 hover:text-black border-neutral-200 bg-white"
                   }`}
                 >
-                  <UserIcon className="w-4 h-4 text-neutral-400" />
+                  <UserIcon className="w-3.5 h-3.5 text-neutral-400" />
                   <span>{user.name}</span>
                 </Link>
                 <Link
                   href="/create"
-                  className="flex items-center gap-1.5 text-sm font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-3.5 py-2 rounded-lg transition-colors shadow-sm"
+                  className="flex items-center gap-1 text-xs font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Nouvelle carte</span>
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Créer</span>
                 </Link>
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  className={`p-2 rounded-lg transition-colors ${
+                  className={`p-1.5 rounded-full transition-colors ${
                     isDark
                       ? "text-neutral-400 hover:text-white hover:bg-neutral-800"
-                      : "text-neutral-500 hover:text-[#111111] hover:bg-neutral-100"
+                      : "text-neutral-500 hover:text-black hover:bg-neutral-100"
                   }`}
                   title="Se déconnecter"
                   aria-label="Se déconnecter"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className={`text-sm font-medium px-3.5 py-2 rounded-lg transition-colors ${
+                  className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-colors ${
                     isDark
-                      ? "text-neutral-300 hover:text-white hover:bg-neutral-800"
-                      : "text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
+                      ? "text-white/90 hover:text-white hover:bg-white/10"
+                      : "text-[#1d1d1f] hover:text-[#FF6B00] hover:bg-black/5"
                   }`}
                 >
                   Connexion
                 </Link>
                 <Link
-                  href="/create"
-                  className="text-sm font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-4 py-2 rounded-lg transition-colors shadow-sm"
+                  href="#commander"
+                  className="text-xs font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-4 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
                 >
-                  Créer ma carte
+                  Commander
                 </Link>
               </div>
             )}
@@ -160,12 +176,12 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`p-2 rounded-lg focus:outline-none ${
                 isDark
-                  ? "text-neutral-300 hover:text-white hover:bg-neutral-800"
-                  : "text-neutral-600 hover:text-[#111111] hover:bg-neutral-100"
+                  ? "text-neutral-300 hover:text-white"
+                  : "text-neutral-700 hover:text-black"
               }`}
               aria-label="Ouvrir le menu"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -174,53 +190,69 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
       {/* Mobile menu dropdown */}
       {isMenuOpen && (
         <div
-          className={`md:hidden border-b px-4 pt-2 pb-4 space-y-3 ${
-            isDark ? "bg-neutral-900 border-neutral-800" : "bg-white border-neutral-200"
+          className={`md:hidden border-b px-4 pt-2 pb-5 space-y-2.5 backdrop-blur-2xl ${
+            isDark ? "bg-[rgba(22,22,23,0.95)] border-white/10" : "bg-[rgba(255,255,255,0.96)] border-black/[0.08]"
           }`}
         >
           <Link
             href="/#usages"
             onClick={() => setIsMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-700 hover:bg-neutral-50"
+            className={`block px-3 py-2 rounded-lg text-sm ${
+              isDark ? "text-neutral-300 hover:bg-white/5" : "text-neutral-700 hover:bg-black/5"
             }`}
           >
-            Usages
+            Comment ça marche
           </Link>
           <Link
             href="/#modeles"
             onClick={() => setIsMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-700 hover:bg-neutral-50"
+            className={`block px-3 py-2 rounded-lg text-sm ${
+              isDark ? "text-neutral-300 hover:bg-white/5" : "text-neutral-700 hover:bg-black/5"
             }`}
           >
-            Modèles
+            Finitions
           </Link>
           <Link
-            href="/jean-dupont"
+            href="/#securite"
             onClick={() => setIsMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-700 hover:bg-neutral-50"
+            className={`block px-3 py-2 rounded-lg text-sm ${
+              isDark ? "text-neutral-300 hover:bg-white/5" : "text-neutral-700 hover:bg-black/5"
+            }`}
+          >
+            Sécurité & Confidentialité
+          </Link>
+          <Link
+            href="/#faq"
+            onClick={() => setIsMenuOpen(false)}
+            className={`block px-3 py-2 rounded-lg text-sm ${
+              isDark ? "text-neutral-300 hover:bg-white/5" : "text-neutral-700 hover:bg-black/5"
+            }`}
+          >
+            Questions fréquentes
+          </Link>
+          <Link
+            href="/richard-odjrado"
+            onClick={() => setIsMenuOpen(false)}
+            className={`block px-3 py-2 rounded-lg text-sm ${
+              isDark ? "text-neutral-300 hover:bg-white/5" : "text-neutral-700 hover:bg-black/5"
             }`}
           >
             Exemple live
           </Link>
-          <div className={`pt-2 border-t space-y-2 ${isDark ? "border-neutral-800" : "border-neutral-100"}`}>
+          <div className={`pt-3 border-t space-y-2 ${isDark ? "border-white/10" : "border-black/[0.08]"}`}>
             {user ? (
               <>
                 <Link
                   href="/dashboard"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isDark ? "text-white bg-neutral-800" : "text-neutral-900 bg-neutral-100"
-                  }`}
+                  className="block px-3 py-2 rounded-lg text-sm font-medium bg-neutral-100 text-black"
                 >
                   Tableau de bord ({user.name})
                 </Link>
                 <Link
                   href="/create"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block text-center px-3 py-2 rounded-md text-base font-medium text-white bg-[#FF6B00]"
+                  className="block text-center px-3 py-2.5 rounded-full text-sm font-medium text-white bg-[#FF6B00]"
                 >
                   Créer une carte
                 </Link>
@@ -229,34 +261,32 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
                     setIsMenuOpen(false);
                     handleLogout();
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-md text-base font-medium ${
-                    isDark ? "text-neutral-400 hover:text-white" : "text-neutral-600 hover:text-[#111111]"
-                  }`}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm text-[#6e6e73]"
                 >
                   Se déconnecter
                 </button>
               </>
             ) : (
-              <>
+              <div className="flex flex-col gap-2 pt-1">
+                <Link
+                  href="#commander"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block text-center px-4 py-2.5 rounded-full text-sm font-medium text-white bg-[#FF6B00]"
+                >
+                  Commander ma carte
+                </Link>
                 <Link
                   href="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block text-center px-3 py-2 rounded-md text-base font-medium border ${
+                  className={`block text-center px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                     isDark
-                      ? "text-neutral-200 border-neutral-700 hover:bg-neutral-800"
-                      : "text-neutral-700 border-neutral-200 hover:bg-neutral-50"
+                      ? "text-white bg-white/10 hover:bg-white/15"
+                      : "text-[#1d1d1f] bg-black/5 hover:bg-black/10"
                   }`}
                 >
-                  Connexion
+                  Connexion Espace Client
                 </Link>
-                <Link
-                  href="/create"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block text-center px-3 py-2 rounded-md text-base font-medium text-white bg-[#FF6B00]"
-                >
-                  Créer ma carte
-                </Link>
-              </>
+              </div>
             )}
           </div>
         </div>

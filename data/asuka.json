@@ -41,7 +41,7 @@
         "bio": true,
         "socials": true
       },
-      "viewsCount": 193,
+      "viewsCount": 195,
       "contactClicks": 47,
       "createdAt": "2026-09-15T15:34:22.485Z",
       "updatedAt": "2026-09-22T15:34:22.485Z"
@@ -164,15 +164,15 @@
       "firstName": "Richard",
       "lastName": "Odjrado",
       "title": "Fondateur & CEO",
-      "company": "AS World Tech & Asuka",
+      "company": "AS WORLD TECH",
       "logoUrl": "",
       "avatarUrl": "/images/richard-odjrado.jpg",
-      "phone": "+229 67 08 83 03",
-      "whatsapp": "+22967088303",
+      "phone": "+229 97 00 00 00",
+      "whatsapp": "",
       "email": "rodjrado-ceo@asworld.tech",
       "website": "https://asukaspirit.com",
       "address": "Cotonou, Bénin - Paris, France",
-      "bio": "Entrepreneur & Innovateur Tech. Concepteur d'objets connectés et solutions technologiques souveraines. Fondateur d'AS World Tech et créateur de la marque Asuka.",
+      "bio": "Entrepreneur & Innovateur Tech. Fondateur & CEO d'AS WORLD TECH, société conceptrice de solutions technologiques souveraines et propriétaire des marques ASUKA SPIRIT, Docteur Asuka et Asuka Card.",
       "socials": {
         "facebook": "https://www.facebook.com/rodjrado",
         "instagram": "https://www.instagram.com/richardodjrado",
@@ -185,15 +185,15 @@
       "template": "premium",
       "fieldVisibility": {
         "phone": true,
-        "whatsapp": true,
+        "whatsapp": false,
         "email": true,
         "website": true,
         "address": true,
         "bio": true,
         "socials": true
       },
-      "viewsCount": 439,
-      "contactClicks": 118,
+      "viewsCount": 456,
+      "contactClicks": 119,
       "createdAt": "2026-09-28T09:00:00.000Z",
       "updatedAt": "2026-09-30T11:17:31.260Z"
     },
@@ -207,8 +207,8 @@
       "company": "Asuka Card",
       "logoUrl": "",
       "avatarUrl": "/images/richard-odjrado.jpg",
-      "phone": "+229 67 08 83 03",
-      "whatsapp": "+22967088303",
+      "phone": "+229 97 00 00 00",
+      "whatsapp": "",
       "email": "rodjrado-ceo@asworld.tech",
       "website": "https://asukaspirit.com",
       "address": "Cotonou, Bénin - Paris, France",
@@ -225,7 +225,7 @@
       "template": "modern",
       "fieldVisibility": {
         "phone": true,
-        "whatsapp": true,
+        "whatsapp": false,
         "email": true,
         "website": true,
         "address": true,
@@ -240,7 +240,7 @@
     {
       "id": "crd_ga9m3x7w",
       "userId": "usr_demo_1",
-      "slug": "georges-ale",
+      "slug": "ga9m3x7w",
       "firstName": "Georges",
       "lastName": "ALÉ",
       "title": "Ministre",
@@ -507,18 +507,6 @@
       "createdAt": "2026-09-25T17:02:06.606Z"
     },
     {
-      "id": "evt_1790758652545_kbpoj",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T08:57:32.545Z"
-    },
-    {
-      "id": "evt_1790758652556_zeqgg",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T08:57:32.556Z"
-    },
-    {
       "id": "evt_1790758727622_g9t4b",
       "cardId": "crd_rk8m4x29",
       "type": "view",
@@ -529,61 +517,6 @@
       "cardId": "crd_rk8m4x29",
       "type": "view",
       "createdAt": "2026-09-30T08:58:47.638Z"
-    },
-    {
-      "id": "evt_1790758979106_24z2z",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "social_linkedin",
-      "createdAt": "2026-09-30T09:02:59.106Z"
-    },
-    {
-      "id": "evt_1790759759410_rwjry",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "social_linkedin",
-      "createdAt": "2026-09-30T09:15:59.410Z"
-    },
-    {
-      "id": "evt_1790759767734_1apqu",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "social_linkedin",
-      "createdAt": "2026-09-30T09:16:07.734Z"
-    },
-    {
-      "id": "evt_1790760467088_87j7k",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T09:27:47.088Z"
-    },
-    {
-      "id": "evt_1790760580095_yyndk",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "social_linkedin",
-      "createdAt": "2026-09-30T09:29:40.095Z"
-    },
-    {
-      "id": "evt_1790760893655_wtd8h",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "website",
-      "createdAt": "2026-09-30T09:34:53.655Z"
-    },
-    {
-      "id": "evt_1790761230096_kcec2",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "website",
-      "createdAt": "2026-09-30T09:40:30.096Z"
-    },
-    {
-      "id": "evt_1790761866436_a4p4x",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "website",
-      "createdAt": "2026-09-30T09:51:06.436Z"
     },
     {
       "id": "evt_1790767185425_nugqq",
@@ -599,73 +532,11 @@
       "createdAt": "2026-09-30T11:20:28.078Z"
     },
     {
-      "id": "evt_1790767233429_izb3w",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T11:20:33.429Z"
-    },
-    {
-      "id": "evt_1790767233441_z9jcj",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T11:20:33.441Z"
-    },
-    {
       "id": "evt_1790767340968_vr0bh",
       "cardId": "crd_rk8m4x29",
       "type": "contact_click",
       "meta": "website",
       "createdAt": "2026-09-30T11:22:20.968Z"
-    },
-    {
-      "id": "evt_1790767919564_auv3e",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T11:31:59.564Z"
-    },
-    {
-      "id": "evt_1790767919580_in0c9",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T11:31:59.580Z"
-    },
-    {
-      "id": "evt_1790767933886_ucrh5",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "phone",
-      "createdAt": "2026-09-30T11:32:13.886Z"
-    },
-    {
-      "id": "evt_1790767939517_nvr5b",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "social_linkedin",
-      "createdAt": "2026-09-30T11:32:19.517Z"
-    },
-    {
-      "id": "evt_1790773317196_oojzz",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T13:01:57.196Z"
-    },
-    {
-      "id": "evt_1790773317212_y0dy4",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T13:01:57.212Z"
-    },
-    {
-      "id": "evt_1790773320020_tc33m",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T13:02:00.020Z"
-    },
-    {
-      "id": "evt_1790773320032_4u8y3",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T13:02:00.032Z"
     },
     {
       "id": "evt_1790776348921_mmagy",
@@ -680,19 +551,6 @@
       "createdAt": "2026-09-30T13:52:28.932Z"
     },
     {
-      "id": "evt_1790777236768_50t03",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "vcard",
-      "createdAt": "2026-09-30T14:07:16.768Z"
-    },
-    {
-      "id": "evt_1790777237699_sokvn",
-      "cardId": "crd_ga9m3x7w",
-      "type": "vcard",
-      "createdAt": "2026-09-30T14:07:17.699Z"
-    },
-    {
       "id": "evt_1790777264395_2sqjl",
       "cardId": "crd_rk8m4x29",
       "type": "view",
@@ -705,58 +563,16 @@
       "createdAt": "2026-09-30T14:07:44.408Z"
     },
     {
-      "id": "evt_1790781591806_vpg4j",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:19:51.806Z"
-    },
-    {
-      "id": "evt_1790781591843_5j5pi",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:19:51.843Z"
-    },
-    {
-      "id": "evt_1790781591862_1txl4",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:19:51.862Z"
-    },
-    {
       "id": "evt_1790781591884_bujmz",
       "cardId": "crd_rk8m4x29",
       "type": "view",
       "createdAt": "2026-09-30T15:19:51.884Z"
     },
     {
-      "id": "evt_1790781591903_5zb9f",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:19:51.903Z"
-    },
-    {
       "id": "evt_1790781591922_lnvvr",
       "cardId": "crd_rk8m4x29",
       "type": "view",
       "createdAt": "2026-09-30T15:19:51.922Z"
-    },
-    {
-      "id": "evt_1790781743535_8dpf7",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:22:23.535Z"
-    },
-    {
-      "id": "evt_1790781743591_mb62b",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:22:23.591Z"
-    },
-    {
-      "id": "evt_1790781743621_qq0ce",
-      "cardId": "crd_ga9m3x7w",
-      "type": "view",
-      "createdAt": "2026-09-30T15:22:23.621Z"
     },
     {
       "id": "evt_1790781743644_d2qil",
@@ -771,24 +587,125 @@
       "createdAt": "2026-09-30T15:22:23.660Z"
     },
     {
-      "id": "evt_1790783524088_bk9pf",
-      "cardId": "crd_ga9m3x7w",
-      "type": "contact_click",
-      "meta": "vcard",
-      "createdAt": "2026-09-30T15:52:04.088Z"
+      "id": "evt_1790868714449_jfvmc",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-01T15:31:54.449Z"
     },
     {
-      "id": "evt_1790783524823_ar6ei",
-      "cardId": "crd_ga9m3x7w",
-      "type": "vcard",
-      "createdAt": "2026-09-30T15:52:04.823Z"
+      "id": "evt_1790868714470_mpqli",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-01T15:31:54.470Z"
     },
     {
-      "id": "evt_1790783637525_jupsq",
-      "cardId": "crd_ga9m3x7w",
+      "id": "evt_1790868761229_at23k",
+      "cardId": "crd_rk8m4x29",
       "type": "contact_click",
-      "meta": "phone",
-      "createdAt": "2026-09-30T15:53:57.525Z"
+      "meta": "social_instagram",
+      "createdAt": "2026-10-01T15:32:41.229Z"
+    },
+    {
+      "id": "evt_1791201181062_a5h9d",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-10-05T11:53:01.062Z"
+    },
+    {
+      "id": "evt_1791201181090_uujwt",
+      "cardId": "crd_demo_1",
+      "type": "view",
+      "createdAt": "2026-10-05T11:53:01.090Z"
+    },
+    {
+      "id": "evt_1791201206228_80uej",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T11:53:26.228Z"
+    },
+    {
+      "id": "evt_1791201206250_k5ca4",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T11:53:26.250Z"
+    },
+    {
+      "id": "evt_1791210161975_viys2",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T14:22:41.975Z"
+    },
+    {
+      "id": "evt_1791210235698_jaeql",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T14:23:55.698Z"
+    },
+    {
+      "id": "evt_1791210235722_x6hgd",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T14:23:55.722Z"
+    },
+    {
+      "id": "evt_1791210324330_cj4ra",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T14:25:24.330Z"
+    },
+    {
+      "id": "evt_1791210324353_gu4pc",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-05T14:25:24.353Z"
+    },
+    {
+      "id": "evt_1791289990840_valqo",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-06T12:33:10.840Z"
+    },
+    {
+      "id": "evt_1791289990864_d1t2b",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-06T12:33:10.864Z"
+    },
+    {
+      "id": "evt_1791304458442_3zwbs",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-06T16:34:18.442Z"
+    },
+    {
+      "id": "evt_1791304458466_02qqm",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-06T16:34:18.466Z"
+    },
+    {
+      "id": "evt_1791368609162_ewsw4",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-07T10:23:29.162Z"
+    },
+    {
+      "id": "evt_1791368609178_rfw8z",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-07T10:23:29.178Z"
+    },
+    {
+      "id": "evt_1791368982935_1rgeh",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-07T10:29:42.935Z"
+    },
+    {
+      "id": "evt_1791368982953_6juqq",
+      "cardId": "crd_rk8m4x29",
+      "type": "view",
+      "createdAt": "2026-10-07T10:29:42.953Z"
     }
   ]
 }
