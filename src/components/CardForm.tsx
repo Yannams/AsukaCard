@@ -24,6 +24,9 @@ import {
   Upload,
   Loader2,
   Sparkles,
+  Lock,
+  ShieldCheck,
+  RefreshCw,
 } from "lucide-react";
 import CardPreview from "./CardPreview";
 import { Card, DominantColor, CardTemplate } from "@/lib/db";
@@ -82,20 +85,23 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
-  // Auto-generate slug from names if user hasn't explicitly set one
-  const handleAutoSlug = () => {
-    if (!formData.firstName && !formData.lastName) return;
-    const combined = `${formData.firstName || ""} ${formData.lastName || ""}`
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    if (combined) {
-      updateField("slug", combined);
-      checkSlugAvailability(combined);
+  // Generate unguessable 8-character secure token for privacy protection
+  const generateSecureSlug = () => {
+    const chars = "abcdefghjkmnpqrstuvwxyz23456789";
+    let result = "";
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    updateField("slug", result);
+    checkSlugAvailability(result);
   };
+
+  // Pre-generate secure slug on mount for new cards
+  useEffect(() => {
+    if (!formData.slug && !isEditing) {
+      generateSecureSlug();
+    }
+  }, []);
 
   const updateField = (field: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -886,20 +892,26 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                 </div>
               </div>
 
-              {/* Slug / Nom d'utilisateur */}
+              {/* Identifiant URL Sécurisé (Anti-scraping & protection vie privée) */}
               <div className="pt-2">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-neutral-800">
-                    Nom d&apos;utilisateur (URL personnalisée) <span className="text-[#FF6B00]">*</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAutoSlug}
-                    className="text-[11px] text-[#FF6B00] hover:underline flex items-center gap-1 font-medium"
-                  >
-                    <Sparkles className="w-3 h-3" />
-                    <span>Générer automatiquement</span>
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-[#FF6B00]" />
+                    <label className="block text-xs font-semibold text-neutral-800">
+                      Identifiant sécurisé de la carte (URL unique chiffrée)
+                    </label>
+                  </div>
+                  {!isEditing && (
+                    <button
+                      type="button"
+                      onClick={generateSecureSlug}
+                      className="text-[11px] text-[#FF6B00] hover:underline flex items-center gap-1 font-medium"
+                      title="Générer une nouvelle clé aléatoire"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Régénérer une clé</span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -909,36 +921,41 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                     </span>
                     <input
                       type="text"
-                      required
+                      readOnly={true}
                       value={formData.slug || ""}
-                      onChange={(e) => {
-                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
-                        updateField("slug", val);
-                      }}
-                      placeholder="jean-dupont"
-                      className="w-full pl-36 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00]"
+                      className="w-full pl-36 pr-10 py-2.5 rounded-xl border border-neutral-200 bg-neutral-50 text-sm font-mono text-neutral-800 cursor-default select-all focus:outline-none focus:ring-1 focus:ring-[#FF6B00]"
                     />
+                    <div className="absolute right-3.5 top-2.5 text-neutral-400">
+                      <Lock className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
+
+                <p className="mt-2 text-[11px] text-neutral-500 flex items-start gap-1.5 leading-relaxed">
+                  <span className="text-neutral-400 mt-0.5">🔒</span>
+                  <span>
+                    Identifiant cryptographique aléatoire à 8 caractères. Il garantit qu&apos;aucune personne extérieure ne puisse deviner ou scanner votre page sans avoir touché votre carte physique.
+                  </span>
+                </p>
 
                 {/* Slug availability status */}
                 <div className="mt-2 text-xs flex items-center gap-1.5">
                   {slugStatus === "checking" && (
                     <span className="text-neutral-500 flex items-center gap-1">
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Vérification de disponibilité...
+                      Vérification de sécurité...
                     </span>
                   )}
                   {slugStatus === "available" && (
                     <span className="text-green-600 font-medium flex items-center gap-1">
                       <Check className="w-3.5 h-3.5" />
-                      {slugMessage || "Nom d'utilisateur disponible !"}
+                      Clé sécurisée active et disponible
                     </span>
                   )}
                   {slugStatus === "unavailable" && (
                     <span className="text-red-600 font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5" />
-                      {slugMessage || "Nom d'utilisateur non disponible."}
+                      Clé déjà attribuée, veuillez cliquer sur &quot;Régénérer une clé&quot;.
                     </span>
                   )}
                 </div>

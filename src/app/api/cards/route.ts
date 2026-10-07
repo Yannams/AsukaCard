@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { getCardsByUserId, createCard, isSlugAvailable } from "@/lib/db";
+import { getCardsByUserId, createCard, isSlugAvailable, generateSecureSlug } from "@/lib/db";
 
 export async function GET() {
   const session = await getCurrentUser();
@@ -49,18 +49,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Le nom est obligatoire." }, { status: 400 });
     }
 
-    if (!slug || typeof slug !== "string") {
-      return NextResponse.json({ error: "Le nom d'utilisateur (slug) est obligatoire." }, { status: 400 });
-    }
+    let cleanSlug = typeof slug === "string" ? slug.trim().toLowerCase() : "";
+    if (!cleanSlug) {
+      let attempts = 0;
+      do {
+        cleanSlug = generateSecureSlug();
+        attempts++;
+      } while (!await isSlugAvailable(cleanSlug) && attempts < 5);
+    } else {
+      const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+      if (cleanSlug.length < 3 || cleanSlug.length > 35 || !slugRegex.test(cleanSlug)) {
+        return NextResponse.json({ error: "Format d'identifiant de carte invalide." }, { status: 400 });
+      }
 
-    const cleanSlug = slug.trim().toLowerCase();
-    const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-    if (cleanSlug.length < 3 || cleanSlug.length > 35 || !slugRegex.test(cleanSlug)) {
-      return NextResponse.json({ error: "Format du nom d'utilisateur invalide." }, { status: 400 });
-    }
-
-    if (!await isSlugAvailable(cleanSlug)) {
-      return NextResponse.json({ error: "Ce nom d'utilisateur est déjà utilisé. Veuillez en choisir un autre." }, { status: 409 });
+      if (!await isSlugAvailable(cleanSlug)) {
+        return NextResponse.json({ error: "Cet identifiant est déjà utilisé. Veuillez en régénérer un autre." }, { status: 409 });
+      }
     }
 
     const newCard = await createCard({
