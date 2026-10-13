@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ShareModal from "@/components/ShareModal";
 import ExportModal from "@/components/ExportModal";
-import { Card } from "@/lib/db";
+import OrderModal from "@/components/OrderModal";
+import MyOrdersModal from "@/components/MyOrdersModal";
+import type { Card } from "@/lib/db";
 import {
   CreditCard,
   Plus,
@@ -22,11 +25,16 @@ import {
   AlertTriangle,
   Loader2,
   TrendingUp,
+  Package,
+  Shield,
+  Sparkles,
 } from "lucide-react";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Modals state
@@ -35,23 +43,17 @@ export default function DashboardPage() {
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Physical Card Order Modals
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [orderCard, setOrderCard] = useState<Card | null>(null);
+  const [isMyOrdersOpen, setIsMyOrdersOpen] = useState(false);
+
   const fetchCards = async () => {
     try {
       const res = await fetch("/api/cards");
       if (res.status === 401) {
-        // Auto-login to demo account if in dev / test mode so the user has immediate access
-        const loginRes = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: "demo@asukacard.fr", password: "asuka2026" }),
-        });
-        if (loginRes.ok) {
-          const retry = await fetch("/api/cards");
-          const retryData = await retry.json();
-          setCards(retryData.cards || []);
-          setLoading(false);
-          return;
-        }
+        router.push("/login");
+        return;
       }
       const data = await res.json();
       setCards(data.cards || []);
@@ -64,6 +66,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchCards();
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) setCurrentUser(data.user);
+      })
+      .catch(() => {});
   }, []);
 
   const handleCopyLink = async (card: Card) => {
@@ -116,13 +124,47 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <Link
-            href="/create"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF6B00] hover:bg-[#E55F00] text-white text-xs sm:text-sm font-semibold shadow-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Créer une nouvelle carte</span>
-          </Link>
+          <div className="flex flex-wrap items-center gap-2.5">
+            {currentUser?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-orange-500/30 bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 text-[#FF6B00] text-xs font-bold transition shadow-xs"
+                title="Console de gestion des commandes et paiements"
+              >
+                <Shield className="w-4 h-4" />
+                <span>Console Admin</span>
+              </Link>
+            )}
+
+            <button
+              onClick={() => setIsMyOrdersOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-neutral-200 hover:border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-semibold transition shadow-xs"
+              title="Consulter l'historique et le statut de mes commandes"
+            >
+              <Package className="w-4 h-4 text-neutral-500" />
+              <span>Mes Commandes</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setOrderCard(null);
+                setIsOrderModalOpen(true);
+              }}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#FF6B00]/30 bg-neutral-900 hover:bg-black text-white text-xs font-semibold shadow-xs transition"
+              title="Commander une carte physique NFC (Métal, PVC, Bois)"
+            >
+              <Sparkles className="w-4 h-4 text-[#FF6B00]" />
+              <span>Commander Carte NFC</span>
+            </button>
+
+            <Link
+              href="/create"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF6B00] hover:bg-[#E55F00] text-white text-xs sm:text-sm font-semibold shadow-sm transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Créer une nouvelle carte</span>
+            </Link>
+          </div>
         </div>
 
         {/* Global Stats Summary */}
@@ -314,6 +356,17 @@ export default function DashboardPage() {
                         >
                           <Download className="w-4 h-4" />
                         </button>
+                        <button
+                          onClick={() => {
+                            setOrderCard(card);
+                            setIsOrderModalOpen(true);
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg border border-[#FF6B00]/30 hover:border-[#FF6B00] bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 text-[#FF6B00] font-bold flex items-center gap-1 transition-colors"
+                          title="Commander la carte physique NFC pour ce profil"
+                        >
+                          <CreditCard className="w-3.5 h-3.5" />
+                          <span>NFC</span>
+                        </button>
                       </div>
 
                       <div className="flex items-center gap-1">
@@ -402,6 +455,28 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Physical Card Order Modal */}
+      {isOrderModalOpen && (
+        <OrderModal
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          availableCards={cards}
+          preselectedCard={orderCard}
+        />
+      )}
+
+      {/* Customer Orders Tracking Modal */}
+      {isMyOrdersOpen && (
+        <MyOrdersModal
+          isOpen={isMyOrdersOpen}
+          onClose={() => setIsMyOrdersOpen(false)}
+          onNewOrderClick={() => {
+            setOrderCard(null);
+            setIsOrderModalOpen(true);
+          }}
+        />
       )}
 
       <Footer />

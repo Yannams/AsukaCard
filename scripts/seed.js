@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -11,91 +11,104 @@ if (!connectionString) {
 
 const pool = new Pool({ connectionString });
 
-async function seed() {
-  console.log("Starting database seed from data/asuka.json...");
-  
-  const jsonPath = path.join(__dirname, '..', 'data', 'asuka.json');
-  if (!fs.existsSync(jsonPath)) {
-    console.error("data/asuka.json not found!");
-    process.exit(1);
-  }
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
 
-  const raw = fs.readFileSync(jsonPath, 'utf8');
-  const data = JSON.parse(raw);
+async function seed() {
+  console.log("Starting Asuka Card database seeding (Admin Account)...");
 
   try {
-    // 1. Seed Users
-    for (const u of data.users) {
-      const existing = await pool.query('SELECT id FROM "User" WHERE email = $1', [u.email.toLowerCase()]);
-      if (existing.rows.length === 0) {
-        await pool.query(
-          `INSERT INTO "User" (id, name, email, "passwordHash", "createdAt", "updatedAt")
-           VALUES ($1, $2, $3, $4, $5, $6)`,
-          [
-            u.id,
-            u.name,
-            u.email.toLowerCase(),
-            u.passwordHash,
-            u.createdAt ? new Date(u.createdAt) : new Date(),
-            new Date()
-          ]
-        );
-        console.log(`✓ Inserted user: ${u.email} (${u.name})`);
-      } else {
-        console.log(`- User already exists: ${u.email}`);
-      }
+    const adminEmail = "admin@asukacard.fr";
+    const adminPassword = "asuka2026";
+    const adminName = "Administrateur Asuka";
+    const adminRole = "ADMIN";
+
+    // 1. Check if admin exists
+    const existing = await pool.query('SELECT id FROM "User" WHERE email = $1', [adminEmail.toLowerCase()]);
+    
+    let adminId;
+    if (existing.rows.length === 0) {
+      adminId = `usr_admin_${Date.now()}`;
+      const passwordHash = hashPassword(adminPassword);
+      
+      await pool.query(
+        `INSERT INTO "User" (id, name, email, "passwordHash", role, "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          adminId,
+          adminName,
+          adminEmail.toLowerCase(),
+          passwordHash,
+          adminRole,
+          new Date(),
+          new Date()
+        ]
+      );
+      console.log(`✓ Admin user created successfully:`);
+      console.log(`  - Email: ${adminEmail}`);
+      console.log(`  - Password: ${adminPassword}`);
+      console.log(`  - Role: ${adminRole}`);
+    } else {
+      adminId = existing.rows[0].id;
+      // Ensure the role is ADMIN
+      await pool.query('UPDATE "User" SET role = $1 WHERE id = $2', [adminRole, adminId]);
+      console.log(`✓ Admin user already exists (${adminEmail}) — role ensured as ADMIN`);
     }
 
-    // 2. Seed Cards
-    for (const c of data.cards) {
-      const existing = await pool.query('SELECT id FROM "Card" WHERE id = $1 OR slug = $2', [c.id, c.slug.toLowerCase()]);
-      
-      const socialsJson = typeof c.socials === 'string' ? c.socials : JSON.stringify(c.socials || {});
-      const visibilityJson = typeof c.fieldVisibility === 'string' ? c.fieldVisibility : JSON.stringify(c.fieldVisibility || {});
+    // 2. Ensure demo user is NOT in the database (as requested)
+    const demoCheck = await pool.query('SELECT id FROM "User" WHERE email = $1', ['demo@asukacard.fr']);
+    if (demoCheck.rows.length > 0) {
+      console.log("- Removing demo account from database...");
+      await pool.query('DELETE FROM "User" WHERE email = $1', ['demo@asukacard.fr']);
+      console.log("✓ Demo account removed.");
+    }
 
-      if (existing.rows.length === 0) {
-        await pool.query(
-          `INSERT INTO "Card" (
-            id, "userId", slug, "firstName", "lastName", title, company, bio,
-            phone, whatsapp, email, website, address, "avatarUrl", "logoUrl",
-            socials, "dominantColor", template, "fieldVisibility",
-            "viewsCount", "contactClicks", "createdAt", "updatedAt"
-          ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8,
-            $9, $10, $11, $12, $13, $14, $15,
-            $16, $17, $18, $19,
-            $20, $21, $22, $23
-          )`,
-          [
-            c.id,
-            c.userId,
-            c.slug.toLowerCase(),
-            c.firstName,
-            c.lastName,
-            c.title || '',
-            c.company || '',
-            c.bio || '',
-            c.phone || '',
-            c.whatsapp || '',
-            c.email || '',
-            c.website || '',
-            c.address || '',
-            c.avatarUrl || '',
-            c.logoUrl || '',
-            socialsJson,
-            c.dominantColor || 'orange',
-            c.template || 'modern',
-            visibilityJson,
-            c.viewsCount || 0,
-            c.contactClicks || 0,
-            c.createdAt ? new Date(c.createdAt) : new Date(),
-            c.updatedAt ? new Date(c.updatedAt) : new Date()
-          ]
-        );
-        console.log(`✓ Inserted card: ${c.slug} (${c.firstName} ${c.lastName})`);
-      } else {
-        console.log(`- Card already exists: ${c.slug}`);
-      }
+    // 3. Optional showcase card for Admin
+    const cardCheck = await pool.query('SELECT id FROM "Card" WHERE "userId" = $1', [adminId]);
+    if (cardCheck.rows.length === 0) {
+      const cardId = `crd_admin_${Date.now()}`;
+      await pool.query(
+        `INSERT INTO "Card" (
+          id, "userId", slug, "firstName", "lastName", title, company, bio,
+          phone, whatsapp, email, website, address, "avatarUrl", "logoUrl",
+          socials, "dominantColor", template, "fieldVisibility",
+          "viewsCount", "contactClicks", "createdAt", "updatedAt"
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8,
+          $9, $10, $11, $12, $13, $14, $15,
+          $16, $17, $18, $19,
+          $20, $21, $22, $23
+        )`,
+        [
+          cardId,
+          adminId,
+          'asuka-officiel',
+          'Admin',
+          'Asuka',
+          'Direction & Supervision',
+          'Asuka Card Technologies',
+          'Compte administrateur officiel de la plateforme Asuka Card.',
+          '+33 1 00 00 00 00',
+          '+33100000000',
+          adminEmail,
+          'https://asuka-card.com',
+          'Paris, France',
+          '',
+          '',
+          JSON.stringify({ linkedin: 'https://linkedin.com' }),
+          'black',
+          'premium',
+          JSON.stringify({ phone: true, whatsapp: true, email: true, website: true, address: true, bio: true, socials: true }),
+          0,
+          0,
+          new Date(),
+          new Date()
+        ]
+      );
+      console.log(`✓ Showcase card created: slug 'asuka-officiel'`);
     }
 
     console.log("\nDatabase seed completed successfully! 🎉");

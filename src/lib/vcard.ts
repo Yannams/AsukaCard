@@ -1,4 +1,5 @@
 import { Card } from "./db";
+import { formatSocialUrl } from "./socials";
 
 // Helper to escape special characters in vCard text fields according to RFC 2426
 function escapeVCard(value: string | undefined | null): string {
@@ -73,7 +74,7 @@ export function generateVCard(card: Card): string {
 
     const addSocial = (label: string, url?: string, serviceType?: string) => {
       if (!url) return;
-      const cleanUrl = url.trim();
+      const cleanUrl = formatSocialUrl(serviceType || label, url);
       if (!cleanUrl) return;
 
       lines.push(`item${itemIdx}.URL:${cleanUrl}`);

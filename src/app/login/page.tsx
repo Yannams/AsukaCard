@@ -66,8 +66,8 @@ export default function LoginPage() {
     setTimeout(() => setOauthNotice(null), 4000);
   };
 
-  const fillDemoAccount = () => {
-    setEmail("demo@asukacard.fr");
+  const fillAdminAccount = () => {
+    setEmail("admin@asukacard.fr");
     setPassword("asuka2026");
   };
 
@@ -167,14 +167,14 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo account quick fill button */}
+          {/* Admin account quick fill button */}
           <div className="pt-2">
             <button
               type="button"
-              onClick={fillDemoAccount}
+              onClick={fillAdminAccount}
               className="w-full py-2 px-3 rounded-lg border border-dashed border-[#FF6B00]/40 text-[#FF6B00] hover:bg-[#FFF3EB] text-xs font-medium transition-colors"
             >
-              Remplir avec le compte Démo (demo@asukacard.fr)
+              Remplir avec le compte Admin (admin@asukacard.fr)
             </button>
           </div>
 

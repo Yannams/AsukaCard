@@ -20,6 +20,8 @@ import {
   Check,
 } from "lucide-react";
 import { Card } from "@/lib/db";
+import { formatSocialUrl } from "@/lib/socials";
+import AppleInvitationCard from "./AppleInvitationCard";
 
 // Minimalist SVG for LinkedIn
 function LinkedInIcon({ className }: { className?: string }) {
@@ -72,7 +74,7 @@ function TikTokIcon({ className }: { className?: string }) {
 function YouTubeIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
     </svg>
   );
 }
@@ -81,7 +83,7 @@ function YouTubeIcon({ className }: { className?: string }) {
 function SnapchatIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.001 2.002c-4.062 0-6.75 3.03-6.75 6.094 0 1.25.438 2.5 1.156 3.25-.125.438-.594.844-1.281 1.031-.344.094-.656.313-.656.656 0 .5.531.844 1.094.75.938-.156 1.875-.75 2.156-1.125.75.5 1.719.813 2.781.813.25 0 .5-.031.75-.063.25.031.5.063.75.063 1.063 0 2.031-.313 2.781-.813.281.375 1.219.969 2.156 1.125.563.094 1.094-.25 1.094-.75 0-.344-.313-.563-.656-.656-.688-.188-1.156-.594-1.281-1.031.719-.75 1.156-2 1.156-3.25 0-3.063-2.688-6.094-6.75-6.094z"/>
+      <path d="M12.001 2.002c-4.062 0-6.75 3.03-6.75 6.094 0 1.25.438 2.5 1.156 3.25-.125.438-.594.844-1.281 1.031-.344.094-.656.313-.656.656 0 .5.531.844 1.094.75.938-.156 1.875-.75 2.156-1.125.75.5 1.719.813 2.781.813.25 0 .5-.031.75-.063.25.031.5.063.75.063 1.063 0 2.031-.313 2.781-.813.281.375 1.219.969 2.156 1.125.563.094 1.094-.25 1.094-.75 0-.344-.313-.563-.656-.656-.688-.188-1.156-.594-1.281-1.031.719-.75 1.156-2 1.156-3.25 0-3.063-2.688-6.094-6.75-6.094z" />
     </svg>
   );
 }
@@ -103,6 +105,7 @@ interface CardPreviewProps {
   onShareClick?: () => void;
   onQrCodeClick?: () => void;
   interactive?: boolean;
+  isMobileFrame?: boolean;
 }
 
 export default function CardPreview({
@@ -114,11 +117,11 @@ export default function CardPreview({
 }: CardPreviewProps) {
   const [showQrInline, setShowQrInline] = useState(false);
 
-  const firstName = card.firstName || "Prénom";
-  const lastName = card.lastName || "Nom";
-  const fullName = `${firstName} ${lastName}`.trim();
-  const title = card.title || "Votre poste ou profession";
-  const company = card.company || "Nom de l'entreprise";
+  const firstName = card.firstName || "";
+  const lastName = card.lastName || "";
+  const fullName = `${firstName} ${lastName}`.trim() || "Prénom Nom";
+  const title = card.title || "";
+  const company = card.company || "";
   const bio = card.bio || "";
   const phone = card.phone || "";
   const whatsapp = card.whatsapp || "";
@@ -136,8 +139,14 @@ export default function CardPreview({
     socials: true,
   };
 
-  const dominantColor = card.dominantColor || "orange";
-  const template = card.template || "modern";
+  const dominantColor: "orange" | "black" | "white" =
+    card.dominantColor === "white"
+      ? "white"
+      : card.dominantColor === "orange"
+      ? "orange"
+      : "black";
+  const template =
+    card.template === "creative" ? "premium" : card.template || "premium";
 
   // Format clean URLs
   const cleanWebsite = website.startsWith("http") ? website : `https://${website}`;
@@ -190,10 +199,11 @@ export default function CardPreview({
     if (onContactClick) onContactClick(type);
     if (!interactive) return;
     if (url) {
-      if (url.startsWith("http")) {
-        window.open(url, "_blank", "noopener,noreferrer");
+      const destinationUrl = formatSocialUrl(type, url);
+      if (destinationUrl.startsWith("http")) {
+        window.open(destinationUrl, "_blank", "noopener,noreferrer");
       } else {
-        window.location.href = url;
+        window.location.href = destinationUrl;
       }
     }
   };
@@ -269,8 +279,15 @@ export default function CardPreview({
 
         {/* In-App Browser modal only if in WhatsApp/Instagram */}
         {inAppNotice && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-            <div className="bg-white text-neutral-900 rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-neutral-200 relative animate-in slide-in-from-bottom-4 duration-150">
+          <div
+            className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setInAppNotice(null)}
+          >
+            <div
+              className="bg-white text-neutral-900 rounded-t-[32px] rounded-b-none max-w-sm w-full p-6 shadow-2xl border-t border-x border-neutral-200 relative animate-in slide-in-from-bottom duration-300 pb-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-12 h-1.5 rounded-full bg-neutral-300 mx-auto -mt-2 mb-4 shrink-0" />
               <button
                 onClick={() => setInAppNotice(null)}
                 className="absolute top-4 right-4 p-1 rounded-full text-neutral-400 hover:text-neutral-900"
@@ -313,6 +330,17 @@ export default function CardPreview({
 
   // Avatar initials fallback
   const initials = `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase() || "AC";
+
+  // APPLE INVITATION TEMPLATE
+  if (template === "apple_invitation") {
+    return (
+      <AppleInvitationCard
+        card={card}
+        interactive={interactive}
+        onShareClick={onShareClick}
+      />
+    );
+  }
 
   // DEDICATED CREATIVE RANGE (Threads-Inspired Constellation in Minimalist Mineral Gray & Pure White)
   if (isCreative) {
@@ -374,7 +402,7 @@ export default function CardPreview({
                 navigator.share({
                   title: `${fullName} - Asuka Card`,
                   url: `${window.location.origin}/${card.slug}`,
-                }).catch(() => {});
+                }).catch(() => { });
               }
             }}
             className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-neutral-700 hover:text-black border border-neutral-200/90 backdrop-blur-md flex items-center justify-center transition-all active:scale-90"
@@ -584,7 +612,7 @@ export default function CardPreview({
                 navigator.share({
                   title: `${fullName} - Asuka Card`,
                   url: `${window.location.origin}/${card.slug}`,
-                }).catch(() => {});
+                }).catch(() => { });
               }
             }}
             className="p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md border border-white/15 transition-transform active:scale-95 shadow-md"
@@ -885,23 +913,21 @@ export default function CardPreview({
 
   return (
     <div
-      className={`w-full max-w-md mx-auto rounded-2xl overflow-hidden transition-all duration-300 shadow-sm border ${
-        isExecutive
+      className={`w-full max-w-md mx-auto rounded-2xl overflow-hidden transition-all duration-300 shadow-sm border ${isExecutive
           ? "bg-[#111111] text-white border-neutral-800"
           : "bg-white text-[#111111] border-neutral-200"
-      }`}
+        }`}
     >
       {/* Top Banner Accent */}
       <div
-        className={`h-24 sm:h-28 w-full relative ${
-          isMinimalist
+        className={`h-24 sm:h-28 w-full relative ${isMinimalist
             ? "h-12 sm:h-14 bg-neutral-100 border-b border-neutral-200"
             : isExecutive
-            ? "bg-neutral-900 border-b border-neutral-800"
-            : isCreative
-            ? "bg-gradient-to-r from-[#FF6B00] via-[#111111] to-[#FF6B00]"
-            : colorStyles?.bannerBg
-        }`}
+              ? "bg-neutral-900 border-b border-neutral-800"
+              : isCreative
+                ? "bg-gradient-to-r from-[#FF6B00] via-[#111111] to-[#FF6B00]"
+                : colorStyles?.bannerBg
+          }`}
       >
         {/* Top actions (Share & QR Code) */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
@@ -912,7 +938,7 @@ export default function CardPreview({
                 navigator.share({
                   title: `${fullName} - Asuka Card`,
                   url: `${window.location.origin}/${card.slug}`,
-                }).catch(() => {});
+                }).catch(() => { });
               }
             }}
             className="p-2 rounded-full bg-white/90 hover:bg-white text-neutral-800 backdrop-blur-sm shadow-sm transition-transform active:scale-95"
@@ -953,11 +979,10 @@ export default function CardPreview({
         <div className="-mt-12 sm:-mt-14 mb-4 flex items-end justify-between">
           <div className="relative">
             <div
-              className={`w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 flex items-center justify-center shadow-sm ${
-                isExecutive
+              className={`w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 flex items-center justify-center shadow-sm ${isExecutive
                   ? "border-[#111111] bg-neutral-800"
                   : "border-white bg-neutral-100"
-              }`}
+                }`}
             >
               {card.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -968,9 +993,8 @@ export default function CardPreview({
                 />
               ) : (
                 <span
-                  className={`text-2xl font-bold ${
-                    isExecutive ? "text-neutral-300" : "text-neutral-600"
-                  }`}
+                  className={`text-2xl font-bold ${isExecutive ? "text-neutral-300" : "text-neutral-600"
+                    }`}
                 >
                   {initials}
                 </span>
@@ -978,9 +1002,8 @@ export default function CardPreview({
             </div>
             {/* Verified / active status dot */}
             <div
-              className={`absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 ${
-                isExecutive ? "border-[#111111]" : "border-white"
-              } bg-[#FF6B00]`}
+              className={`absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 ${isExecutive ? "border-[#111111]" : "border-white"
+                } bg-[#FF6B00]`}
               title="Carte active vérifiée"
             />
           </div>
@@ -989,11 +1012,10 @@ export default function CardPreview({
           {company && (
             <div className="mb-2 max-w-[190px]">
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium truncate ${
-                  isExecutive
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium truncate ${isExecutive
                     ? "bg-neutral-800 text-neutral-300 border border-neutral-700"
                     : colorStyles?.badge
-                }`}
+                  }`}
               >
                 <Building className="w-3 h-3 shrink-0" />
                 <span className="truncate">{company}</span>
@@ -1005,16 +1027,14 @@ export default function CardPreview({
         {/* Identity Details */}
         <div className="space-y-1 mb-5">
           <h1
-            className={`text-2xl font-bold tracking-tight ${
-              isExecutive ? "text-white" : "text-[#111111]"
-            }`}
+            className={`text-2xl font-bold tracking-tight ${isExecutive ? "text-white" : "text-[#111111]"
+              }`}
           >
             {fullName}
           </h1>
           <p
-            className={`text-sm font-medium ${
-              isExecutive ? "text-neutral-400" : "text-neutral-600"
-            }`}
+            className={`text-sm font-medium ${isExecutive ? "text-neutral-400" : "text-neutral-600"
+              }`}
           >
             {title}
           </p>
@@ -1023,11 +1043,10 @@ export default function CardPreview({
         {/* Bio */}
         {visibility.bio && bio && (
           <div
-            className={`p-3.5 rounded-xl mb-5 text-xs sm:text-sm leading-relaxed ${
-              isExecutive
+            className={`p-3.5 rounded-xl mb-5 text-xs sm:text-sm leading-relaxed ${isExecutive
                 ? "bg-neutral-900 border border-neutral-800 text-neutral-300"
                 : "bg-neutral-50 border border-neutral-200 text-neutral-600"
-            }`}
+              }`}
           >
             {bio}
           </div>
@@ -1051,18 +1070,16 @@ export default function CardPreview({
           {visibility.phone && phone && (
             <button
               onClick={() => handleAction("phone", `tel:${phone}`)}
-              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${
-                isExecutive
+              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${isExecutive
                   ? "bg-neutral-900 border-neutral-800 text-neutral-200 hover:bg-neutral-800"
                   : "bg-white border-neutral-200 text-neutral-800 hover:bg-neutral-50"
-              }`}
+                }`}
             >
               <div
-                className={`p-1.5 rounded-lg ${
-                  dominantColor === "orange"
+                className={`p-1.5 rounded-lg ${dominantColor === "orange"
                     ? "bg-[#FFF3EB] text-[#FF6B00]"
                     : "bg-neutral-100 text-neutral-900"
-                }`}
+                  }`}
               >
                 <Phone className="w-4 h-4" />
               </div>
@@ -1078,18 +1095,16 @@ export default function CardPreview({
           {visibility.email && email && (
             <button
               onClick={() => handleAction("email", `mailto:${email}`)}
-              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${
-                isExecutive
+              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${isExecutive
                   ? "bg-neutral-900 border-neutral-800 text-neutral-200 hover:bg-neutral-800"
                   : "bg-white border-neutral-200 text-neutral-800 hover:bg-neutral-50"
-              }`}
+                }`}
             >
               <div
-                className={`p-1.5 rounded-lg ${
-                  dominantColor === "orange"
+                className={`p-1.5 rounded-lg ${dominantColor === "orange"
                     ? "bg-[#FFF3EB] text-[#FF6B00]"
                     : "bg-neutral-100 text-neutral-900"
-                }`}
+                  }`}
               >
                 <Mail className="w-4 h-4" />
               </div>
@@ -1105,18 +1120,16 @@ export default function CardPreview({
           {visibility.whatsapp && cleanWhatsapp && (
             <button
               onClick={() => handleAction("whatsapp", `https://wa.me/${cleanWhatsapp}`)}
-              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${
-                isExecutive
+              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${isExecutive
                   ? "bg-neutral-900 border-neutral-800 text-neutral-200 hover:bg-neutral-800"
                   : "bg-white border-neutral-200 text-neutral-800 hover:bg-neutral-50"
-              }`}
+                }`}
             >
               <div
-                className={`p-1.5 rounded-lg ${
-                  dominantColor === "orange"
+                className={`p-1.5 rounded-lg ${dominantColor === "orange"
                     ? "bg-[#FFF3EB] text-[#FF6B00]"
                     : "bg-neutral-100 text-neutral-900"
-                }`}
+                  }`}
               >
                 <MessageCircle className="w-4 h-4" />
               </div>
@@ -1132,18 +1145,16 @@ export default function CardPreview({
           {visibility.website && website && (
             <button
               onClick={() => handleAction("website", cleanWebsite)}
-              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${
-                isExecutive
+              className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-medium border transition-colors ${isExecutive
                   ? "bg-neutral-900 border-neutral-800 text-neutral-200 hover:bg-neutral-800"
                   : "bg-white border-neutral-200 text-neutral-800 hover:bg-neutral-50"
-              }`}
+                }`}
             >
               <div
-                className={`p-1.5 rounded-lg ${
-                  dominantColor === "orange"
+                className={`p-1.5 rounded-lg ${dominantColor === "orange"
                     ? "bg-[#FFF3EB] text-[#FF6B00]"
                     : "bg-neutral-100 text-neutral-900"
-                }`}
+                  }`}
               >
                 <Globe className="w-4 h-4" />
               </div>
@@ -1160,11 +1171,10 @@ export default function CardPreview({
         {/* Address if visible */}
         {visibility.address && address && (
           <div
-            className={`p-3 rounded-xl mb-6 flex items-start gap-2.5 text-xs border ${
-              isExecutive
+            className={`p-3 rounded-xl mb-6 flex items-start gap-2.5 text-xs border ${isExecutive
                 ? "bg-neutral-900/60 border-neutral-800 text-neutral-300"
                 : "bg-neutral-50/80 border-neutral-200 text-neutral-600"
-            }`}
+              }`}
           >
             <MapPin className="w-4 h-4 text-neutral-400 shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -1191,9 +1201,8 @@ export default function CardPreview({
         {visibility.socials && Object.values(socials).some(Boolean) && (
           <div className="mb-6">
             <span
-              className={`block text-[11px] uppercase tracking-wider font-semibold mb-3 ${
-                isExecutive ? "text-neutral-400" : "text-neutral-400"
-              }`}
+              className={`block text-[11px] uppercase tracking-wider font-semibold mb-3 ${isExecutive ? "text-neutral-400" : "text-neutral-400"
+                }`}
             >
               Réseaux professionnels & sociaux
             </span>
@@ -1201,11 +1210,10 @@ export default function CardPreview({
               {(socials as any).linkedin && (
                 <button
                   onClick={() => handleAction("social_linkedin", (socials as any).linkedin)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="LinkedIn"
                   aria-label="LinkedIn"
                 >
@@ -1216,11 +1224,10 @@ export default function CardPreview({
               {(socials as any).x && (
                 <button
                   onClick={() => handleAction("social_x", (socials as any).x)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="X (Twitter)"
                   aria-label="X (Twitter)"
                 >
@@ -1231,11 +1238,10 @@ export default function CardPreview({
               {(socials as any).instagram && (
                 <button
                   onClick={() => handleAction("social_instagram", (socials as any).instagram)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="Instagram"
                   aria-label="Instagram"
                 >
@@ -1246,11 +1252,10 @@ export default function CardPreview({
               {(socials as any).facebook && (
                 <button
                   onClick={() => handleAction("social_facebook", (socials as any).facebook)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="Facebook"
                   aria-label="Facebook"
                 >
@@ -1261,11 +1266,10 @@ export default function CardPreview({
               {(socials as any).tiktok && (
                 <button
                   onClick={() => handleAction("social_tiktok", (socials as any).tiktok)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="TikTok"
                   aria-label="TikTok"
                 >
@@ -1276,11 +1280,10 @@ export default function CardPreview({
               {(socials as any).youtube && (
                 <button
                   onClick={() => handleAction("social_youtube", (socials as any).youtube)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="YouTube"
                   aria-label="YouTube"
                 >
@@ -1291,11 +1294,10 @@ export default function CardPreview({
               {(socials as any).snapchat && (
                 <button
                   onClick={() => handleAction("social_snapchat", (socials as any).snapchat)}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${
-                    isExecutive
+                  className={`p-2.5 rounded-xl border flex items-center justify-center transition-colors ${isExecutive
                       ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
                       : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-[#111111] hover:bg-neutral-100"
-                  }`}
+                    }`}
                   title="Snapchat"
                   aria-label="Snapchat"
                 >

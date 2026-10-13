@@ -5,7 +5,8 @@
       "name": "Jean Dupont",
       "email": "demo@asukacard.fr",
       "passwordHash": "7a0f04efeaa3a71227e943488ba3ae7e:4522999befda2ce8dd31c4d6ce8f04600391ab2be5583894a3ab6ef641373324b702c8f277cca88e9ff2e636eb3dd949f91e6c9620500364dcd2606d8835d396",
-      "createdAt": "2026-09-22T15:34:22.484Z"
+      "createdAt": "2026-09-22T15:34:22.484Z",
+      "role": "ADMIN"
     }
   ],
   "cards": [

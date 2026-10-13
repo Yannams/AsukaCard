@@ -15,10 +15,12 @@ model User {
   name         String?
   email        String   @unique
   passwordHash String
+  role         String   @default("USER") // "USER" | "ADMIN"
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   
   cards        Card[]
+  orders       Order[]
   refreshTokens RefreshToken[]
 }
 
@@ -62,6 +64,56 @@ model Card {
   viewsCount      Int      @default(0)
   contactClicks   Int      @default(0)
   
+  orders          Order[]
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+model Order {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique // e.g. "ORD-2026-XXXX"
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardId          String?
+  card            Card?    @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  
+  // Card product specifications
+  cardType        String   // "PVC_CLASSIC" | "METAL_MATTE_BLACK" | "METAL_GOLD" | "WOOD_BAMBOO"
+  cardColor       String?  @default("Noir Mat") // "Noir Mat" | "Blanc Perle" | "Or Miroir" | "Bois Bambou"
+  customName      String?  // Nom imprimé / gravé
+  quantity        Int      @default(1)
+  unitPrice       Int      // en FCFA
+  totalAmount     Int      // en FCFA
+  currency        String   @default("XOF")
+  
+  // Customer & Shipping
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String
+  city            String
+  country         String   @default("Bénin")
+  postalCode      String?
+  notes           String?
+  
+  // Fulfillment Status
+  status          String   @default("PENDING") // "PENDING" | "CONFIRMED" | "IN_PRODUCTION" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+  trackingNumber  String?
+  carrier         String?
+  
+  // Payment Details
+  paymentStatus   String   @default("UNPAID") // "UNPAID" | "PAID" | "REFUNDED" | "FAILED"
+  paymentMethod   String?  // "FEDAPAY" | "MOBILE_MONEY" | "CARD" | "CASH_ON_DELIVERY" | "BANK_TRANSFER"
+  paymentRef      String?
+  paidAt          DateTime?
+  
+  // FedaPay Integration
+  fedapayId       String?
+  fedapayStatus   String?
+  fedapayUrl      String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+

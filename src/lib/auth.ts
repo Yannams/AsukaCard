@@ -11,6 +11,7 @@ export interface TokenPayload {
   userId: string;
   email: string;
   name: string;
+  role?: string;
   type?: "access" | "refresh";
 }
 
@@ -52,6 +53,7 @@ export function verifyToken(token: string): TokenPayload | null {
       userId: decoded.userId,
       email: decoded.email,
       name: decoded.name,
+      role: decoded.role || "USER",
       type: decoded.type,
     };
   } catch {
@@ -59,9 +61,10 @@ export function verifyToken(token: string): TokenPayload | null {
   }
 }
 
-export async function createSession(user: { id: string; email: string; name: string | null }) {
-  const payload = { userId: user.id, email: user.email, name: user.name || "" };
-  
+export async function createSession(user: { id: string; email: string; name: string | null; role?: string }) {
+  const role = user.role || "USER";
+  const payload = { userId: user.id, email: user.email, name: user.name || "", role };
+
   // Access Token (15 mins)
   const accessToken = signToken({ ...payload, type: "access" }, 15 * 60 * 1000);
   
@@ -69,13 +72,17 @@ export async function createSession(user: { id: string; email: string; name: str
   const refreshToken = signToken({ ...payload, type: "refresh" }, 7 * 24 * 60 * 60 * 1000);
   
   // Store refresh token in DB for instant revocation ability
-  await prisma.refreshToken.create({
-    data: {
-      userId: user.id,
-      token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    }
-  });
+  try {
+    await prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        token: refreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      }
+    });
+  } catch (err: any) {
+    console.error("Database refresh token storage error:", err?.message || err);
+  }
 
   return { accessToken, refreshToken };
 }
@@ -101,7 +108,7 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
     if (decoded && decoded.type === "access") return decoded;
   }
   
-  // Fallback: Check if refresh token is valid and unrevoked in the database
+  // Check if refresh token is valid and unrevoked in the database
   const refreshCookie = cookieStore.get(REFRESH_COOKIE);
   if (refreshCookie && refreshCookie.value) {
     const decodedRefresh = verifyToken(refreshCookie.value);
@@ -115,6 +122,7 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
             userId: decodedRefresh.userId,
             email: decodedRefresh.email,
             name: decodedRefresh.name,
+            role: decodedRefresh.role || "USER",
             type: "access",
           };
         }

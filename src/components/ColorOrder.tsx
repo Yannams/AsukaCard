@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ShoppingBag } from "lucide-react";
 import InteractiveCard from "./InteractiveCard";
 
 const colors = [
   {
     id: "noir",
     name: "Noir mat",
+    colorKey: "NOIR_MAT",
     swatch: "#0c0c0d",
     ring: "#3a3a3d",
     front: "/images/black-card-front.png",
@@ -18,6 +19,7 @@ const colors = [
   {
     id: "blanc",
     name: "Blanc perle",
+    colorKey: "BLANC_PERLE",
     swatch: "#f2efe9",
     ring: "#c7c7cc",
     front: "/images/white-card-front.png",
@@ -54,7 +56,7 @@ export default function ColorOrder() {
             onClick={() => setI(idx)}
             aria-label={col.name}
             aria-pressed={idx === i}
-            className="group flex flex-col items-center gap-2"
+            className="group flex flex-col items-center gap-2 cursor-pointer"
           >
             <span
               className="h-9 w-9 rounded-full transition-all duration-300 group-hover:scale-110"
@@ -66,20 +68,22 @@ export default function ColorOrder() {
                     : `0 0 0 1px ${col.ring}`,
               }}
             />
-            <span className={`text-xs ${idx === i ? "text-[#1d1d1f]" : "text-[#86868b]"}`}>
+            <span className={`text-xs ${idx === i ? "text-[#1d1d1f] font-bold" : "text-[#86868b]"}`}>
               {col.name}
             </span>
           </button>
         ))}
       </div>
 
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
         <Link
-          href={`/create?couleur=${c.id === "noir" ? "black" : c.id === "blanc" ? "white" : "orange"}`}
-          className="rounded-full bg-[#FF6B00] px-7 py-3 text-base font-medium text-white transition hover:bg-[#E55F00] active:scale-95"
+          href={`/create?couleur=${c.id === "noir" ? "noir" : "blanc"}`}
+          className="flex items-center gap-2 rounded-full bg-[#FF6B00] px-7 py-3 text-base font-semibold text-white transition hover:bg-[#E55F00] active:scale-95 shadow-md shadow-[#FF6B00]/20 cursor-pointer"
         >
-          Commander la carte {c.name.toLowerCase()}
+          <ShoppingBag className="w-4 h-4" />
+          <span>Commander la carte {c.name.toLowerCase()}</span>
         </Link>
+
         <Link
           href="/jean-dupont"
           className="group inline-flex items-center text-base font-medium text-[#FF6B00] hover:underline"
@@ -88,7 +92,9 @@ export default function ColorOrder() {
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
-      <p className="mt-4 text-xs text-[#86868b]">Paiement unique · Sans abonnement</p>
+      <p className="mt-4 text-xs text-[#86868b]">
+        Paiement sécurisé FedaPay · Retrait direct au Showroom Asuka Spirit
+      </p>
     </div>
   );
 }

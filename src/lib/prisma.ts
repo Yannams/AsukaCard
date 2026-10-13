@@ -1,10 +1,10 @@
+import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
 
 const prismaClientSingleton = () => {
-  const connectionString = `${process.env.DATABASE_URL}`;
-  // Use standard TCP connection (pg adapter) which bypasses WSL HTTP fetch issues
+  const connectionString = process.env.DATABASE_URL;
   const pool = new Pool({ connectionString });
   const adapter = new PrismaPg(pool);
   

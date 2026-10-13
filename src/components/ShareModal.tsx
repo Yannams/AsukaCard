@@ -82,8 +82,15 @@ export default function ShareModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 relative animate-in zoom-in-95 duration-150">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white text-neutral-900 rounded-t-[32px] rounded-b-none max-w-md w-full p-6 shadow-2xl border-t border-x border-neutral-200 relative animate-in slide-in-from-bottom duration-300 pb-8 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-12 h-1.5 rounded-full bg-neutral-300 mx-auto -mt-2 mb-4 shrink-0" />
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
           <div>

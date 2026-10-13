@@ -31,7 +31,7 @@ export default function GalaxyHero() {
 
         <div className="animate-hero-actions mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:mt-8">
           <Link
-            href="#commander"
+            href="/commander"
             className="rounded-full bg-[#FF6B00] px-6 py-3 text-base font-medium text-white shadow-lg shadow-[#FF6B00]/25 transition hover:bg-[#E55F00] active:scale-95"
           >
             Commander

@@ -261,7 +261,7 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="#commander"
+              href="/commander"
               className="rounded-full bg-[#FF6B00] px-8 py-3.5 text-base font-medium text-white transition hover:bg-[#E55F00] active:scale-95 shadow-lg shadow-[#FF6B00]/20"
             >
               Commander maintenant

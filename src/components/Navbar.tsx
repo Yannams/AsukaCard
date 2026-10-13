@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, X, User as UserIcon, LogOut, Plus } from "lucide-react";
+import { Menu, X, User as UserIcon, LogOut, Plus, Shield, Package, ShoppingBag } from "lucide-react";
+import MyOrdersModal from "@/components/MyOrdersModal";
 
 interface UserProfile {
   id: string;
   name: string;
   email: string;
+  role?: string;
 }
 
 interface NavbarProps {
@@ -20,6 +22,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -115,7 +118,29 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
+                {user.role === "ADMIN" && (
+                  <Link
+                    href="/admin"
+                    className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full border border-orange-500/40 bg-[#FF6B00]/10 text-[#FF6B00] hover:bg-[#FF6B00]/20 transition shadow-xs"
+                    title="Console d'administration des commandes et paiements"
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Admin</span>
+                  </Link>
+                )}
+                <button
+                  onClick={() => setIsOrdersOpen(true)}
+                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+                    isDark
+                      ? "text-neutral-200 hover:text-white border-neutral-700 bg-neutral-900/60"
+                      : "text-neutral-700 hover:text-black border-neutral-200 bg-white"
+                  }`}
+                  title="Voir l'état de mes commandes de cartes physiques"
+                >
+                  <Package className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>Mes Commandes</span>
+                </button>
                 <Link
                   href="/dashboard"
                   className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
@@ -161,7 +186,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
                   Connexion
                 </Link>
                 <Link
-                  href="/create"
+                  href="/commander"
                   className="text-xs font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-4 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
                 >
                   Commander
@@ -242,6 +267,24 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
           <div className={`pt-3 border-t space-y-2 ${isDark ? "border-white/10" : "border-black/[0.08]"}`}>
             {user ? (
               <>
+                {user.role === "ADMIN" && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-3 py-2 rounded-lg text-sm font-bold bg-[#FF6B00]/15 text-[#FF6B00] border border-[#FF6B00]/30"
+                  >
+                    🛡️ Administration (Commandes & Paiements)
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setIsOrdersOpen(true);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-neutral-100 text-neutral-800"
+                >
+                  📦 Mes Commandes de cartes
+                </button>
                 <Link
                   href="/dashboard"
                   onClick={() => setIsMenuOpen(false)}
@@ -269,7 +312,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
             ) : (
               <div className="flex flex-col gap-2 pt-1">
                 <Link
-                  href="/create"
+                  href="/commander"
                   onClick={() => setIsMenuOpen(false)}
                   className="block text-center px-4 py-2.5 rounded-full text-sm font-medium text-white bg-[#FF6B00]"
                 >
@@ -291,6 +334,12 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
           </div>
         </div>
       )}
+
+      {/* User Orders Modal */}
+      <MyOrdersModal
+        isOpen={isOrdersOpen}
+        onClose={() => setIsOrdersOpen(false)}
+      />
     </header>
   );
 }

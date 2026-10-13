@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Carte non trouvée" }, { status: 404 });
     }
 
-    await recordCardAnalytics(card.id, type, meta);
+    await recordCardAnalytics(card.id, type);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
