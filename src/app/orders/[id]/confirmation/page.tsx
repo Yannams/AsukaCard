@@ -48,85 +48,91 @@ export default async function OrderConfirmationPage({
       <Navbar theme="light" />
 
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-16">
-        {/* Top Status Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-neutral-100 shadow-xl space-y-8 animate-in fade-in zoom-in-95 duration-300">
+        {/* Top Status Card - Apple Store Inspired */}
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-neutral-200/80 space-y-8 animate-in fade-in duration-300">
           <div className="text-center space-y-3">
             {isPaid ? (
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner ring-8 ring-emerald-50">
-                <CheckCircle2 className="w-9 h-9" />
+              <div className="w-14 h-14 rounded-full border border-emerald-500/30 bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-7 h-7 stroke-[2]" />
               </div>
             ) : isPaymentFailed ? (
-              <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-inner ring-8 ring-amber-50">
-                <ShieldCheck className="w-9 h-9" />
+              <div className="w-14 h-14 rounded-full border border-amber-500/30 bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+                <ShieldCheck className="w-7 h-7 stroke-[2]" />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-full bg-[#FF6B00]/10 text-[#FF6B00] flex items-center justify-center mx-auto ring-8 ring-[#FF6B00]/5">
-                <Package className="w-9 h-9" />
+              <div className="w-14 h-14 rounded-full border border-neutral-300 bg-neutral-100 text-neutral-700 flex items-center justify-center mx-auto">
+                <Package className="w-7 h-7 stroke-[2]" />
               </div>
             )}
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900">
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1d1d1f]">
               {isPaid
-                ? "Paiement Validé & Commande Confirmée !"
+                ? "Votre commande est confirmée."
                 : isPaymentFailed
-                ? "Commande enregistrée (Paiement en attente)"
-                : "Commande enregistrée avec succès"}
+                ? "Commande enregistrée (paiement en attente)"
+                : "Commande reçue"}
             </h1>
 
-            <p className="text-sm text-neutral-500 max-w-md mx-auto">
-              Merci pour votre confiance. Votre carte NFC Asuka Card est désormais transmise à
-              notre atelier de gravure à Cotonou.
+            <p className="text-sm text-[#86868b] max-w-md mx-auto leading-relaxed">
+              Merci pour votre confiance. Votre carte NFC Asuka Card est en cours de façonnage laser.
+              Vous recevrez un message WhatsApp dès qu’elle sera prête pour le retrait.
             </p>
 
-            <div className="inline-flex items-center gap-2 bg-neutral-100 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold text-neutral-800">
-              <span>Référence :</span>
-              <span className="text-[#FF6B00]">{order.orderNumber}</span>
-            </div>
+            <p className="text-xs text-[#86868b] pt-1">
+              Numéro de commande{" "}
+              <span className="font-mono font-semibold text-[#1d1d1f]">{order.orderNumber}</span>
+            </p>
           </div>
 
-          {/* Payment Banner */}
+          {/* Payment Receipt Row - Minimalist Apple Style */}
           {isPaid && (
-            <div className="rounded-2xl bg-emerald-50/80 border border-emerald-200/80 p-4 flex items-center justify-between text-xs text-emerald-900">
+            <div className="rounded-2xl border border-neutral-200/80 bg-neutral-50/60 p-4 sm:p-5 flex items-center justify-between text-xs">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
-                  ✓
-                </div>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
                 <div>
-                  <p className="font-bold text-emerald-950">Règlement FedaPay sécurisé validé</p>
-                  <p className="text-emerald-700 text-[11px]">
-                    Réf transaction : {order.paymentRef || query.ref || "FEDAPAY-OK"}
+                  <p className="font-semibold text-neutral-900 text-sm">Paiement sécurisé validé</p>
+                  <p className="text-neutral-500 text-[11px] font-mono">
+                    FedaPay · Réf. {order.paymentRef || query.ref || "FEDAPAY-OK"}
                   </p>
                 </div>
               </div>
-              <span className="font-extrabold text-sm text-emerald-900">
-                {order.totalAmount.toLocaleString("fr-FR")} FCFA
-              </span>
+              <div className="text-right">
+                <span className="font-semibold text-base sm:text-lg text-neutral-900">
+                  {order.totalAmount.toLocaleString("fr-FR")} FCFA
+                </span>
+                <p className="text-[11px] text-emerald-600 font-medium">Réglé avec succès</p>
+              </div>
             </div>
           )}
 
           {/* Product Specifications & Color */}
-          <div className="rounded-2xl border border-neutral-200/80 bg-neutral-50/60 p-5 space-y-4">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-              Spécifications de votre carte NFC
-            </h2>
+          <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                Spécifications de la carte
+              </h2>
+              <span className="text-xs font-medium text-neutral-500">
+                {order.quantity} unité{order.quantity > 1 ? "s" : ""}
+              </span>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div className="space-y-1">
-                <span className="text-neutral-400">Modèle sélectionné :</span>
-                <p className="font-bold text-neutral-900 text-sm">
+                <span className="text-neutral-400">Modèle sélectionné</span>
+                <p className="font-semibold text-neutral-900 text-sm">
                   {product?.name || order.cardType}
                 </p>
                 <p className="text-neutral-500 text-[11px]">{product?.material}</p>
               </div>
 
               <div className="space-y-1">
-                <span className="text-neutral-400">Couleur & Finition de la carte :</span>
+                <span className="text-neutral-400">Couleur & Finition</span>
                 <div className="flex items-center gap-2 pt-0.5">
                   <span
-                    className="w-4 h-4 rounded-full border border-neutral-300 shadow-xs shrink-0"
+                    className="w-3.5 h-3.5 rounded-full border border-neutral-300 shrink-0"
                     style={{ background: colorObj?.swatch || "#1c1c1e" }}
                   />
-                  <p className="font-bold text-neutral-900 text-sm">
+                  <p className="font-semibold text-neutral-900 text-sm">
                     {order.cardColor || "Noir Mat Obsidienne"}
                   </p>
                 </div>
@@ -136,68 +142,90 @@ export default async function OrderConfirmationPage({
               </div>
 
               <div className="space-y-1">
-                <span className="text-neutral-400">Nom gravé / Titre imprimé :</span>
-                <p className="font-bold text-neutral-900 text-sm">
+                <span className="text-neutral-400">Nom gravé au laser</span>
+                <p className="font-semibold text-neutral-900 text-sm">
                   {order.customName || order.customerName}
                 </p>
               </div>
 
               <div className="space-y-1">
-                <span className="text-neutral-400">Quantité & Montant :</span>
-                <p className="font-bold text-neutral-900 text-sm">
-                  {order.quantity} unité(s) · {order.totalAmount.toLocaleString("fr-FR")} FCFA
+                <span className="text-neutral-400">Montant total</span>
+                <p className="font-semibold text-neutral-900 text-sm">
+                  {order.totalAmount.toLocaleString("fr-FR")} FCFA
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Delivery & Tracking */}
-          <div className="rounded-2xl border border-neutral-200/80 p-5 space-y-3 text-xs">
-            <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
-              <div className="flex items-center gap-2 font-bold text-neutral-800">
-                <MapPin className="w-4 h-4 text-[#FF6B00]" />
-                <span>Adresse de livraison (Bénin)</span>
+          {/* Point de retrait au Showroom (Apple Store Pick-up style) */}
+          <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 sm:p-6 space-y-4 text-xs">
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+              <div className="flex items-center gap-2 font-semibold text-neutral-900 text-sm">
+                <MapPin className="w-4 h-4 text-neutral-700" />
+                <span>Retrait au Showroom Asuka Spirit</span>
               </div>
-              <span className="font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full text-[10px]">
-                Livraison Offerte
+              <span className="font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full text-[11px]">
+                Prête sous 24h à 48h
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-neutral-600">
-              <div>
-                <p className="font-bold text-neutral-900">{order.customerName}</p>
-                <p>{order.shippingAddress}</p>
-                <p>
-                  {order.city}, {order.country}
-                </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-neutral-700">
+              <div className="space-y-2">
+                <div>
+                  <p className="font-semibold text-neutral-900 text-sm">
+                    Showroom Asuka Spirit
+                  </p>
+                  <p className="text-neutral-500 text-xs">
+                    Cotonou, Bénin
+                  </p>
+                </div>
+
+                <a
+                  href="https://maps.app.goo.gl/zSnn2Gv6ZJjiFuNG6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0066cc] hover:underline pt-1"
+                >
+                  <span>Afficher l'itinéraire sur Google Maps</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               </div>
-              <div>
-                <p>Téléphone : <span className="font-medium text-neutral-900">{order.customerPhone}</span></p>
-                <p>Email : <span className="font-medium text-neutral-900">{order.customerEmail}</span></p>
-                <p className="text-[11px] text-neutral-500 mt-1">
-                  Délai de livraison estimé : 24h à 48h (Cotonou & environs)
+
+              <div className="space-y-1 text-neutral-600 text-xs">
+                <p>
+                  Titulaire : <span className="font-semibold text-neutral-900">{order.customerName}</span>
+                </p>
+                <p>
+                  Téléphone : <span className="font-medium text-neutral-900">{order.customerPhone}</span>
+                </p>
+                <p>
+                  Email : <span className="font-medium text-neutral-900">{order.customerEmail}</span>
                 </p>
               </div>
             </div>
+
+            <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-100 text-[11px] text-neutral-600 leading-relaxed">
+              <strong className="text-neutral-900">Modalités de retrait :</strong> Notre équipe vous contactera directement par WhatsApp au <strong>{order.customerPhone}</strong> dès que votre gravure laser sera terminée. Présentez simplement votre numéro de commande <strong>{order.orderNumber}</strong> lors de votre passage.
+            </div>
           </div>
 
-          {/* Navigation Actions */}
+          {/* Navigation Actions - Soft Apple Style */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href="/dashboard"
-              className="flex-1 py-3 px-5 rounded-2xl bg-[#FF6B00] hover:bg-[#E55F00] text-white text-xs font-bold text-center transition shadow-md active:scale-98 flex items-center justify-center gap-2"
+              className="flex-1 py-3.5 px-6 rounded-full bg-[#1d1d1f] hover:bg-black text-white text-xs font-medium text-center transition active:scale-98 flex items-center justify-center gap-2"
             >
-              <span>Accéder à mon tableau de bord</span>
+              <span>Voir mes cartes</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <a
-              href="https://wa.me/22997000000?text=Bonjour,%20je%20souhaite%20suivre%20ma%20commande%20Asuka%20Card%20référence%20"
+              href="https://wa.me/22901000000?text=Bonjour,%20je%20souhaite%20suivre%20ma%20commande%20Asuka%20Card%20référence%20"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-3 px-5 rounded-2xl bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold text-center transition flex items-center justify-center gap-2"
+              className="py-3.5 px-6 rounded-full bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-800 text-xs font-medium text-center transition active:scale-98 flex items-center justify-center gap-2"
             >
-              <Smartphone className="w-4 h-4 text-emerald-600" />
+              <Smartphone className="w-4 h-4 text-neutral-600" />
               <span>Assistance Atelier WhatsApp</span>
             </a>
           </div>

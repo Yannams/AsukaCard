@@ -89,7 +89,7 @@ export default function HeroReference() {
             </Link>
 
             <Link
-              href="/richard-odjrado"
+              href="/exemple"
               className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-neutral-900/90 hover:bg-neutral-800 text-neutral-200 hover:text-white border border-neutral-800 text-xs font-medium tracking-wider uppercase transition-all"
             >
               <span>Voir un profil live</span>

@@ -36,6 +36,11 @@ export async function createUser(name: string, email: string, passwordHash: stri
 export async function getCardsByUserId(userId: string) {
   return await prisma.card.findMany({
     where: { userId },
+    include: {
+      orders: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -51,12 +56,66 @@ export async function getCardBySlug(slug: string) {
 
   let card = await prisma.card.findUnique({
     where: { slug: normalized },
+    include: {
+      orders: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
   });
   if (!card) {
     card = await prisma.card.findUnique({
       where: { id: normalized },
+      include: {
+        orders: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
     });
   }
+
+  // Fallback sécurisé vitrine Richard Odjrado si absent de la base
+  if (!card && (normalized === "richard-odjrado" || normalized === "crd_rk8m4x29" || normalized === "v7p1k3d8")) {
+    return {
+      id: "crd_rk8m4x29",
+      userId: "usr_admin",
+      slug: "richard-odjrado",
+      firstName: "Richard",
+      lastName: "ODJRADO",
+      title: "Fondateur & CEO",
+      company: "AS WORLD TECH",
+      bio: "Entrepreneur & Innovateur Tech. Fondateur & CEO d'AS WORLD TECH, société créatrice de solutions technologiques souveraines et propriétaire des marques ASUKA SPIRIT, Docteur Asuka et Asuka Card.",
+      avatarUrl: "/images/richard-odjrado.jpg",
+      logoUrl: "",
+      phone: "+229 01 00 00 00",
+      whatsapp: "",
+      email: "contact@asworld.tech",
+      website: "https://asukaspirit.com",
+      address: "Cotonou, Bénin · Paris, France",
+      dominantColor: "black",
+      template: "premium",
+      fieldVisibility: {
+        phone: true,
+        whatsapp: false,
+        email: true,
+        website: true,
+        address: true,
+        bio: true,
+        socials: true,
+      },
+      socials: {
+        linkedin: "https://www.linkedin.com/in/richard-g-odjrado-660a08179/",
+        instagram: "https://www.instagram.com/richardodjrado",
+        youtube: "https://www.youtube.com/@asworldtech7517",
+        tiktok: "https://www.tiktok.com/@richardodjrado",
+        facebook: "https://www.facebook.com/rodjrado",
+      },
+      viewsCount: 1240,
+      contactClicks: 380,
+      createdAt: new Date("2026-09-01"),
+      updatedAt: new Date("2026-10-13"),
+    } as unknown as Card;
+  }
+
   return card;
 }
 
@@ -107,6 +166,30 @@ export async function deleteCard(id: string, userId: string): Promise<boolean> {
     },
   });
   return count.count > 0;
+}
+
+export async function getAllCards() {
+  return await prisma.card.findMany({
+    include: {
+      user: {
+        select: { id: true, name: true, email: true, role: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getAllUsers() {
+  return await prisma.user.findMany({
+    select: { id: true, name: true, email: true, role: true },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function adminDeleteCard(id: string) {
+  return await prisma.card.delete({
+    where: { id },
+  });
 }
 
 // Analytics Helpers
@@ -247,8 +330,9 @@ export async function getAllOrders() {
 }
 
 export async function getOrderById(id: string) {
+  const isOrderNumber = id.startsWith('ASK-') || id.startsWith('ORD-');
   return await prisma.order.findUnique({
-    where: { id },
+    where: isOrderNumber ? { orderNumber: id } : { id },
     include: {
       user: { select: { id: true, name: true, email: true } },
       card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
@@ -257,8 +341,9 @@ export async function getOrderById(id: string) {
 }
 
 export async function updateOrder(id: string, data: any) {
+  const isOrderNumber = id.startsWith('ASK-') || id.startsWith('ORD-');
   return await prisma.order.update({
-    where: { id },
+    where: isOrderNumber ? { orderNumber: id } : { id },
     data,
     include: {
       user: { select: { id: true, name: true, email: true } },
@@ -268,8 +353,9 @@ export async function updateOrder(id: string, data: any) {
 }
 
 export async function deleteOrder(id: string): Promise<boolean> {
+  const isOrderNumber = id.startsWith('ASK-') || id.startsWith('ORD-');
   await prisma.order.delete({
-    where: { id },
+    where: isOrderNumber ? { orderNumber: id } : { id },
   });
   return true;
 }

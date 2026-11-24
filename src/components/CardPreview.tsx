@@ -92,9 +92,9 @@ function SnapchatIcon({ className }: { className?: string }) {
 function NfcContactlessIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M7 16a7.5 7.5 0 0 1 0-8" />
-      <path d="M10.5 14.5a5 5 0 0 1 0-5" />
-      <path d="M14 13a2.5 2.5 0 0 1 0-2" />
+      <path d="M7.5 16.5a6.5 6.5 0 0 0 0-9" />
+      <path d="M11 19a10 10 0 0 0 0-14" />
+      <path d="M14.5 21.5a13.5 13.5 0 0 0 0-19" />
     </svg>
   );
 }
@@ -257,19 +257,17 @@ export default function CardPreview({
       <>
         {/* Subtle, floating non-blocking notification for iOS Safari */}
         {showToast && (
-          <div className="fixed top-4 inset-x-4 max-w-sm mx-auto z-50 bg-[#111111]/95 text-white backdrop-blur-md px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-neutral-800 animate-in fade-in slide-in-from-top-4 duration-200">
-            <div className="w-8 h-8 rounded-xl bg-[#FF6B00] text-white flex items-center justify-center shrink-0 font-bold text-sm">
-              ⬇️
-            </div>
+          <div className="fixed top-4 inset-x-4 max-w-sm mx-auto z-50 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-200">
+            <Download className="w-5 h-5 text-white shrink-0" />
             <div className="flex-1 text-xs">
-              <p className="font-semibold text-white">Fiche contact prête !</p>
-              <p className="text-neutral-300 text-[11px] leading-snug">
-                Touchez <strong>Télécharger</strong>, puis l'icône <strong>⬇️</strong> en haut pour l'ajouter.
+              <p className="font-semibold text-white">Fiche contact prête</p>
+              <p className="text-white/90 text-[11px] leading-snug">
+                Touchez <strong>Télécharger</strong>, puis l'icône de téléchargement en haut pour l'ajouter.
               </p>
             </div>
             <button
               onClick={() => setShowToast(false)}
-              className="text-neutral-400 hover:text-white p-1 rounded-lg"
+              className="text-white/80 hover:text-white p-1 rounded-lg"
               aria-label="Fermer"
             >
               <X className="w-4 h-4" />
@@ -280,11 +278,11 @@ export default function CardPreview({
         {/* In-App Browser modal only if in WhatsApp/Instagram */}
         {inAppNotice && (
           <div
-            className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-black/80 animate-in fade-in duration-200"
             onClick={() => setInAppNotice(null)}
           >
             <div
-              className="bg-white text-neutral-900 rounded-t-[32px] rounded-b-none max-w-sm w-full p-6 shadow-2xl border-t border-x border-neutral-200 relative animate-in slide-in-from-bottom duration-300 pb-8"
+              className="bg-white text-neutral-900 rounded-t-[28px] rounded-b-none max-w-sm w-full p-6 border-t border-x border-neutral-200 relative animate-in slide-in-from-bottom duration-300 pb-8"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-1.5 rounded-full bg-neutral-300 mx-auto -mt-2 mb-4 shrink-0" />
@@ -405,7 +403,7 @@ export default function CardPreview({
                 }).catch(() => { });
               }
             }}
-            className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-neutral-700 hover:text-black border border-neutral-200/90 backdrop-blur-md flex items-center justify-center transition-all active:scale-90"
+            className="w-10 h-10 rounded-full bg-white hover:bg-neutral-100 text-neutral-700 hover:text-black border border-neutral-200 flex items-center justify-center transition-all active:scale-90"
             aria-label="Partager la carte"
             title="Partager"
           >
@@ -416,7 +414,7 @@ export default function CardPreview({
               if (onQrCodeClick) onQrCodeClick();
               else setShowQrInline(!showQrInline);
             }}
-            className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-neutral-700 hover:text-black border border-neutral-200/90 backdrop-blur-md flex items-center justify-center transition-all active:scale-90"
+            className="w-10 h-10 rounded-full bg-white hover:bg-neutral-100 text-neutral-700 hover:text-black border border-neutral-200 flex items-center justify-center transition-all active:scale-90"
             aria-label="Afficher le QR code"
             title="QR Code"
           >
@@ -615,7 +613,7 @@ export default function CardPreview({
                 }).catch(() => { });
               }
             }}
-            className="p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md border border-white/15 transition-transform active:scale-95 shadow-md"
+            className="p-2.5 rounded-full bg-neutral-900/90 hover:bg-neutral-900 text-white border border-neutral-700 transition-transform active:scale-95"
             aria-label="Partager la carte"
             title="Partager"
           >
@@ -626,7 +624,7 @@ export default function CardPreview({
               if (onQrCodeClick) onQrCodeClick();
               else setShowQrInline(!showQrInline);
             }}
-            className="p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md border border-white/15 transition-transform active:scale-95 shadow-md"
+            className="p-2.5 rounded-full bg-neutral-900/90 hover:bg-neutral-900 text-white border border-neutral-700 transition-transform active:scale-95"
             aria-label="Afficher le QR code"
             title="QR Code"
           >
@@ -636,12 +634,12 @@ export default function CardPreview({
 
         {/* Company logo or badge if present */}
         {card.logoUrl ? (
-          <div className="absolute top-4 left-4 z-20 h-9 px-3 rounded-full bg-black/40 backdrop-blur-md border border-white/15 flex items-center">
+          <div className="absolute top-4 left-4 z-20 h-9 px-3 rounded-full bg-neutral-900 border border-neutral-800 flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={card.logoUrl} alt="Logo" className="max-h-5 max-w-[100px] object-contain filter drop-shadow-sm" />
           </div>
         ) : company ? (
-          <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-[11px] font-medium text-neutral-300 flex items-center gap-1.5">
+          <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-[11px] font-medium text-neutral-300 flex items-center gap-1.5">
             <Building className="w-3 h-3 text-neutral-400" />
             <span className="truncate max-w-[130px]">{company}</span>
           </div>
@@ -941,7 +939,7 @@ export default function CardPreview({
                 }).catch(() => { });
               }
             }}
-            className="p-2 rounded-full bg-white/90 hover:bg-white text-neutral-800 backdrop-blur-sm shadow-sm transition-transform active:scale-95"
+            className="p-2 rounded-full bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 shadow-sm transition-transform active:scale-95"
             aria-label="Partager la carte"
             title="Partager"
           >
@@ -952,7 +950,7 @@ export default function CardPreview({
               if (onQrCodeClick) onQrCodeClick();
               else setShowQrInline(!showQrInline);
             }}
-            className="p-2 rounded-full bg-white/90 hover:bg-white text-neutral-800 backdrop-blur-sm shadow-sm transition-transform active:scale-95"
+            className="p-2 rounded-full bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 shadow-sm transition-transform active:scale-95"
             aria-label="Afficher le QR code"
             title="QR Code"
           >

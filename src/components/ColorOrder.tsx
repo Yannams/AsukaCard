@@ -85,8 +85,8 @@ export default function ColorOrder() {
         </Link>
 
         <Link
-          href="/jean-dupont"
-          className="group inline-flex items-center text-base font-medium text-[#FF6B00] hover:underline"
+          href="/exemple"
+          className="group inline-flex items-center text-base font-medium text-[#FF6B00] hover:underline cursor-pointer"
         >
           Voir un exemple
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

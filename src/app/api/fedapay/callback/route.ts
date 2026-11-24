@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getOrderById, updateOrderPayment } from "@/lib/db";
 import { getFedaPayTransaction } from "@/lib/fedapay";
+import { notifyBackofficeRealtime } from "@/lib/auth";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -50,6 +51,16 @@ export async function GET(req: Request) {
         status: order.status === "PENDING" ? "CONFIRMED" : order.status,
         fedapayId: transactionId || order.fedapayId,
         fedapayStatus: "approved",
+      });
+
+      await notifyBackofficeRealtime({
+        type: "CARD_ORDER_PAID",
+        title: "Paiement Asuka Card confirmé",
+        message: `Commande ${order.orderNumber} (${order.customerName}) payée (${order.totalAmount.toLocaleString("fr-FR")} FCFA)`,
+        orderId: `AC-${order.id}`,
+        orderNumber: order.orderNumber,
+        customerName: order.customerName,
+        amount: order.totalAmount,
       });
 
       return NextResponse.redirect(

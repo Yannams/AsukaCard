@@ -71,7 +71,7 @@ export default function MyOrdersModal({ isOpen, onClose, onNewOrderClick }: MyOr
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 animate-in fade-in duration-200">
       <div className="bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-neutral-100 animate-in slide-in-from-bottom duration-300">
         <div className="w-12 h-1.5 rounded-full bg-neutral-300 mx-auto mt-3 -mb-1 sm:hidden shrink-0" />
         {/* Header */}

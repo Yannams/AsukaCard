@@ -3,8 +3,18 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 MB
+const ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/pjpeg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+  "image/heic",
+  "image/heif",
+  "", // Some mobile browsers send empty MIME type for camera captures
+];
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,12 +26,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: "La taille du fichier ne doit pas dépasser 5 Mo." }, { status: 400 });
+      return NextResponse.json({ error: "La photo est trop volumineuse (max 15 Mo)." }, { status: 400 });
     }
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (file.type && !ALLOWED_TYPES.includes(file.type.toLowerCase())) {
       return NextResponse.json(
-        { error: "Format non supporté. Veuillez importer un fichier JPG, PNG, WEBP ou SVG." },
+        { error: "Format non supporté. Veuillez importer un fichier JPG, PNG ou WEBP." },
         { status: 400 }
       );
     }
@@ -36,23 +46,37 @@ export async function POST(req: NextRequest) {
     if (file.type === "image/svg+xml") ext = ".svg";
 
     const fileName = `${Date.now()}_${crypto.randomBytes(8).toString("hex")}${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    const mime = file.type || "image/jpeg";
+    const dataUrl = `data:${mime};base64,${buffer.toString("base64")}`;
 
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    // Try saving to public/uploads (local development & standard Node hosts)
+    try {
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const filePath = path.join(uploadDir, fileName);
+      fs.writeFileSync(filePath, buffer);
+
+      return NextResponse.json({
+        success: true,
+        url: `/uploads/${fileName}`,
+        fileName,
+        size: file.size,
+      });
+    } catch (diskErr) {
+      // Vercel serverless environment has a read-only filesystem:
+      // Return high-efficiency base64 data URL fallback so photo upload NEVER fails
+      console.warn("Upload fallback: filesystem read-only on host, returning data URL", diskErr);
+      return NextResponse.json({
+        success: true,
+        url: dataUrl,
+        fileName,
+        size: file.size,
+      });
     }
-
-    const filePath = path.join(uploadDir, fileName);
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/uploads/${fileName}`;
-
-    return NextResponse.json({
-      success: true,
-      url: publicUrl,
-      fileName,
-      size: file.size,
-    });
   } catch (err) {
     console.error("Erreur upload:", err);
     return NextResponse.json({ error: "Échec du téléchargement de l'image." }, { status: 500 });

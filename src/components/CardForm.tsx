@@ -30,8 +30,8 @@ import {
 } from "lucide-react";
 import { Card, DominantColor, CardTemplate } from "@/lib/db";
 import { formatSocialUrl } from "@/lib/socials";
+import dynamic from "next/dynamic";
 import CardPreview from "./CardPreview";
-import AuthModal from "./AuthModal";
 import OrderModal from "./OrderModal";
 
 // Minimalist SVGs matching CardPreview exactly
@@ -113,6 +113,23 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  const [toast, setToast] = useState<{
+    type: "error" | "success" | "info";
+    message: string;
+  } | null>(null);
+
+  const showToast = (type: "error" | "success" | "info", message: string) => {
+    setToast({ type, message });
+  };
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   // 1: Edit Mode ("la page à remplir" & "après le remplissage") vs 2: Preview Mode ("l'aperçu adapté")
@@ -121,11 +138,25 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
   const [activeSheet, setActiveSheet] = useState<ModalSheetType>(null);
   const [activeCaptureField, setActiveCaptureField] = useState<string | null>(null);
 
-  // Auth & Order Flow states
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  // Order Flow states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [savedCardForOrder, setSavedCardForOrder] = useState<Card | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // Sauvegarde locale du brouillon
+  const saveDraftToLocalStorage = (customFormData?: Partial<Card>, customName?: string) => {
+    try {
+      if (typeof window !== "undefined") {
+        const draft = {
+          formData: customFormData || formData,
+          fullNameInput: customName ?? fullNameInput,
+        };
+        localStorage.setItem("asuka_card_draft", JSON.stringify(draft));
+      }
+    } catch (e) {
+      console.warn("Could not save card draft to localStorage", e);
+    }
+  };
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -134,16 +165,58 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
         if (data.user) setCurrentUser(data.user);
       })
       .catch(() => {});
+
+    // Restaurer le brouillon s'il existe et si on ne modifie pas déjà une carte existante
+    if (typeof window !== "undefined") {
+      try {
+        const savedDraftStr = localStorage.getItem("asuka_card_draft");
+        if (savedDraftStr && !initialData?.id) {
+          const draft = JSON.parse(savedDraftStr);
+          if (draft && draft.formData) {
+            setFormData((prev) => ({ ...prev, ...draft.formData }));
+            if (draft.fullNameInput) {
+              setFullNameInput(draft.fullNameInput);
+            } else if (draft.formData.firstName || draft.formData.lastName) {
+              setFullNameInput(
+                `${draft.formData.firstName || ""} ${draft.formData.lastName || ""}`.trim()
+              );
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Error restoring draft", e);
+      }
+
+      // Si l'utilisateur revient après connexion avec l'action "order"
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("action") === "order") {
+        fetch("/api/auth/me")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.user) {
+              setCurrentUser(data.user);
+              window.history.replaceState({}, document.title, window.location.pathname);
+              const savedDraftStr = localStorage.getItem("asuka_card_draft");
+              let dataToSave = formData;
+              if (savedDraftStr) {
+                try {
+                  const parsed = JSON.parse(savedDraftStr);
+                  if (parsed.formData) dataToSave = { ...formData, ...parsed.formData };
+                } catch {}
+              }
+              executeSaveAndOrder(data.user, dataToSave);
+              localStorage.removeItem("asuka_card_draft");
+            }
+          })
+          .catch(() => {});
+      }
+    }
   }, []);
 
   const openCaptureInfo = (field?: string) => {
     setActiveCaptureField(field || null);
     setActiveSheet("capture_info");
   };
-
-  const [isLocating, setIsLocating] = useState(false);
-  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
-  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
 
   const pasteSocialLink = async (network: string) => {
     try {
@@ -157,64 +230,6 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
       }
     } catch {
       // ignore
-    }
-  };
-
-  const handleGetGpsLocation = () => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setErrorMsg("La géolocalisation n'est pas supportée sur ce navigateur.");
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords;
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-          );
-          const data = await res.json();
-          if (data && data.address) {
-            const addr = data.address;
-            const city = addr.city || addr.town || addr.village || addr.county || "";
-            const country = addr.country || "";
-            const formatted = [city, country].filter(Boolean).join(", ") || data.display_name;
-            updateField("address", formatted);
-          }
-        } catch {
-          // ignore
-        } finally {
-          setIsLocating(false);
-        }
-      },
-      () => {
-        setIsLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
-  };
-
-  const handleSearchAddress = async (query: string) => {
-    updateField("address", query);
-    if (!query || query.trim().length < 3) {
-      setAddressSuggestions([]);
-      return;
-    }
-    try {
-      setIsSearchingAddress(true);
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          query
-        )}&limit=4`
-      );
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setAddressSuggestions(data.map((item: any) => item.display_name));
-      }
-    } catch {
-      // ignore
-    } finally {
-      setIsSearchingAddress(false);
     }
   };
 
@@ -307,28 +322,94 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
     }));
   };
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (file.type === "image/svg+xml") {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            const MAX_SIZE = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height && width > MAX_SIZE) {
+              height = Math.round((height * MAX_SIZE) / width);
+              width = MAX_SIZE;
+            } else if (height > MAX_SIZE) {
+              width = Math.round((width * MAX_SIZE) / height);
+              height = MAX_SIZE;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              resolve(e.target?.result as string);
+              return;
+            }
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+            resolve(dataUrl);
+          } catch {
+            resolve(e.target?.result as string);
+          }
+        };
+        img.onerror = () => {
+          resolve(e.target?.result as string);
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileUpload = async (file: File) => {
     setIsUploadingPhoto(true);
     setErrorMsg("");
 
     try {
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", file);
+      // 1. Compression instantanée côté navigateur (compatible caméras iOS et Android 4K/HEIC)
+      const compressedDataUrl = await compressImage(file);
+      // Affichage immédiat pour une réactivité 100% instantanée
+      updateField("avatarUrl", compressedDataUrl);
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: uploadFormData,
-      });
+      // 2. Tentative de sauvegarde côté serveur
+      try {
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Échec du téléchargement");
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) {
+            updateField("avatarUrl", data.url);
+          }
+        }
+      } catch {
+        // En cas d'indisponibilité du serveur de fichiers, la photo locale compressée est préservée
       }
 
-      updateField("avatarUrl", data.url);
+      showToast("success", "Photo de profil ajoutée avec succès !");
     } catch (err: unknown) {
       const error = err as Error;
-      setErrorMsg(error.message || "Impossible de télécharger l'image");
+      const msg = error.message || "Impossible de charger la photo";
+      setErrorMsg(msg);
+      showToast("error", msg);
     } finally {
       setIsUploadingPhoto(false);
     }
@@ -339,7 +420,9 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
     setSuccessMsg("");
 
     if (!formData.firstName?.trim() && !formData.lastName?.trim()) {
-      setErrorMsg("Veuillez renseigner votre nom directement sur la carte.");
+      const msg = "Veuillez renseigner votre nom directement sur la carte.";
+      setErrorMsg(msg);
+      showToast("error", msg);
       return;
     }
 
@@ -352,19 +435,52 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
       const authRes = await fetch("/api/auth/me");
       const authData = await authRes.json();
       if (!authData.user) {
-        setIsAuthModalOpen(true);
+        saveDraftToLocalStorage();
+        router.push("/login?redirect=" + encodeURIComponent("/create?action=order"));
         return;
       }
       setCurrentUser(authData.user);
       await executeSaveAndOrder(authData.user);
     } catch {
-      setIsAuthModalOpen(true);
+      saveDraftToLocalStorage();
+      router.push("/login?redirect=" + encodeURIComponent("/create?action=order"));
     }
   };
 
-  const executeSaveAndOrder = async (user?: any) => {
+  const ToastBanner = toast ? (
+    <div className="fixed top-4 inset-x-4 max-w-md mx-auto z-50 animate-in slide-in-from-top-6 fade-in duration-300 pointer-events-auto">
+      <div
+        className={`px-4 py-3 rounded-xl flex items-center gap-3 shadow-lg ${
+          toast.type === "error"
+            ? "bg-red-600 text-white"
+            : toast.type === "success"
+            ? "bg-emerald-600 text-white"
+            : "bg-neutral-900 border border-neutral-800 text-white"
+        }`}
+      >
+        {toast.type === "error" ? (
+          <AlertCircle className="w-5 h-5 text-white shrink-0" />
+        ) : toast.type === "success" ? (
+          <Check className="w-5 h-5 text-white shrink-0" />
+        ) : (
+          <Sparkles className="w-5 h-5 text-[#FF6B00] shrink-0" />
+        )}
+        <p className="text-xs font-semibold leading-relaxed flex-1 text-white">{toast.message}</p>
+        <button
+          type="button"
+          onClick={() => setToast(null)}
+          className="p-1 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  ) : null;
+
+  const executeSaveAndOrder = async (user?: any, overrideData?: Partial<Card>) => {
     startTransition(async () => {
       try {
+        const payload = overrideData || formData;
         const endpoint = isEditing && initialData?.id
           ? `/api/cards/${initialData.id}`
           : "/api/cards";
@@ -373,7 +489,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
         const res = await fetch(endpoint, {
           method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
 
         const data = await res.json();
@@ -382,7 +498,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
         }
 
         const savedCard = data.card || {
-          ...formData,
+          ...payload,
           id: initialData?.id || data.id || "card_tmp",
           userId: user?.id || user?.userId,
         };
@@ -407,12 +523,6 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
     });
   };
 
-  const handleAuthSuccess = async (user: any) => {
-    setCurrentUser(user);
-    setIsAuthModalOpen(false);
-    await executeSaveAndOrder(user);
-  };
-
   const socials = (formData.socials as any) || {};
   const fullName = `${formData.firstName || ""} ${formData.lastName || ""}`.trim();
   const hasCaptureInfo = Boolean(
@@ -429,12 +539,13 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
   if (viewMode === "preview") {
     return (
       <div className="w-full max-w-md mx-auto space-y-4">
+        {ToastBanner}
         {/* Floating Return Pill Bar */}
         <div className="flex items-center justify-between px-2 gap-2">
           <button
             type="button"
             onClick={() => setViewMode("edit")}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-900/80 hover:bg-neutral-800 text-white border border-white/10 text-xs font-semibold backdrop-blur-md active:scale-95 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-800 text-xs font-semibold active:scale-95 transition-all cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4 -ml-1" />
             <span>Modifier la carte</span>
@@ -497,17 +608,6 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
             }}
           />
         )}
-
-        {/* Inline Auth Modal */}
-        {isAuthModalOpen && (
-          <AuthModal
-            isOpen={isAuthModalOpen}
-            onClose={() => setIsAuthModalOpen(false)}
-            onSuccess={handleAuthSuccess}
-            title="Connectez-vous pour finaliser votre commande"
-            subtitle="Vos informations sont sauvegardées en toute sécurité. Connectez-vous pour régler votre carte via FedaPay."
-          />
-        )}
       </div>
     );
   }
@@ -517,6 +617,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
   // =========================================================================
   return (
     <div className="w-full max-w-md mx-auto space-y-4 pb-16">
+      {ToastBanner}
       {/* Hidden File Input */}
       <input
         type="file"
@@ -537,7 +638,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
           <button
             type="button"
             onClick={() => setActiveSheet("company")}
-            className="px-3 py-1 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/15 text-[11px] font-medium text-neutral-300 flex items-center gap-1.5 active:scale-95 transition-all"
+            className="px-3 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-[11px] font-medium text-neutral-300 flex items-center gap-1.5 active:scale-95 transition-all"
             title="Modifier le nom de l'entreprise"
           >
             <Building className="w-3 h-3 text-neutral-400" />
@@ -551,7 +652,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
             <button
               type="button"
               onClick={() => setViewMode("preview")}
-              className="px-3.5 py-1 rounded-full bg-white hover:bg-neutral-200 text-black text-xs font-bold backdrop-blur-md shadow-lg active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1 rounded-full bg-white hover:bg-neutral-200 text-black text-xs font-bold active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>Aperçu</span>
             </button>
@@ -569,8 +670,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
             />
           ) : (
             // State 1: Placeholder when photo is not uploaded yet
-            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-neutral-900 via-neutral-950 to-black p-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-neutral-400 mb-3 shadow-lg">
+            <div className="w-full h-full flex flex-col items-center justify-center bg-neutral-950 p-6 text-center">
+              <div className="w-16 h-16 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-400 mb-3">
                 <Camera className="w-7 h-7 stroke-[1.8] text-white" />
               </div>
               <p className="text-sm font-semibold text-white">Photo portrait</p>
@@ -586,7 +687,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
               type="button"
               onClick={() => photoInputRef.current?.click()}
               disabled={isUploadingPhoto}
-              className="px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-xl border border-white/20 text-white text-xs font-semibold flex items-center gap-2 shadow-2xl active:scale-95 transition-all"
+              className="px-4 py-2 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-semibold flex items-center gap-2 active:scale-95 transition-all"
             >
               {isUploadingPhoto ? (
                 <>
@@ -608,16 +709,19 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
 
         {/* Identity & Content Section (Direct in-place inputs!) */}
         <div className="px-6 pb-8 pt-2 relative z-10 space-y-6">
-          {/* Identity Card (Apple Invites Frosted Card Style with Dividers) */}
-          <div className="rounded-[32px] bg-neutral-900/70 backdrop-blur-2xl border border-white/10 p-5 shadow-2xl text-white space-y-3.5">
+          {/* Identity Card Solid Matte Style */}
+          <div className="rounded-[32px] bg-neutral-900 border border-neutral-800 p-5 text-white space-y-3.5">
             {/* Row 1: Nom et Prénom en une seule fois */}
             <div className="py-1">
               <input
+                id="name"
+                name="name"
+                autoComplete="name"
                 type="text"
                 value={fullNameInput}
                 onChange={(e) => handleFullNameChange(e.target.value)}
                 placeholder="Nom et Prénom"
-                className="w-full text-center text-2xl sm:text-3xl font-extrabold tracking-tight text-white placeholder:text-white/35 bg-transparent border-none focus:outline-none"
+                className="w-full text-center text-2xl sm:text-3xl font-extrabold tracking-tight text-white placeholder:text-white/35 bg-transparent border-0 outline-none focus:outline-none focus-visible:outline-none ring-0 focus:ring-0 shadow-none"
               />
             </div>
 
@@ -629,11 +733,14 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                 <Briefcase className="w-4 h-4 text-white/60" />
               </div>
               <input
+                id="jobtitle"
+                name="jobtitle"
+                autoComplete="organization-title"
                 type="text"
                 value={formData.title || ""}
                 onChange={(e) => updateField("title", e.target.value)}
                 placeholder="Poste ou Titre (ex: Fondateur & CEO)"
-                className="w-full text-center text-xs sm:text-sm font-medium text-white/90 placeholder:text-white/35 bg-transparent border-none focus:outline-none"
+                className="w-full text-center text-xs sm:text-sm font-medium text-white/90 placeholder:text-white/35 bg-transparent border-0 outline-none focus:outline-none focus-visible:outline-none ring-0 focus:ring-0 shadow-none"
               />
             </div>
 
@@ -645,11 +752,14 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                 <Building className="w-4 h-4 text-white/60" />
               </div>
               <input
+                id="organization"
+                name="organization"
+                autoComplete="organization"
                 type="text"
                 value={formData.company || ""}
                 onChange={(e) => updateField("company", e.target.value)}
                 placeholder="Nom de l'entreprise (ex: AS WORLD TECH)"
-                className="w-full text-center text-xs sm:text-sm font-medium text-white/90 placeholder:text-white/35 bg-transparent border-none focus:outline-none"
+                className="w-full text-center text-xs sm:text-sm font-medium text-white/90 placeholder:text-white/35 bg-transparent border-0 outline-none focus:outline-none focus-visible:outline-none ring-0 focus:ring-0 shadow-none"
               />
             </div>
           </div>
@@ -769,7 +879,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
 
       {/* Error Message */}
       {errorMsg && (
-        <div className="p-3.5 rounded-2xl bg-red-500/20 border border-red-500/40 text-red-200 text-xs flex items-center gap-2 backdrop-blur-md">
+        <div className="p-3.5 rounded-2xl bg-red-950 border border-red-500/40 text-red-200 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
           <span className="flex-1">{errorMsg}</span>
         </div>
@@ -802,13 +912,13 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
          ========================================================================= */}
       {activeSheet && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-black/80 animate-in fade-in duration-150"
           onClick={() => setActiveSheet(null)}
         >
           <div
             className={`w-full ${
               activeSheet === "capture_info" ? "max-w-lg" : "max-w-md"
-            } bg-neutral-900 border-t border-x border-neutral-800 text-white rounded-t-[32px] rounded-b-none p-5 sm:p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-300 max-h-[88vh] overflow-y-auto pb-8`}
+            } bg-neutral-900 border-t border-x border-neutral-800 text-white rounded-t-[32px] rounded-b-none p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom duration-200 max-h-[92vh] overflow-y-auto pb-8`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Barre de poignée (drag handle) pour l'effet Bottom Sheet mobile */}
@@ -817,9 +927,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
             <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
               {activeSheet === "capture_info" ? (
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white shrink-0">
-                    <UserPlus className="w-4 h-4 stroke-[2.2]" />
-                  </div>
+                  <UserPlus className="w-5 h-5 text-white shrink-0 stroke-[2.2]" />
                   <div>
                     <h3 className="text-sm font-bold text-white">
                       Ajouter mes informations
@@ -832,14 +940,12 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
               ) : (
                 <div className="flex items-center gap-2.5">
                   {activeSheet === "address" && (
-                    <div className="w-8 h-8 rounded-xl bg-[#FF6B00]/15 flex items-center justify-center text-[#FF6B00] shrink-0">
-                      <MapPin className="w-4 h-4" />
-                    </div>
+                    <MapPin className="w-5 h-5 text-[#FF6B00] shrink-0" />
                   )}
                   <div>
                     <h3 className="text-sm font-bold text-white">
                       {activeSheet === "company" && "Nom de l'entreprise"}
-                      {activeSheet === "address" && "Adresse & Localisation Maps"}
+                      {activeSheet === "address" && "Adresse"}
                       {activeSheet === "phone" && "Numéro de téléphone"}
                       {activeSheet === "whatsapp" && "Numéro WhatsApp"}
                       {activeSheet === "email" && "Adresse E-mail"}
@@ -853,7 +959,7 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                     </h3>
                     {activeSheet === "address" && (
                       <p className="text-[11px] text-neutral-400">
-                        GPS automatique ou recherche d'adresse
+                        Saisie manuelle de votre adresse ou ville
                       </p>
                     )}
                   </div>
@@ -889,6 +995,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       </label>
                       <input
                         type="tel"
+                        name="tel"
+                        autoComplete="tel"
                         autoFocus={activeCaptureField === "phone"}
                         value={formData.phone || ""}
                         onChange={(e) => updateField("phone", e.target.value)}
@@ -905,6 +1013,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       </label>
                       <input
                         type="tel"
+                        name="whatsapp"
+                        autoComplete="off"
                         autoFocus={activeCaptureField === "whatsapp"}
                         value={formData.whatsapp || ""}
                         onChange={(e) => updateField("whatsapp", e.target.value)}
@@ -921,6 +1031,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       </label>
                       <input
                         type="email"
+                        name="email"
+                        autoComplete="email"
                         autoFocus={activeCaptureField === "email"}
                         value={formData.email || ""}
                         onChange={(e) => updateField("email", e.target.value)}
@@ -952,6 +1064,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                       </div>
                       <input
                         type="text"
+                        name="url"
+                        autoComplete="url"
                         autoFocus={activeCaptureField === "website"}
                         value={formData.website || ""}
                         onChange={(e) => updateField("website", e.target.value)}
@@ -1236,6 +1350,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                   {activeSheet === "company" && (
                     <input
                       type="text"
+                      name="organization"
+                      autoComplete="organization"
                       autoFocus
                       value={formData.company || ""}
                       onChange={(e) => updateField("company", e.target.value)}
@@ -1245,85 +1361,28 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                   )}
 
                   {activeSheet === "address" && (
-                    <div className="space-y-3">
-                      {/* GPS 1-clic */}
-                      <button
-                        type="button"
-                        onClick={handleGetGpsLocation}
-                        disabled={isLocating}
-                        className="w-full py-2.5 px-3.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer"
-                      >
-                        {isLocating ? (
-                          <>
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>Détection GPS en cours...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Navigation className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>📍 Utiliser ma position actuelle (GPS)</span>
-                          </>
-                        )}
-                      </button>
-
-                      {/* Champ de recherche avec autocomplétion Maps */}
-                      <div className="relative">
-                        <div className="relative">
-                          <input
-                            type="text"
-                            autoFocus
-                            value={formData.address || ""}
-                            onChange={(e) => handleSearchAddress(e.target.value)}
-                            placeholder="Tapez une ville ou adresse (ex: Cotonou, Paris)..."
-                            className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-sm text-white placeholder:text-neutral-500 focus:border-white focus:outline-none"
-                          />
-                          <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                          {isSearchingAddress && (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2" />
-                          )}
-                        </div>
-
-                        {/* Suggestions de recherche Maps */}
-                        {addressSuggestions.length > 0 && (
-                          <div className="mt-2 rounded-xl bg-neutral-800 border border-neutral-700 divide-y divide-neutral-700/60 overflow-hidden shadow-xl max-h-48 overflow-y-auto">
-                            {addressSuggestions.map((suggestion, idx) => (
-                              <button
-                                key={idx}
-                                type="button"
-                                onClick={() => {
-                                  updateField("address", suggestion);
-                                  setAddressSuggestions([]);
-                                }}
-                                className="w-full p-2.5 text-left text-xs text-neutral-200 hover:bg-neutral-700 flex items-center gap-2 transition-colors cursor-pointer"
-                              >
-                                <MapPin className="w-3.5 h-3.5 text-[#FF6B00] shrink-0" />
-                                <span className="truncate">{suggestion}</span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Lien direct Google Maps */}
-                      {formData.address && (
-                        <div className="pt-1 flex items-center justify-between">
-                          <a
-                            href={`https://maps.google.com/?q=${encodeURIComponent(formData.address)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs text-[#FF6B00] hover:underline font-medium"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span>Voir le repère sur Google Maps</span>
-                          </a>
-                        </div>
-                      )}
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        name="street-address"
+                        autoComplete="street-address"
+                        autoFocus
+                        value={formData.address || ""}
+                        onChange={(e) => updateField("address", e.target.value)}
+                        placeholder="ex: Cotonou, Haie Vive (ou votre adresse complète)"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-sm text-white placeholder:text-neutral-500 focus:border-[#FF6B00] focus:outline-none transition-colors"
+                      />
+                      <p className="text-[11px] text-neutral-400">
+                        Indiquez votre ville, quartier ou localisation qui apparaîtra sur votre profil.
+                      </p>
                     </div>
                   )}
 
                   {activeSheet === "phone" && (
                     <input
                       type="tel"
+                      name="tel"
+                      autoComplete="tel"
                       autoFocus
                       value={formData.phone || ""}
                       onChange={(e) => updateField("phone", e.target.value)}
@@ -1335,6 +1394,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                   {activeSheet === "whatsapp" && (
                     <input
                       type="tel"
+                      name="whatsapp"
+                      autoComplete="off"
                       autoFocus
                       value={formData.whatsapp || ""}
                       onChange={(e) => updateField("whatsapp", e.target.value)}
@@ -1346,6 +1407,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                   {activeSheet === "email" && (
                     <input
                       type="email"
+                      name="email"
+                      autoComplete="email"
                       autoFocus
                       value={formData.email || ""}
                       onChange={(e) => updateField("email", e.target.value)}
@@ -1357,6 +1420,8 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
                   {activeSheet === "website" && (
                     <input
                       type="text"
+                      name="url"
+                      autoComplete="url"
                       autoFocus
                       value={formData.website || ""}
                       onChange={(e) => updateField("website", e.target.value)}
@@ -1461,17 +1526,6 @@ export default function CardForm({ initialData, isEditing = false }: CardFormPro
           onOrderSuccess={() => {
             router.push("/dashboard");
           }}
-        />
-      )}
-
-      {/* Inline Auth Modal */}
-      {isAuthModalOpen && (
-        <AuthModal
-          isOpen={isAuthModalOpen}
-          onClose={() => setIsAuthModalOpen(false)}
-          onSuccess={handleAuthSuccess}
-          title="Connectez-vous pour finaliser votre commande"
-          subtitle="Vos informations sont sauvegardées en toute sécurité. Connectez-vous pour régler votre carte via FedaPay."
         />
       )}
     </div>

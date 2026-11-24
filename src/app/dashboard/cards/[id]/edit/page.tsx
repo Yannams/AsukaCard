@@ -1,12 +1,12 @@
 import React from "react";
-import Navbar from "@/components/Navbar";
+import BackButton from "@/components/BackButton";
 import Footer from "@/components/Footer";
 import CardForm from "@/components/CardForm";
 import { getCardById } from "@/lib/db";
 import { notFound } from "next/navigation";
 
 export const metadata = {
-  title: "Modifier mon invitation - Asuka Card",
+  title: "Modifier ma carte - Asuka Card",
 };
 
 export default async function EditCardPage({
@@ -23,9 +23,15 @@ export default async function EditCardPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050507] text-white">
-      <Navbar />
+      {/* En-tête minimal d'édition */}
+      <header className="w-full max-w-md mx-auto px-4 pt-4 pb-1 flex items-center justify-between z-10">
+        <BackButton label="Retour" fallbackHref="/dashboard" />
+        <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500">
+          Édition Carte
+        </span>
+      </header>
 
-      <main className="flex-1 w-full max-w-md mx-auto px-2 sm:px-4 py-4 sm:py-6 flex flex-col items-center justify-center">
+      <main className="flex-1 w-full max-w-md mx-auto px-2 sm:px-4 py-2 sm:py-4 flex flex-col items-center justify-center">
         <CardForm initialData={card} isEditing={true} />
       </main>
 
@@ -33,3 +39,4 @@ export default async function EditCardPage({
     </div>
   );
 }
+

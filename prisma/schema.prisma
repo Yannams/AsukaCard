@@ -101,6 +101,7 @@ model Order {
   status          String   @default("PENDING") // "PENDING" | "CONFIRMED" | "IN_PRODUCTION" | "SHIPPED" | "DELIVERED" | "CANCELLED"
   trackingNumber  String?
   carrier         String?
+  steps           Json?
   
   // Payment Details
   paymentStatus   String   @default("UNPAID") // "UNPAID" | "PAID" | "REFUNDED" | "FAILED"

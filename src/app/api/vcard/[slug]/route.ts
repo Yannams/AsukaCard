@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCardBySlug, recordCardAnalytics } from "@/lib/db";
 import { generateVCard } from "@/lib/vcard";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET(
   req: NextRequest,
@@ -13,6 +14,19 @@ export async function GET(
 
   if (!card) {
     return new NextResponse("Carte non trouvée", { status: 404 });
+  }
+
+  // Vérifier si la carte est payée
+  const isPaid = (card as any).orders?.some(
+    (o: any) => o.paymentStatus === "PAID" || o.status === "DELIVERED" || o.status === "SHIPPED"
+  ) || card.userId === "usr_admin";
+
+  if (!isPaid) {
+    const currentUser = await getCurrentUser();
+    const isOwner = !!currentUser && (currentUser.userId === card.userId || currentUser.role === "ADMIN");
+    if (!isOwner) {
+      return new NextResponse("Cette carte n'est pas encore activée.", { status: 403 });
+    }
   }
 
   // Record vCard download analytics

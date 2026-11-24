@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
+import { isAuthorizedAdminOrService } from "@/lib/auth";
 import { getOrderStats } from "@/lib/db";
 
-export async function GET() {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
+export async function GET(req: Request) {
+  const user = await isAuthorizedAdminOrService(req);
+  if (!user) {
     return NextResponse.json({ error: "Accès réservé aux administrateurs" }, { status: 403 });
   }
 

@@ -8,13 +8,15 @@ import { Card } from "@/lib/db";
 
 interface PublicCardClientProps {
   card: Card;
+  isPreviewMode?: boolean;
 }
 
-export default function PublicCardClient({ card }: PublicCardClientProps) {
+export default function PublicCardClient({ card, isPreviewMode = false }: PublicCardClientProps) {
   const [isShareOpen, setIsShareOpen] = useState(false);
 
-  // Record initial view
+  // Record initial view only if not previewing
   useEffect(() => {
+    if (isPreviewMode) return;
     try {
       fetch("/api/analytics", {
         method: "POST",
@@ -27,7 +29,7 @@ export default function PublicCardClient({ card }: PublicCardClientProps) {
     } catch {
       // ignore
     }
-  }, [card.slug]);
+  }, [card.slug, isPreviewMode]);
 
   // Record contact interaction
   const handleContactClick = (type: string) => {
@@ -75,8 +77,8 @@ export default function PublicCardClient({ card }: PublicCardClientProps) {
             card={card}
             interactive={true}
             onContactClick={handleContactClick}
-            onShareClick={() => setIsShareOpen(true)}
-            onQrCodeClick={() => setIsShareOpen(true)}
+            onShareClick={isPreviewMode ? undefined : () => setIsShareOpen(true)}
+            onQrCodeClick={isPreviewMode ? undefined : () => setIsShareOpen(true)}
           />
         </div>
       </main>
@@ -86,10 +88,10 @@ export default function PublicCardClient({ card }: PublicCardClientProps) {
         <div
           className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-medium tracking-wide ${
             isPremium
-              ? "bg-neutral-900/60 border-neutral-800 text-neutral-400"
+              ? "bg-neutral-900 border-neutral-800 text-neutral-400"
               : isCreative
-              ? "bg-white/80 border-neutral-200 text-neutral-500"
-              : "bg-white/80 border-neutral-200 text-neutral-500"
+              ? "bg-white border-neutral-200 text-neutral-500"
+              : "bg-white border-neutral-200 text-neutral-500"
           }`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
@@ -98,12 +100,14 @@ export default function PublicCardClient({ card }: PublicCardClientProps) {
       </footer>
 
       {/* Share & QR Code Modal */}
-      <ShareModal
-        isOpen={isShareOpen}
-        onClose={() => setIsShareOpen(false)}
-        slug={card.slug}
-        fullName={fullName}
-      />
+      {!isPreviewMode && (
+        <ShareModal
+          isOpen={isShareOpen}
+          onClose={() => setIsShareOpen(false)}
+          slug={card.slug}
+          fullName={fullName}
+        />
+      )}
     </div>
   );
 }

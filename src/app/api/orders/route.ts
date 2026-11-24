@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, notifyBackofficeRealtime } from "@/lib/auth";
 import { createOrder, getOrdersByUserId, updateOrderPayment } from "@/lib/db";
 import { CARD_PRODUCTS, CARD_COLORS } from "@/lib/products";
 import { createFedaPayTransaction } from "@/lib/fedapay";
@@ -73,13 +73,11 @@ export async function POST(req: Request) {
       };
     }
 
-    // Find product to get unit price
     const product = CARD_PRODUCTS.find((p) => p.id === validated.cardType);
     if (!product) {
       return NextResponse.json({ error: "Modèle de carte invalide" }, { status: 400 });
     }
 
-    // Resolve color display name
     const foundColor = CARD_COLORS.find(
       (c) => c.id === validated.cardColor || c.shortName === validated.cardColor || c.name === validated.cardColor
     );
@@ -88,13 +86,14 @@ export async function POST(req: Request) {
     const unitPrice = product.priceXOF;
     const totalAmount = unitPrice * validated.quantity;
 
-    // Fast-path: simulated instant pay
-    const isInstantSimulation = validated.autoConfirmPayment;
+    // Only allow simulated instant pay in non-production without a live key
+    const isLiveFedaPay = (process.env.FEDAPAY_SECRET_KEY || "").trim().startsWith("sk_live");
+    const isInstantSimulation =
+      Boolean(validated.autoConfirmPayment) && process.env.NODE_ENV !== "production" && !isLiveFedaPay;
     const paymentStatus = isInstantSimulation ? "PAID" : "UNPAID";
     const paymentRef = isInstantSimulation ? `TX-${Date.now().toString(36).toUpperCase()}` : null;
     const paidAt = isInstantSimulation ? new Date() : null;
 
-    // Create the order in database
     const order = await createOrder({
       userId: user.userId,
       cardId: validated.cardId,
@@ -119,7 +118,6 @@ export async function POST(req: Request) {
       paidAt,
     });
 
-    // If payment method is FedaPay / Mobile Money / Card and not yet marked paid
     let checkoutUrl: string | null = null;
     let isSimulatedPayment = false;
 
@@ -129,7 +127,6 @@ export async function POST(req: Request) {
         validated.paymentMethod === "MOBILE_MONEY" ||
         validated.paymentMethod === "CARD")
     ) {
-      // Determine origin base URL
       const origin = req.headers.get("origin") || req.headers.get("referer") || "http://localhost:3000";
       const baseUrl = origin.split("?")[0].replace(/\/$/, "");
       const callbackUrl = `${baseUrl}/api/fedapay/callback?orderId=${order.id}`;
@@ -161,7 +158,6 @@ export async function POST(req: Request) {
         checkoutUrl = fedapayRes.checkoutUrl;
         isSimulatedPayment = Boolean(fedapayRes.isSimulated);
 
-        // Update order with FedaPay transaction info
         await updateOrderPayment(order.id, {
           paymentStatus: "UNPAID",
           fedapayId: fedapayRes.transactionId ? String(fedapayRes.transactionId) : undefined,
@@ -172,6 +168,16 @@ export async function POST(req: Request) {
         console.error("[ORDERS] Échec initialisation FedaPay:", fedapayRes.error);
       }
     }
+
+    notifyBackofficeRealtime({
+      type: "CARD_ORDER_CREATED",
+      title: `Nouvelle commande Asuka Card (${order.orderNumber})`,
+      message: `${validated.customerName} — ${product.name} (${resolvedColor}) • ${totalAmount.toLocaleString("fr-FR")} FCFA`,
+      orderId: `AC-${order.id}`,
+      orderNumber: order.orderNumber,
+      amount: totalAmount,
+      customerName: validated.customerName,
+    });
 
     return NextResponse.json(
       {

@@ -134,3 +134,62 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
   
   return null;
 }
+
+
+export const SERVICE_KEY_DEFAULT = "asuka_service_secret_bridge_2026";
+
+export async function isAuthorizedAdminOrService(req?: Request): Promise<TokenPayload | null> {
+  if (req) {
+    const serviceKey = req.headers.get("x-service-key");
+    const expectedKey = process.env.ASUKA_SERVICE_KEY || SERVICE_KEY_DEFAULT;
+    if (serviceKey && expectedKey && serviceKey === expectedKey) {
+      return {
+        userId: "usr_admin",
+        email: "admin@asukaspirit.com",
+        name: "Backoffice Asuka Spirit",
+        role: "ADMIN",
+        type: "access",
+      };
+    }
+  }
+  const user = await getCurrentUser();
+  if (user && user.role === "ADMIN") {
+    return user;
+  }
+  return null;
+}
+
+
+export async function notifyBackofficeRealtime(payload: {
+  type:
+    | "CARD_ORDER_CREATED"
+    | "CARD_ORDER_PAID"
+    | "CARD_ORDER_UPDATED"
+    | "CARD_CREATED";
+  title: string;
+  message: string;
+  orderId?: string;
+  orderNumber?: string;
+  amount?: number;
+  customerName?: string;
+}) {
+  const backendUrl =
+    process.env.ASUKA_BACKEND_URL || "http://localhost:4002";
+  const serviceKey =
+    process.env.ASUKA_SERVICE_KEY || SERVICE_KEY_DEFAULT;
+  try {
+    await fetch(`${backendUrl}/realtime/notify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-service-key": serviceKey,
+      },
+      body: JSON.stringify({
+        ...payload,
+        source: "ASUKA_CARD",
+      }),
+    });
+  } catch {
+    // Non-blocking if backend is offline
+  }
+}

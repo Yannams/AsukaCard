@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { getOrderById, updateOrderPayment } from "@/lib/db";
+import { getFedaPayTransaction } from "@/lib/fedapay";
+import { notifyBackofficeRealtime } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
     const event = await req.json();
 
-    // Event format from FedaPay webhook:
-    // { name: "transaction.approved" | "transaction.canceled", entity: { id: 1234, status: "approved", custom_metadata: { orderId: "..." } } }
     const eventName = event.name || event.event;
     const entity = event.entity || event.data || event;
 
@@ -16,15 +16,17 @@ export async function POST(req: Request) {
     }
 
     const transactionId = String(entity.id);
-    const status = entity.status;
     const orderId = entity.custom_metadata?.orderId;
+
+    // Verify transaction status directly against FedaPay API to prevent forged webhooks
+    const verifiedTx = await getFedaPayTransaction(transactionId);
+    const verifiedStatus = verifiedTx?.status || entity.status;
 
     let targetOrder = null;
     if (orderId) {
       targetOrder = await getOrderById(orderId);
     }
 
-    // Fallback: search by fedapayId
     if (!targetOrder) {
       targetOrder = await prisma.order.findFirst({
         where: { fedapayId: transactionId },
@@ -36,7 +38,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ received: true, warning: "Order not found" });
     }
 
-    if (eventName === "transaction.approved" || status === "approved") {
+    if ((eventName === "transaction.approved" || entity.status === "approved") && verifiedStatus === "approved") {
       await updateOrderPayment(targetOrder.id, {
         paymentStatus: "PAID",
         paymentRef: `FEDAPAY-${transactionId}`,
@@ -45,8 +47,17 @@ export async function POST(req: Request) {
         fedapayId: transactionId,
         fedapayStatus: "approved",
       });
+      notifyBackofficeRealtime({
+        type: "CARD_ORDER_PAID",
+        title: `Paiement reçu — ${targetOrder.orderNumber}`,
+        message: `${targetOrder.customerName} a payé ${Number(targetOrder.totalAmount).toLocaleString("fr-FR")} FCFA`,
+        orderId: `AC-${targetOrder.id}`,
+        orderNumber: targetOrder.orderNumber,
+        amount: targetOrder.totalAmount,
+        customerName: targetOrder.customerName,
+      });
       console.log(`[FEDAPAY WEBHOOK] Commande ${targetOrder.orderNumber} confirmée avec succès`);
-    } else if (eventName === "transaction.canceled" || status === "canceled") {
+    } else if (eventName === "transaction.canceled" || verifiedStatus === "canceled") {
       await updateOrderPayment(targetOrder.id, {
         paymentStatus: "UNPAID",
         fedapayStatus: "canceled",

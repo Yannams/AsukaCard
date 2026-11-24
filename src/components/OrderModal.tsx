@@ -5,7 +5,6 @@ import {
   X,
   CreditCard,
   CheckCircle2,
-  Store,
   ShieldCheck,
   Loader2,
   Nfc,
@@ -139,18 +138,20 @@ export default function OrderModal({
     }
   };
 
+  const [cardSide, setCardSide] = useState<"back" | "front">("back");
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl sm:rounded-[32px] shadow-2xl w-full max-w-lg max-h-[92vh] flex flex-col overflow-hidden border border-black/[0.08] animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl sm:rounded-[32px] w-full max-w-lg max-h-[92vh] flex flex-col overflow-hidden border border-neutral-200 animate-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="px-6 py-5 border-b border-black/[0.06] flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-[#1d1d1f]">
-              Commander votre carte
+              Commander votre carte physique
             </h2>
             <p className="text-xs text-[#6e6e73] mt-0.5">
-              Carte connectée NFC officielle personnalisée
+              Carte connectée NFC officielle Asuka Card gravée à votre nom
             </p>
           </div>
           <button
@@ -171,7 +172,7 @@ export default function OrderModal({
           )}
 
           {redirectingFedaPay && (
-            <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 text-[#FF6B00] text-xs flex items-center justify-center gap-3 animate-pulse">
+            <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 text-[#FF6B00] text-xs flex items-center justify-center gap-3">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span className="font-semibold">Redirection sécurisée vers FedaPay...</span>
             </div>
@@ -179,8 +180,8 @@ export default function OrderModal({
 
           {/* SUCCESS SCREEN */}
           {createdOrder ? (
-            <div className="py-6 text-center space-y-5">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+            <div className="py-4 text-center space-y-4">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div className="space-y-1">
@@ -193,25 +194,30 @@ export default function OrderModal({
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#f5f5f7] text-left text-xs space-y-2 text-[#1d1d1f]">
-                <div className="flex items-center gap-2 font-bold text-neutral-900">
-                  <Store className="w-4 h-4 text-[#FF6B00]" />
-                  <span>Retrait au Showroom Asuka Spirit</span>
-                </div>
-                <p className="text-neutral-600 leading-relaxed">
-                  Votre carte NFC sera gravée au nom de{" "}
-                  <strong>{customerName}</strong> et disponible sous 24h à 48h.
+              <div className="p-4 rounded-2xl bg-[#f5f5f7] border border-neutral-200 text-left text-xs space-y-3 text-[#1d1d1f]">
+                <p className="text-neutral-700 leading-relaxed">
+                  Votre carte NFC personnalisée est en cours de gravure au nom de{" "}
+                  <strong>{customerName}</strong>. Vous serez contacté au <strong>{customerPhone}</strong> dès qu&apos;elle sera prête.
                 </p>
-                <a
-                  href="https://maps.app.goo.gl/zSnn2Gv6ZJjiFuNG6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6B00] hover:underline pt-1"
-                >
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>Voir le showroom sur Google Maps</span>
-                  <ExternalLink className="w-3 h-3 opacity-80" />
-                </a>
+
+                <div className="pt-2 border-t border-neutral-200 space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-neutral-900">
+                    <MapPin className="w-4 h-4 text-[#FF6B00]" />
+                    <span>Lieu de retrait : Showroom Asuka Spirit</span>
+                  </div>
+                  <p className="text-neutral-500 text-[11px]">
+                    Cotonou, Bénin · Prête sous 24h à 48h
+                  </p>
+                  <a
+                    href="https://maps.app.goo.gl/zSnn2Gv6ZJjiFuNG6"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#FF6B00] hover:underline pt-0.5"
+                  >
+                    <span>Localiser le Showroom sur Google Maps</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
 
               <button
@@ -224,70 +230,73 @@ export default function OrderModal({
             </div>
           ) : (
             <>
-              {/* VEDETTE : CARTE ASUKA NOIRE ÉPURÉE */}
-              <div className="relative rounded-2xl p-5 bg-[#0c0c0d] text-white shadow-xl border border-white/10 overflow-hidden">
-                <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-full blur-2xl pointer-events-none" />
-                
-                <div className="flex items-center justify-between text-xs relative z-10">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-[10px] tracking-widest uppercase font-semibold text-neutral-400">
-                      ASUKA CARD
-                    </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white font-medium">
-                      NFC
-                    </span>
-                  </div>
-                  <Nfc className="w-5 h-5 text-[#FF6B00]" />
-                </div>
+              {/* VEDETTE : VRAIE CARTE PHYSIQUE ASUKA CARD (RATIO CRÉDIT EXACT) */}
+              <div className="space-y-2">
+                <div
+                  onClick={() => setCardSide(cardSide === "back" ? "front" : "back")}
+                  className="relative w-full aspect-[1.586/1] rounded-2xl sm:rounded-[24px] bg-[#141416] border border-neutral-800 p-5 sm:p-7 flex items-center justify-between text-white overflow-hidden select-none cursor-pointer group transition-all"
+                  title="Cliquez pour retourner la carte (Recto / Verso)"
+                >
+                  {cardSide === "back" ? (
+                    /* Verso Officiel : Puce QR dorée + Nom gravé + Contactless Wave */
+                    <>
+                      {/* Puce microchip dorée QR Code officielle */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/asuka-gold-chip.png"
+                        alt="Puce QR Dorée Asuka"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-contain shrink-0"
+                      />
 
-                <div className="mt-8 relative z-10">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-neutral-400 block">
-                    Gravure laser nominative
-                  </span>
-                  <div className="text-xl sm:text-2xl font-bold tracking-tight text-white mt-0.5 truncate">
-                    {customerName || "Nom du titulaire"}
-                  </div>
-                  {targetCard?.company && (
-                    <div className="text-xs text-neutral-400 mt-0.5 truncate">
-                      {targetCard.company}
+                      {/* Typographie nominative gravée au laser */}
+                      <div className="flex-1 px-4 sm:px-6 min-w-0">
+                        <div className="text-lg sm:text-2xl font-bold tracking-tight text-white truncate leading-tight">
+                          {customerName || "Nom du titulaire"}
+                        </div>
+                        <div className="text-xs sm:text-sm text-neutral-400 font-medium mt-1 truncate">
+                          {targetCard?.title
+                            ? `${targetCard.title}${targetCard.company ? ` chez ${targetCard.company}` : ""}`
+                            : targetCard?.company || "Membre Asuka Card"}
+                        </div>
+                      </div>
+
+                      {/* Symbole officiel NFC sans contact */}
+                      <div className="shrink-0 flex items-center justify-center pl-2">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/images/asuka-nfc-wave.png"
+                          alt="Symbole NFC sans contact"
+                          className="w-5 h-9 sm:w-6 sm:h-11 object-contain opacity-75"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    /* Recto Officiel : ASUKA Card + Pique Asuka */
+                    <div className="w-full h-full flex items-center justify-center relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/black-card-front-straight.png"
+                        alt="Recto Asuka Card"
+                        className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                      />
                     </div>
                   )}
+
+                  {/* Bouton retournement discret en bas à droite */}
+                  <div className="absolute bottom-2.5 right-3 text-[10px] font-medium text-neutral-500 group-hover:text-neutral-300 transition flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full">
+                    <span>{cardSide === "back" ? "Voir recto" : "Voir verso"}</span>
+                  </div>
                 </div>
 
-                <div className="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-neutral-400 relative z-10">
-                  <span>Noir Mat Soft-Touch • Puce NTAG216</span>
-                  <span className="font-bold text-white text-sm">
+                {/* Spécifications & Prix sous la carte */}
+                <div className="flex items-center justify-between px-1 text-xs text-[#6e6e73]">
+                  <span className="font-medium">
+                    Finition Noir Mat Soft-Touch • Puce NTAG216
+                  </span>
+                  <span className="font-bold text-[#1d1d1f] text-sm">
                     {UNIT_PRICE.toLocaleString("fr-FR")} FCFA
                   </span>
                 </div>
-              </div>
-
-              {/* INFORMATION RETRAIT SHOWROOM */}
-              <div className="p-4 rounded-2xl bg-[#f5f5f7] border border-black/[0.04] space-y-2">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#FF6B00]/10 text-[#FF6B00] flex items-center justify-center shrink-0 mt-0.5">
-                    <Store className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs space-y-0.5 flex-1">
-                    <div className="font-bold text-[#1d1d1f]">
-                      Retrait direct au Showroom Asuka Spirit
-                    </div>
-                    <p className="text-[#6e6e73] leading-relaxed">
-                      Cotonou, Bénin · Prête sous 24h à 48h
-                    </p>
-                  </div>
-                </div>
-
-                <a
-                  href="https://maps.app.goo.gl/zSnn2Gv6ZJjiFuNG6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6B00] hover:underline pt-0.5 pl-11"
-                >
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>Localiser le showroom sur Google Maps</span>
-                  <ExternalLink className="w-3 h-3 opacity-80" />
-                </a>
               </div>
 
               {/* FORMULAIRE DE CONTACT MINIMALISTE */}
@@ -347,12 +356,12 @@ export default function OrderModal({
               </div>
 
               {/* ACTION BOUTONS PAIEMENT */}
-              <div className="pt-2 space-y-3">
+              <div className="pt-2">
                 <button
                   type="button"
                   onClick={() => handleSubmitOrder(true)}
                   disabled={loading || redirectingFedaPay}
-                  className="w-full py-3.5 px-6 rounded-full bg-[#FF6B00] hover:bg-[#E55F00] text-white text-sm font-semibold shadow-md shadow-[#FF6B00]/25 transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3.5 px-6 rounded-full bg-[#FF6B00] hover:bg-[#E55F00] text-white text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -365,18 +374,6 @@ export default function OrderModal({
                       : `Régler ${totalAmount.toLocaleString("fr-FR")} FCFA via FedaPay`}
                   </span>
                 </button>
-
-                <div className="flex items-center justify-center gap-3 text-[11px] text-[#86868b]">
-                  <span>MTN MoMo</span>
-                  <span>•</span>
-                  <span>Moov Money</span>
-                  <span>•</span>
-                  <span>Celtiis</span>
-                  <span>•</span>
-                  <span>Wave</span>
-                  <span>•</span>
-                  <span>Cartes bancaires</span>
-                </div>
               </div>
             </>
           )}

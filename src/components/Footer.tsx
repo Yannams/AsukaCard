@@ -70,7 +70,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/richard-odjrado" className="hover:text-[#1d1d1f] hover:underline transition-colors">
+                <Link href="/exemple" className="hover:text-[#1d1d1f] hover:underline transition-colors">
                   Exemple en direct
                 </Link>
               </li>

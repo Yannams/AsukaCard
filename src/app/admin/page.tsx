@@ -28,13 +28,24 @@ import {
   DollarSign,
   ArrowLeft,
   Trash2,
+  LogOut,
+  Crown,
+  Plus,
+  Copy,
+  Check,
+  Building,
 } from "lucide-react";
+import AdminCardModal from "@/components/AdminCardModal";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
+  // Active Tab: "cards" | "orders"
+  const [currentTab, setCurrentTab] = useState<"cards" | "orders">("cards");
+
+  // Orders State
   const [orders, setOrders] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({
     totalOrders: 0,
@@ -46,7 +57,17 @@ export default function AdminDashboardPage() {
   });
   const [loadingOrders, setLoadingOrders] = useState(true);
 
-  // Filters
+  // Cards State
+  const [cards, setCards] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loadingCards, setLoadingCards] = useState(true);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState<any | null>(null);
+  const [cardSearchQuery, setCardSearchQuery] = useState("");
+  const [cardTemplateFilter, setCardTemplateFilter] = useState("ALL");
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  // Filters for orders
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [paymentFilter, setPaymentFilter] = useState("ALL");
@@ -55,7 +76,7 @@ export default function AdminDashboardPage() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Edit fields for modal
+  // Edit fields for order modal
   const [editStatus, setEditStatus] = useState("");
   const [editPaymentStatus, setEditPaymentStatus] = useState("");
   const [editTrackingNumber, setEditTrackingNumber] = useState("");
@@ -81,13 +102,16 @@ export default function AdminDashboardPage() {
       .finally(() => setAuthLoading(false));
   }, [router]);
 
-  // Load orders & stats
+  // Load orders, cards, stats & users
   const loadData = async () => {
     setLoadingOrders(true);
+    setLoadingCards(true);
     try {
-      const [ordersRes, statsRes] = await Promise.all([
+      const [ordersRes, statsRes, cardsRes, usersRes] = await Promise.all([
         fetch("/api/admin/orders"),
         fetch("/api/admin/stats"),
+        fetch("/api/admin/cards"),
+        fetch("/api/admin/users"),
       ]);
 
       if (ordersRes.ok) {
@@ -98,10 +122,19 @@ export default function AdminDashboardPage() {
         const sData = await statsRes.json();
         setStats(sData.stats || {});
       }
+      if (cardsRes.ok) {
+        const cData = await cardsRes.json();
+        setCards(cData.cards || []);
+      }
+      if (usersRes.ok) {
+        const uData = await usersRes.json();
+        setUsers(uData.users || []);
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setLoadingOrders(false);
+      setLoadingCards(false);
     }
   };
 
@@ -172,6 +205,16 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch {
+      router.push("/login");
+    }
+  };
+
   // Filtered orders
   const filteredOrders = useMemo(() => {
     return orders.filter((o) => {
@@ -202,6 +245,53 @@ export default function AdminDashboardPage() {
     });
   }, [orders, searchQuery, statusFilter, paymentFilter]);
 
+  // Filtered Cards
+  const filteredCards = useMemo(() => {
+    return cards.filter((c) => {
+      const q = cardSearchQuery.toLowerCase().trim();
+      if (q) {
+        const matchName = `${c.firstName || ""} ${c.lastName || ""}`.toLowerCase().includes(q);
+        const matchTitle = c.title?.toLowerCase().includes(q);
+        const matchCompany = c.company?.toLowerCase().includes(q);
+        const matchSlug = c.slug?.toLowerCase().includes(q);
+        const matchEmail = c.email?.toLowerCase().includes(q);
+        if (!matchName && !matchTitle && !matchCompany && !matchSlug && !matchEmail) {
+          return false;
+        }
+      }
+      if (cardTemplateFilter !== "ALL" && c.template !== cardTemplateFilter) {
+        return false;
+      }
+      return true;
+    });
+  }, [cards, cardSearchQuery, cardTemplateFilter]);
+
+  const handleDeleteCard = async (cardId: string, cardName: string) => {
+    if (!window.confirm(`Confirmez-vous la suppression de la carte de "${cardName}" ?`)) return;
+    try {
+      const res = await fetch(`/api/admin/cards/${cardId}`, { method: "DELETE" });
+      if (res.ok) {
+        setCards((prev) => prev.filter((c) => c.id !== cardId));
+      } else {
+        alert("Erreur lors de la suppression de la carte.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur réseau.");
+    }
+  };
+
+  const handleCopySlug = async (slug: string) => {
+    const url = `${window.location.origin}/${slug}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedSlug(slug);
+      setTimeout(() => setCopiedSlug(null), 2500);
+    } catch {
+      // fallback
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-900 text-white">
@@ -216,25 +306,18 @@ export default function AdminDashboardPage() {
       <header className="sticky top-0 z-30 bg-neutral-900/90 backdrop-blur-xl border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="flex items-center gap-2 group">
+            <Link href="/admin" className="flex items-center gap-2 group">
               <span className="font-extrabold text-base tracking-tight text-white flex items-center gap-2">
                 <span className="text-[#FF6B00]">ASUKA</span> CARD
               </span>
             </Link>
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] text-[11px] font-bold uppercase tracking-wider">
               <Shield className="w-3.5 h-3.5" />
-              <span>Back-Office Administrateur</span>
+              <span>Console Administrateur</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-neutral-800 transition"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Retour à l'Espace Client</span>
-            </Link>
             <button
               onClick={loadData}
               disabled={loadingOrders}
@@ -243,23 +326,374 @@ export default function AdminDashboardPage() {
             >
               <RefreshCw className={`w-4 h-4 ${loadingOrders ? "animate-spin" : ""}`} />
             </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-xs font-medium text-neutral-300 hover:text-white px-3.5 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition"
+              title="Se déconnecter"
+            >
+              <LogOut className="w-3.5 h-3.5 text-neutral-400" />
+              <span>Déconnexion</span>
+            </button>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        {/* Title & Overview */}
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            Gestion des Commandes & Paiements
-          </h1>
-          <p className="text-sm text-neutral-400 mt-1">
-            Supervisez la fabrication des cartes NFC physiques, l'encaissement et les livraisons.
-          </p>
+        {/* Navigation Tabs Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-5">
+          <div>
+            <div className="flex items-center gap-2 p-1 bg-neutral-900 border border-neutral-800 rounded-xl w-fit mb-3">
+              <button
+                onClick={() => setCurrentTab("cards")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+                  currentTab === "cards"
+                    ? "bg-gradient-to-r from-[#FF6B00] to-amber-500 text-white shadow-md"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                <span>Cartes & Profils VIP / Ministres ({cards.length})</span>
+              </button>
+              <button
+                onClick={() => setCurrentTab("orders")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+                  currentTab === "orders"
+                    ? "bg-gradient-to-r from-[#FF6B00] to-amber-500 text-white shadow-md"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                <Package className="w-3.5 h-3.5" />
+                <span>Commandes Physiques NFC ({orders.length})</span>
+              </button>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              {currentTab === "cards" ? "Cartes & Profils VIP / Ministres" : "Commandes Physiques & Livraisons"}
+            </h1>
+            <p className="text-sm text-neutral-400 mt-1">
+              {currentTab === "cards"
+                ? "Gérez les profils officiels, appliquez les templates exécutifs d'État et associez les tokens NFC."
+                : "Supervisez la fabrication des cartes physiques, l'encaissement et les livraisons."}
+            </p>
+          </div>
+
+          {currentTab === "cards" && (
+            <button
+              onClick={() => {
+                setEditingCard(null);
+                setIsCardModalOpen(true);
+              }}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#FF6B00] via-[#FF6B00] to-amber-500 hover:from-[#E55F00] hover:to-amber-600 text-white text-xs font-bold transition shadow-lg active:scale-95 shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Créer une Carte (Ministre / VIP)</span>
+            </button>
+          )}
         </div>
 
-        {/* Bento Stats KPI Cards */}
+        {/* TAB 1: CARDS MANAGEMENT */}
+        {currentTab === "cards" && (
+          <div className="space-y-6">
+            {/* Bento KPIs for Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Total Cards */}
+              <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between text-neutral-400 mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Total Profils</span>
+                  <div className="w-8 h-8 rounded-xl bg-orange-500/10 text-[#FF6B00] flex items-center justify-center">
+                    <Crown className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">{cards.length}</div>
+                <div className="text-[11px] text-neutral-400 mt-1">Cartes enregistrées</div>
+              </div>
+
+              {/* Ministerial / Executive */}
+              <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                <div className="flex items-center justify-between text-neutral-400 mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Modèles Ministériels</span>
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <Shield className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-amber-400">
+                  {cards.filter((c) => c.template === "executive").length}
+                </div>
+                <div className="text-[11px] text-amber-400/80 mt-1">Template Executive régalien</div>
+              </div>
+
+              {/* Total Scans & Views */}
+              <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between text-neutral-400 mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Scans & Vues Totaux</span>
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                    <Eye className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">
+                  {cards.reduce((sum, c) => sum + (c.viewsCount || 0), 0)}
+                </div>
+                <div className="text-[11px] text-neutral-400 mt-1">Consultations de profil</div>
+              </div>
+
+              {/* Total Contact Clicks */}
+              <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between text-neutral-400 mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Interactions & Clics</span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">
+                  {cards.reduce((sum, c) => sum + (c.contactClicks || 0), 0)}
+                </div>
+                <div className="text-[11px] text-emerald-400 mt-1">Enregistrements vCard & clics</div>
+              </div>
+            </div>
+
+            {/* Cards Filter & List Table */}
+            <div className="bg-neutral-900/70 border border-neutral-800 rounded-3xl overflow-hidden shadow-xl">
+              {/* Controls Bar: Search & Template Filter */}
+              <div className="p-5 border-b border-neutral-800 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between bg-neutral-900/90">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher par titulaire, fonction, ministère, token..."
+                    value={cardSearchQuery}
+                    onChange={(e) => setCardSearchQuery(e.target.value)}
+                    className="w-full text-xs pl-10 pr-4 py-2.5 rounded-xl bg-neutral-800/80 border border-neutral-700/60 text-white placeholder-neutral-500 focus:outline-none focus:border-[#FF6B00]"
+                  />
+                  {cardSearchQuery && (
+                    <button
+                      onClick={() => setCardSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Template Filter Pills */}
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  {[
+                    { label: "Tous", val: "ALL" },
+                    { label: "🏛️ Exécutif / Ministériel", val: "executive" },
+                    { label: "👑 Premium Prestige", val: "premium" },
+                    { label: "⚡ Moderne Dynamique", val: "modern" },
+                    { label: "🍏 Apple Invitation", val: "apple_invitation" },
+                  ].map((t) => (
+                    <button
+                      key={t.val}
+                      onClick={() => setCardTemplateFilter(t.val)}
+                      className={`px-3 py-1.5 rounded-full font-medium transition ${
+                        cardTemplateFilter === t.val
+                          ? "bg-[#FF6B00] text-white shadow-xs"
+                          : "bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table / List */}
+              {loadingCards ? (
+                <div className="p-16 flex flex-col items-center justify-center text-neutral-400 gap-3">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#FF6B00]" />
+                  <span className="text-xs">Chargement des profils et cartes...</span>
+                </div>
+              ) : filteredCards.length === 0 ? (
+                <div className="p-16 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-neutral-800 flex items-center justify-center text-neutral-500 mx-auto">
+                    <Crown className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white">Aucun profil ne correspond</h3>
+                  <p className="text-xs text-neutral-500 max-w-sm mx-auto">
+                    Créez une carte avec le template Ministériel / Exécutif ou modifiez vos critères de recherche.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setEditingCard(null);
+                      setIsCardModalOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF6B00] text-white text-xs font-semibold shadow-sm hover:bg-[#E55F00] transition"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Créer une Carte (Ministre / VIP)</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-neutral-800 text-neutral-400 uppercase tracking-wider text-[11px] bg-neutral-950/40">
+                        <th className="py-4 px-6 font-semibold">Titulaire & Fonction</th>
+                        <th className="py-4 px-4 font-semibold">Modèle Graphique</th>
+                        <th className="py-4 px-4 font-semibold">Token NFC & URL</th>
+                        <th className="py-4 px-4 font-semibold">Statistiques</th>
+                        <th className="py-4 px-4 font-semibold">Compte Lié</th>
+                        <th className="py-4 px-6 text-right font-semibold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-800/60">
+                      {filteredCards.map((card) => {
+                        const fullName = `${card.firstName || ""} ${card.lastName || ""}`.trim();
+                        const isMinister = card.template === "executive";
+
+                        return (
+                          <tr key={card.id} className="hover:bg-neutral-800/40 transition group">
+                            {/* Profile Info */}
+                            <td className="py-4 px-6">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl overflow-hidden bg-neutral-800 border border-neutral-700 shrink-0 flex items-center justify-center">
+                                  {card.avatarUrl ? (
+                                    <img src={card.avatarUrl} alt={fullName} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <span className="font-bold text-neutral-400 text-xs">
+                                      {(card.firstName?.[0] || "") + (card.lastName?.[0] || "")}
+                                    </span>
+                                  )}
+                                </div>
+                                <div>
+                                  <div className="font-bold text-white text-sm flex items-center gap-1.5">
+                                    <span>{fullName}</span>
+                                    {isMinister && (
+                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                                        OFFICIEL
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-neutral-400 text-[11px] flex items-center gap-1 mt-0.5">
+                                    <span>{card.title || "—"}</span>
+                                    {card.company && (
+                                      <>
+                                        <span className="text-neutral-600">•</span>
+                                        <span className="truncate max-w-[200px] text-neutral-300">{card.company}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Template badge */}
+                            <td className="py-4 px-4">
+                              {card.template === "executive" ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                                  <Shield className="w-3 h-3" />
+                                  <span>Ministériel / Exécutif</span>
+                                </span>
+                              ) : card.template === "premium" ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-neutral-800 text-neutral-300 border border-neutral-700">
+                                  <Crown className="w-3 h-3" />
+                                  <span>Premium Prestige</span>
+                                </span>
+                              ) : card.template === "modern" ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FF6B00]/15 text-[#FF6B00] border border-[#FF6B00]/30">
+                                  <Sparkles className="w-3 h-3" />
+                                  <span>Moderne Dynamique</span>
+                                </span>
+                              ) : card.template === "apple_invitation" ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/10 text-white border border-white/20">
+                                  <span>🍏 Apple Invitation</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-neutral-800 text-neutral-400">
+                                  <span>{card.template || "Standard"}</span>
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Token NFC */}
+                            <td className="py-4 px-4 font-mono text-[11px]">
+                              <div className="flex items-center gap-2">
+                                <span className="text-neutral-300 bg-neutral-800 px-2.5 py-1 rounded-lg border border-neutral-700/80">
+                                  {card.slug}
+                                </span>
+                                <button
+                                  onClick={() => handleCopySlug(card.slug)}
+                                  className="p-1 rounded-md text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+                                  title="Copier l'URL complète de la carte"
+                                >
+                                  {copiedSlug === card.slug ? (
+                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            </td>
+
+                            {/* Stats */}
+                            <td className="py-4 px-4">
+                              <div className="flex items-center gap-3 text-neutral-300">
+                                <span title="Vues / Scans" className="flex items-center gap-1">
+                                  <Eye className="w-3.5 h-3.5 text-blue-400" />
+                                  <span>{card.viewsCount || 0}</span>
+                                </span>
+                                <span title="Clics de contact" className="flex items-center gap-1">
+                                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                                  <span>{card.contactClicks || 0}</span>
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Linked user */}
+                            <td className="py-4 px-4 text-neutral-400 text-[11px]">
+                              <div className="truncate max-w-[150px]">
+                                {card.user?.name || card.user?.email || "Admin"}
+                              </div>
+                            </td>
+
+                            {/* Actions */}
+                            <td className="py-4 px-6 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <a
+                                  href={`/${card.slug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white transition"
+                                  title="Ouvrir la page publique en direct"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </a>
+                                <button
+                                  onClick={() => {
+                                    setEditingCard(card);
+                                    setIsCardModalOpen(true);
+                                  }}
+                                  className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white transition"
+                                  title="Modifier les données et le template"
+                                >
+                                  <Edit className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCard(card.id, fullName)}
+                                  className="p-2 rounded-lg bg-neutral-800 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 transition"
+                                  title="Supprimer la carte"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: PHYSICAL NFC ORDERS */}
+        {currentTab === "orders" && (
+          <div className="space-y-6">
+            {/* Bento Stats KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Revenue */}
           <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
@@ -578,7 +1012,9 @@ export default function AdminDashboardPage() {
             </table>
           </div>
         </div>
-      </main>
+      </div>
+    )}
+  </main>
 
       {/* MODAL: ADMIN ORDER DETAILS & SHIPPING PROCESSING */}
       {selectedOrder && (
@@ -779,6 +1215,19 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* MODAL: CREATE / EDIT VIP & MINISTERIAL CARD */}
+      <AdminCardModal
+        isOpen={isCardModalOpen}
+        onClose={() => {
+          setIsCardModalOpen(false);
+          setEditingCard(null);
+        }}
+        initialCard={editingCard}
+        users={users}
+        currentAdminUserId={currentUser?.id}
+        onSaved={loadData}
+      />
     </div>
   );
 }

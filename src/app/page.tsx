@@ -70,20 +70,20 @@ export default function HomePage() {
 
                   {/* VISUEL ÉPURÉ : IPHONE DIRECT ET CARTE BLANCHE ORIGINALE */}
                   <div className="lg:col-span-6 relative h-[280px] sm:h-[320px] -mb-10 -mr-6 sm:-mr-8 flex items-end justify-center pointer-events-none">
-                    {/* Carte Asuka Blanche redressée (sans -12deg) et proportionnelle au téléphone */}
+                    {/* Carte Asuka Blanche redressée et proportionnelle au téléphone */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/white-card-front.png"
                       alt="Carte Asuka Blanche sans contact"
-                      className="absolute bottom-16 sm:bottom-20 left-2 sm:left-6 w-[200px] sm:w-[230px] drop-shadow-2xl z-10 transition-transform duration-500 hover:-translate-y-1"
+                      className="absolute bottom-14 sm:bottom-16 left-3 sm:left-8 w-[190px] sm:w-[220px] drop-shadow-2xl z-10 transition-transform duration-500 hover:-translate-y-1"
                     />
 
-                    {/* Haut de l'iPhone avec la notification NFC qui émerge du bas de la carte */}
+                    {/* Haut de l'iPhone avec la notification NFC qui émerge du bas de la carte (aucun contour parasite) */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/iphone-nfc-notification.png"
                       alt="Notification NFC Safari sur iPhone"
-                      className="relative z-20 w-[270px] sm:w-[300px] h-auto object-contain -mb-40 sm:-mb-44 drop-shadow-[0_-10px_30px_rgba(0,0,0,0.9)]"
+                      className="relative z-20 w-[170px] sm:w-[195px] h-auto object-contain -mb-16 sm:-mb-20 drop-shadow-[0_-10px_35px_rgba(0,0,0,0.85)]"
                     />
                   </div>
                 </div>
@@ -111,9 +111,9 @@ export default function HomePage() {
                 </div>
 
                 {/* VISUEL ÉPURÉ : LES DEUX HAUTS DE SMARTPHONES ÉMERGEANT DU BAS */}
-                <div className="relative h-[210px] -mb-10 -mx-6 flex items-end justify-center gap-3 overflow-hidden pointer-events-none">
+                <div className="relative h-[210px] -mb-10 -mx-6 flex items-end justify-center gap-4 overflow-hidden pointer-events-none">
                   {/* Smartphone 1 (iOS) */}
-                  <div className="w-[130px] flex flex-col items-center -mb-48">
+                  <div className="w-[85px] sm:w-[95px] flex flex-col items-center -mb-20 overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/iphone-nfc-notification.png"
@@ -123,7 +123,7 @@ export default function HomePage() {
                   </div>
 
                   {/* Smartphone 2 (Android) */}
-                  <div className="w-[130px] flex flex-col items-center -mb-48 opacity-90">
+                  <div className="w-[85px] sm:w-[95px] flex flex-col items-center -mb-20 overflow-hidden opacity-90">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/iphone-nfc-notification.png"
@@ -267,8 +267,8 @@ export default function HomePage() {
               Commander maintenant
             </Link>
             <Link
-              href="/richard-odjrado"
-              className="group inline-flex items-center rounded-full bg-white/10 px-7 py-3.5 text-base font-medium text-white transition hover:bg-white/15"
+              href="/exemple"
+              className="group inline-flex items-center rounded-full bg-white/10 px-7 py-3.5 text-base font-medium text-white transition hover:bg-white/15 cursor-pointer"
             >
               Voir un profil démo
               <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-0.5" />

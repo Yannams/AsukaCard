@@ -1,11 +1,10 @@
-import React from "react";
-import Navbar from "@/components/Navbar";
+import BackButton from "@/components/BackButton";
 import Footer from "@/components/Footer";
 import CardForm from "@/components/CardForm";
 
 export const metadata = {
-  title: "Créer mon invitation Apple - Asuka Card",
-  description: "Personnalisez directement votre invitation Apple en temps réel.",
+  title: "Créer une carte - Asuka Card",
+  description: "Personnalisez directement votre carte Asuka Card.",
 };
 
 interface CreateCardPageProps {
@@ -24,9 +23,15 @@ export default async function CreateCardPage({ searchParams }: CreateCardPagePro
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050507] text-white">
-      <Navbar />
+      {/* En-tête minimal avec bouton retour vers la page précédente */}
+      <header className="w-full max-w-md mx-auto px-4 pt-4 pb-1 flex items-center justify-between z-10">
+        <BackButton label="Retour" fallbackHref="/dashboard" />
+        <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500">
+          Asuka Card Studio
+        </span>
+      </header>
 
-      <main className="flex-1 w-full max-w-md mx-auto px-2 sm:px-4 py-4 sm:py-6 flex flex-col items-center justify-center">
+      <main className="flex-1 w-full max-w-md mx-auto px-2 sm:px-4 py-2 sm:py-4 flex flex-col items-center justify-center">
         <CardForm initialData={dominantColor ? { dominantColor } : undefined} />
       </main>
 
@@ -34,3 +39,4 @@ export default async function CreateCardPage({ searchParams }: CreateCardPagePro
     </div>
   );
 }
+
