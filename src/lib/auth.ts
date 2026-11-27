@@ -136,12 +136,10 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
 }
 
 
-export const SERVICE_KEY_DEFAULT = "asuka_service_secret_bridge_2026";
-
 export async function isAuthorizedAdminOrService(req?: Request): Promise<TokenPayload | null> {
   if (req) {
     const serviceKey = req.headers.get("x-service-key");
-    const expectedKey = process.env.ASUKA_SERVICE_KEY || SERVICE_KEY_DEFAULT;
+    const expectedKey = process.env.ASUKA_SERVICE_KEY;
     if (serviceKey && expectedKey && serviceKey === expectedKey) {
       return {
         userId: "usr_admin",
@@ -175,8 +173,10 @@ export async function notifyBackofficeRealtime(payload: {
 }) {
   const backendUrl =
     process.env.ASUKA_BACKEND_URL || "http://localhost:4002";
-  const serviceKey =
-    process.env.ASUKA_SERVICE_KEY || SERVICE_KEY_DEFAULT;
+  const serviceKey = process.env.ASUKA_SERVICE_KEY;
+  if (!serviceKey) {
+    return;
+  }
   try {
     await fetch(`${backendUrl}/realtime/notify`, {
       method: "POST",
