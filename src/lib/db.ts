@@ -284,6 +284,9 @@ export async function getCardBySlug(slug: string) {
       orders: {
         orderBy: { createdAt: "desc" },
       },
+      user: {
+        select: { role: true },
+      },
     },
   });
   if (!card) {
@@ -292,6 +295,9 @@ export async function getCardBySlug(slug: string) {
       include: {
         orders: {
           orderBy: { createdAt: "desc" },
+        },
+        user: {
+          select: { role: true },
         },
       },
     });

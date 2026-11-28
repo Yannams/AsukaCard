@@ -65,9 +65,13 @@ export default async function PublicCardPage({ params }: PageProps) {
   }
 
   // Vérification de l'état de règlement
-  const isPaid = (card as any).orders?.some(
-    (o: any) => o.paymentStatus === "PAID" || o.status === "DELIVERED" || o.status === "SHIPPED"
-  ) || card.userId === "usr_admin";
+  const isPaid =
+    (card as any).orders?.some(
+      (o: any) => o.paymentStatus === "PAID" || o.status === "DELIVERED" || o.status === "SHIPPED"
+    ) ||
+    card.userId === "usr_admin" ||
+    card.userId.startsWith("usr_admin_") ||
+    (card as any).user?.role === "ADMIN";
 
   const currentUser = await getCurrentUser();
   const isOwner = !!currentUser && (currentUser.userId === card.userId || currentUser.role === "ADMIN");
