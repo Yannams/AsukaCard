@@ -94,29 +94,88 @@ export async function POST(req: Request) {
     const paymentRef = isInstantSimulation ? `TX-${Date.now().toString(36).toUpperCase()}` : null;
     const paidAt = isInstantSimulation ? new Date() : null;
 
-    const order = await createOrder({
-      userId: user.userId,
-      cardId: validated.cardId,
-      cardType: validated.cardType,
-      cardColor: resolvedColor,
-      customName: validated.customName || validated.customerName,
-      quantity: validated.quantity,
-      unitPrice,
-      totalAmount,
-      currency: "XOF",
-      customerName: validated.customerName,
-      customerEmail: validated.customerEmail,
-      customerPhone: validated.customerPhone,
-      shippingAddress: validated.shippingAddress,
-      city: validated.city,
-      country: validated.country,
-      postalCode: validated.postalCode,
-      notes: validated.notes,
-      paymentMethod: validated.paymentMethod,
-      paymentStatus,
-      paymentRef,
-      paidAt,
-    });
+    const { default: prisma } = await import("@/lib/prisma");
+    let order: any = null;
+    let isReusedPendingOrder = false;
+
+    // Reuse existing unpaid PENDING order for the same cardId instead of creating duplicates
+    if (validated.cardId) {
+      const existingPendingOrders = await prisma.order.findMany({
+        where: {
+          cardId: validated.cardId,
+          paymentStatus: { not: "PAID" },
+          status: "PENDING",
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (existingPendingOrders.length > 0) {
+        const primaryPending = existingPendingOrders[0];
+        const staleDuplicates = existingPendingOrders.slice(1).map((o) => o.id);
+        if (staleDuplicates.length > 0) {
+          await prisma.order.updateMany({
+            where: { id: { in: staleDuplicates } },
+            data: { status: "CANCELLED", fedapayStatus: "superseded" },
+          });
+        }
+
+        order = await prisma.order.update({
+          where: { id: primaryPending.id },
+          data: {
+            cardType: validated.cardType,
+            cardColor: resolvedColor,
+            customName: validated.customName || validated.customerName,
+            quantity: validated.quantity,
+            unitPrice,
+            totalAmount,
+            customerName: validated.customerName,
+            customerEmail: validated.customerEmail,
+            customerPhone: validated.customerPhone,
+            shippingAddress: validated.shippingAddress,
+            city: validated.city,
+            country: validated.country,
+            postalCode: validated.postalCode,
+            notes: validated.notes,
+            paymentMethod: validated.paymentMethod,
+            paymentStatus,
+            paymentRef,
+            paidAt,
+            status: isInstantSimulation ? "CONFIRMED" : "PENDING",
+          },
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+            card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
+          },
+        });
+        isReusedPendingOrder = true;
+      }
+    }
+
+    if (!order) {
+      order = await createOrder({
+        userId: user.userId,
+        cardId: validated.cardId,
+        cardType: validated.cardType,
+        cardColor: resolvedColor,
+        customName: validated.customName || validated.customerName,
+        quantity: validated.quantity,
+        unitPrice,
+        totalAmount,
+        currency: "XOF",
+        customerName: validated.customerName,
+        customerEmail: validated.customerEmail,
+        customerPhone: validated.customerPhone,
+        shippingAddress: validated.shippingAddress,
+        city: validated.city,
+        country: validated.country,
+        postalCode: validated.postalCode,
+        notes: validated.notes,
+        paymentMethod: validated.paymentMethod,
+        paymentStatus,
+        paymentRef,
+        paidAt,
+      });
+    }
 
     let checkoutUrl: string | null = null;
     let isSimulatedPayment = false;
@@ -169,15 +228,17 @@ export async function POST(req: Request) {
       }
     }
 
-    notifyBackofficeRealtime({
-      type: "CARD_ORDER_CREATED",
-      title: `Nouvelle commande Asuka Card (${order.orderNumber})`,
-      message: `${validated.customerName} — ${product.name} (${resolvedColor}) • ${totalAmount.toLocaleString("fr-FR")} FCFA`,
-      orderId: `AC-${order.id}`,
-      orderNumber: order.orderNumber,
-      amount: totalAmount,
-      customerName: validated.customerName,
-    });
+    if (!isReusedPendingOrder) {
+      notifyBackofficeRealtime({
+        type: "CARD_ORDER_CREATED",
+        title: `Nouvelle commande Asuka Card (${order.orderNumber})`,
+        message: `${validated.customerName} — ${product.name} (${resolvedColor}) • ${totalAmount.toLocaleString("fr-FR")} FCFA`,
+        orderId: `AC-${order.id}`,
+        orderNumber: order.orderNumber,
+        amount: totalAmount,
+        customerName: validated.customerName,
+      });
+    }
 
     return NextResponse.json(
       {

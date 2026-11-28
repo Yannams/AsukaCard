@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthorizedAdminOrService } from "@/lib/auth";
-import { getAllCards, createCard, isSlugAvailable, generateSecureSlug } from "@/lib/db";
+import {
+  getAllCards,
+  createCard,
+  isSlugAvailable,
+  generateSecureSlug,
+  resolveOrCreateUserId,
+  getCardTemplateByKey,
+} from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   const user = await isAuthorizedAdminOrService(req);
@@ -75,11 +82,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Default template for admin creation: executive, apple_invitation, modern, minimalist, creative, premium
-    const validTemplates = ["executive", "apple_invitation", "modern", "minimalist", "creative", "premium", "professional"];
-    const chosenTemplate = validTemplates.includes(template) ? template : "executive";
+    const validTemplates = ["government", "executive", "apple_invitation", "modern", "minimalist", "creative", "premium", "professional"];
+    const requestedTpl = typeof template === "string" ? template.trim() : "";
+    const dbTemplate = requestedTpl ? await getCardTemplateByKey(requestedTpl) : null;
+    const chosenTemplate = dbTemplate
+      ? dbTemplate.key
+      : validTemplates.includes(requestedTpl)
+        ? requestedTpl
+        : "premium";
 
-    const targetUserId = userId || user.userId;
+    const targetUserId = await resolveOrCreateUserId({
+      userId: userId || user.userId,
+      email: typeof email === "string" ? email : undefined,
+      name: `${firstName} ${lastName}`.trim(),
+    });
 
     const newCard = await createCard({
       userId: targetUserId,

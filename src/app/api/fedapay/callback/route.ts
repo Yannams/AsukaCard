@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getOrderById, updateOrderPayment } from "@/lib/db";
 import { getFedaPayTransaction } from "@/lib/fedapay";
 import { notifyBackofficeRealtime } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -52,6 +53,18 @@ export async function GET(req: Request) {
         fedapayId: transactionId || order.fedapayId,
         fedapayStatus: "approved",
       });
+
+      if (order.cardId) {
+        await prisma.order.updateMany({
+          where: {
+            cardId: order.cardId,
+            id: { not: order.id },
+            paymentStatus: { not: "PAID" },
+            status: "PENDING",
+          },
+          data: { status: "CANCELLED", fedapayStatus: "superseded" },
+        });
+      }
 
       await notifyBackofficeRealtime({
         type: "CARD_ORDER_PAID",

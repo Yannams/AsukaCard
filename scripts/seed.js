@@ -55,7 +55,7 @@ async function seed() {
       adminId = existing.rows[0].id;
       // Ensure the role is ADMIN
       await pool.query('UPDATE "User" SET role = $1 WHERE id = $2', [adminRole, adminId]);
-      console.log(`✓ Admin user already exists (${adminEmail}) — role ensured as ADMIN`);
+      console.log(`✓ Admin user already exists (${adminEmail}) - role ensured as ADMIN`);
     }
 
     // 2. Ensure demo user is NOT in the database (as requested)
@@ -109,6 +109,53 @@ async function seed() {
         ]
       );
       console.log(`✓ Showcase card created: slug 'asuka-officiel'`);
+    }
+
+    // 4. Seed real government profile with slug 'ga9m3x7w'
+    const govCheck = await pool.query('SELECT id FROM "Card" WHERE slug = $1', ['ga9m3x7w']);
+    if (govCheck.rows.length === 0) {
+      const govCardId = `crd_gov_${Date.now()}`;
+      await pool.query(
+        `INSERT INTO "Card" (
+          id, "userId", slug, "firstName", "lastName", title, company, bio,
+          phone, whatsapp, email, website, address, "avatarUrl", "logoUrl",
+          socials, "dominantColor", template, "fieldVisibility",
+          "viewsCount", "contactClicks", "createdAt", "updatedAt"
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8,
+          $9, $10, $11, $12, $13, $14, $15,
+          $16, $17, $18, $19,
+          $20, $21, $22, $23
+        )`,
+        [
+          govCardId,
+          adminId,
+          'ga9m3x7w',
+          'Georges',
+          'ALÉ',
+          'Ministre',
+          'Ministère du Cadre de Vie et des Transports',
+          'Ministre du Cadre de Vie et des Transports, en charge du Développement Durable, République du Bénin.',
+          '+229 01 98 99 89 77',
+          '+2290198998977',
+          'georges.ale@gouv.bj',
+          'https://www.cadredevie.gouv.bj',
+          'Cotonou, Bénin',
+          '/images/georges-ale.jpg',
+          '/images/logo-benin-cadre-de-vie-transparent.png',
+          JSON.stringify({ linkedin: 'https://www.linkedin.com/in/georges-al%C3%A9-5a78a726/' }),
+          'white',
+          'government',
+          JSON.stringify({ phone: true, whatsapp: true, email: true, website: true, address: true, bio: true, socials: true }),
+          0,
+          0,
+          new Date(),
+          new Date()
+        ]
+      );
+      console.log(`✓ Government card created: slug 'ga9m3x7w'`);
+    } else {
+      console.log(`✓ Government card already exists: slug 'ga9m3x7w'`);
     }
 
     console.log("\nDatabase seed completed successfully! 🎉");

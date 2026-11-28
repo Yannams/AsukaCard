@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
       bio: (bio || "").trim(),
       socials: socials || {},
       dominantColor: dominantColor === "black" || dominantColor === "white" ? dominantColor : "orange",
-      template: ["modern", "minimalist", "executive", "creative", "premium", "professional"].includes(template) ? template : "modern",
+      template: ["government", "modern", "minimalist", "executive", "creative", "premium", "professional"].includes(template) ? template : "modern",
       fieldVisibility: fieldVisibility || {
         phone: true,
         whatsapp: true,

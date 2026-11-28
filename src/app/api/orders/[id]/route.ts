@@ -41,16 +41,60 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
   try {
     const body = await req.json();
 
+    // Cancel an unpaid order explicitly
+    if (body.action === "cancel") {
+      if (order.paymentStatus === "PAID") {
+        return NextResponse.json(
+          { error: "Impossible d'annuler une commande déjà payée." },
+          { status: 400 }
+        );
+      }
+      const updated = await updateOrder(id, {
+        status: "CANCELLED",
+        fedapayStatus: "canceled",
+      });
+      return NextResponse.json({ order: updated, success: true });
+    }
+
     // If user is paying for an unpaid order
     if (body.action === "pay") {
+      if (order.paymentStatus === "PAID") {
+        return NextResponse.json(
+          { error: "Cette commande est déjà payée." },
+          { status: 400 }
+        );
+      }
+      if (order.status === "CANCELLED") {
+        return NextResponse.json(
+          { error: "Cette commande a été annulée." },
+          { status: 400 }
+        );
+      }
+
       const paymentMethod = body.paymentMethod || order.paymentMethod || "FEDAPAY";
+      const contactUpdates: Record<string, any> = { paymentMethod };
+      if (typeof body.customerName === "string" && body.customerName.trim()) {
+        contactUpdates.customerName = body.customerName.trim();
+      }
+      if (typeof body.customerEmail === "string" && body.customerEmail.trim()) {
+        contactUpdates.customerEmail = body.customerEmail.trim();
+      }
+      if (typeof body.customerPhone === "string" && body.customerPhone.trim()) {
+        contactUpdates.customerPhone = body.customerPhone.trim();
+      }
+      if (typeof body.customName === "string" && body.customName.trim()) {
+        contactUpdates.customName = body.customName.trim();
+      }
+      if (body.notes !== undefined) {
+        contactUpdates.notes = body.notes || null;
+      }
 
       // If user requested instant/offline payment simulation
       if (body.instantPay) {
         const paymentRef = `TX-${Date.now().toString(36).toUpperCase()}`;
         const updated = await updateOrder(id, {
+          ...contactUpdates,
           paymentStatus: "PAID",
-          paymentMethod,
           paymentRef,
           paidAt: new Date(),
           status: order.status === "PENDING" ? "CONFIRMED" : order.status,
@@ -64,7 +108,11 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
       const baseUrl = origin.split("?")[0].replace(/\/$/, "");
       const callbackUrl = `${baseUrl}/api/fedapay/callback?orderId=${order.id}`;
 
-      const nameParts = (order.customerName || "Client Asuka").trim().split(" ");
+      const effectiveName = contactUpdates.customerName || order.customerName || "Client Asuka";
+      const effectiveEmail = contactUpdates.customerEmail || order.customerEmail;
+      const effectivePhone = contactUpdates.customerPhone || order.customerPhone;
+
+      const nameParts = effectiveName.trim().split(" ");
       const firstname = nameParts[0] || "Client";
       const lastname = nameParts.slice(1).join(" ") || "Asuka";
 
@@ -76,8 +124,8 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
         customer: {
           firstname,
           lastname,
-          email: order.customerEmail,
-          phone: order.customerPhone,
+          email: effectiveEmail,
+          phone: effectivePhone,
           country: order.country?.toLowerCase() === "bénin" ? "bj" : "bj",
         },
         customMetadata: {
@@ -87,14 +135,15 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
       });
 
       if (fedapayRes.success && fedapayRes.checkoutUrl) {
-        await updateOrder(id, {
+        const updatedOrder = await updateOrder(id, {
+          ...contactUpdates,
           fedapayId: fedapayRes.transactionId ? String(fedapayRes.transactionId) : undefined,
           fedapayUrl: fedapayRes.checkoutUrl,
           fedapayStatus: "pending",
         });
 
         return NextResponse.json({
-          order,
+          order: updatedOrder,
           checkoutUrl: fedapayRes.checkoutUrl,
           isSimulatedPayment: fedapayRes.isSimulated,
           success: true,
