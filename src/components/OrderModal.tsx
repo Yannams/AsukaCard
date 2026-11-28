@@ -55,6 +55,11 @@ export default function OrderModal({
   const [redirectingFedaPay, setRedirectingFedaPay] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdOrder, setCreatedOrder] = useState<any>(null);
+  const [cardSide, setCardSide] = useState<"back" | "front">("back");
+
+  const existingPendingOrder = (targetCard as any)?.orders?.find(
+    (o: any) => o.paymentStatus !== "PAID" && o.status === "PENDING"
+  );
 
   // Sync when card changes
   useEffect(() => {
@@ -96,26 +101,43 @@ export default function OrderModal({
     const chosenMethod = payWithFedaPay ? "FEDAPAY" : "CASH_ON_DELIVERY";
 
     try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cardId: targetCard?.id || undefined,
-          cardType: CARD_PRODUCTS[0]?.id || "PVC_CLASSIC",
-          cardColor: "Noir Mat Obsidienne",
-          customName: customerName,
-          quantity: 1,
-          customerName,
-          customerEmail,
-          customerPhone,
-          shippingAddress: "Retrait direct au Showroom Asuka Spirit (Cotonou) - https://maps.app.goo.gl/zSnn2Gv6ZJjiFuNG6",
-          city: "Cotonou",
-          country: "Bénin",
-          notes: notes || undefined,
-          paymentMethod: chosenMethod,
-          autoConfirmPayment: false,
-        }),
-      });
+      const isRetryingPending = Boolean(existingPendingOrder && payWithFedaPay);
+      const res = await fetch(
+        isRetryingPending ? `/api/orders/${existingPendingOrder.id}` : "/api/orders",
+        {
+          method: isRetryingPending ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            isRetryingPending
+              ? {
+                  action: "pay",
+                  paymentMethod: chosenMethod,
+                  customerName,
+                  customerEmail,
+                  customerPhone,
+                  customName: customerName,
+                  notes: notes || undefined,
+                }
+              : {
+                  cardId: targetCard?.id || undefined,
+                  cardType: CARD_PRODUCTS[0]?.id || "PVC_CLASSIC",
+                  cardColor: "Noir Mat Obsidienne",
+                  customName: customerName,
+                  quantity: 1,
+                  customerName,
+                  customerEmail,
+                  customerPhone,
+                  shippingAddress:
+                    "Retrait direct au Showroom Asuka Spirit (Cotonou) - https://maps.app.goo.gl/zSnn2Gv6ZJjiFuNG6",
+                  city: "Cotonou",
+                  country: "Bénin",
+                  notes: notes || undefined,
+                  paymentMethod: chosenMethod,
+                  autoConfirmPayment: false,
+                }
+          ),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) {
@@ -137,8 +159,6 @@ export default function OrderModal({
       setLoading(false);
     }
   };
-
-  const [cardSide, setCardSide] = useState<"back" | "front">("back");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
@@ -165,6 +185,13 @@ export default function OrderModal({
 
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-5">
+          {existingPendingOrder && !createdOrder && (
+            <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs leading-relaxed">
+              Relance du paiement en attente pour la commande{" "}
+              <span className="font-mono font-bold">{existingPendingOrder.orderNumber}</span>{" "}
+              (aucun doublon ne sera créé).
+            </div>
+          )}
           {error && (
             <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
               <span className="font-semibold">Attention :</span> {error}

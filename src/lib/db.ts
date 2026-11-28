@@ -3,7 +3,231 @@ import { Card, User, Order } from "../generated/prisma/client";
 
 export type { Card, User, Order };
 export type DominantColor = "orange" | "black" | "white";
-export type CardTemplate = "modern" | "minimalist" | "executive" | "creative" | "premium" | "professional" | "apple_invitation";
+export type CardTemplate = "government" | "modern" | "minimalist" | "executive" | "creative" | "premium" | "professional" | "apple_invitation" | (string & {});
+export type CardTemplatePricingMode = "PAID" | "FREE" | "FLEXIBLE";
+
+export interface CardTemplateData {
+  id: string;
+  key: string;
+  name: string;
+  subtitle: string | null;
+  description: string | null;
+  pricingMode: string;
+  priceXOF: number;
+  defaultFree: boolean;
+  allowCustomPrice: boolean;
+  isPublic: boolean;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export const DEFAULT_CARD_TEMPLATES: Omit<CardTemplateData, "id" | "createdAt" | "updatedAt">[] = [
+  {
+    key: "premium",
+    name: "Standard",
+    subtitle: "Profil digital Asuka Card",
+    description:
+      "Modèle sombre de base utilisé par défaut pour les particuliers et professionnels.",
+    pricingMode: "FLEXIBLE",
+    priceXOF: 15000,
+    defaultFree: false,
+    allowCustomPrice: true,
+    isPublic: true,
+    isActive: true,
+    sortOrder: 1,
+  },
+  {
+    key: "government",
+    name: "Gouvernement",
+    subtitle: "Protocole Officiel & Ministères",
+    description:
+      "Template institutionnel clair avec armoiries et liseré tricolore national.",
+    pricingMode: "FLEXIBLE",
+    priceXOF: 15000,
+    defaultFree: true,
+    allowCustomPrice: true,
+    isPublic: false,
+    isActive: true,
+    sortOrder: 2,
+  },
+];
+
+function fallbackTemplates(): CardTemplateData[] {
+  return DEFAULT_CARD_TEMPLATES.map((t) => ({
+    ...t,
+    id: `tpl_${t.key}`,
+  }));
+}
+
+export async function getAllCardTemplates(): Promise<CardTemplateData[]> {
+  try {
+    const count = await prisma.cardTemplate.count();
+    if (count === 0) {
+      await prisma.cardTemplate.createMany({
+        data: DEFAULT_CARD_TEMPLATES,
+        skipDuplicates: true,
+      });
+    }
+    return await prisma.cardTemplate.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+  } catch (err: any) {
+    console.warn("[TEMPLATES] Fallback to default templates:", err?.message || err);
+    return fallbackTemplates();
+  }
+}
+
+export async function getCardTemplateByKey(key: string): Promise<CardTemplateData | null> {
+  const normalizedKey = (key || "").trim();
+  if (!normalizedKey) return null;
+  try {
+    const existing = await prisma.cardTemplate.findUnique({
+      where: { key: normalizedKey },
+    });
+    if (existing) return existing;
+    const all = await getAllCardTemplates();
+    return all.find((t) => t.key === normalizedKey) || null;
+  } catch {
+    return fallbackTemplates().find((t) => t.key === normalizedKey) || null;
+  }
+}
+
+export async function createCardTemplate(data: {
+  key: string;
+  name: string;
+  subtitle?: string | null;
+  description?: string | null;
+  pricingMode?: string;
+  priceXOF?: number;
+  defaultFree?: boolean;
+  allowCustomPrice?: boolean;
+  isPublic?: boolean;
+  isActive?: boolean;
+  sortOrder?: number;
+}): Promise<CardTemplateData> {
+  return await prisma.cardTemplate.create({
+    data: {
+      key: data.key,
+      name: data.name,
+      subtitle: data.subtitle ?? null,
+      description: data.description ?? null,
+      pricingMode: data.pricingMode || "FLEXIBLE",
+      priceXOF: typeof data.priceXOF === "number" ? Math.max(0, Math.round(data.priceXOF)) : 15000,
+      defaultFree: Boolean(data.defaultFree),
+      allowCustomPrice: data.allowCustomPrice !== false,
+      isPublic: data.isPublic !== false,
+      isActive: data.isActive !== false,
+      sortOrder: typeof data.sortOrder === "number" ? data.sortOrder : 10,
+    },
+  });
+}
+
+export async function updateCardTemplate(
+  idOrKey: string,
+  data: Partial<Omit<CardTemplateData, "id" | "key" | "createdAt" | "updatedAt">>
+): Promise<CardTemplateData> {
+  // Ensure defaults are seeded if table was empty before updating by id/key
+  await getAllCardTemplates();
+
+  const existing = await prisma.cardTemplate.findFirst({
+    where: {
+      OR: [
+        { id: idOrKey },
+        { key: idOrKey },
+        ...(idOrKey.startsWith("tpl_") ? [{ key: idOrKey.slice(4) }] : []),
+      ],
+    },
+  });
+
+  if (!existing) {
+    throw new Error("Template introuvable");
+  }
+
+  return await prisma.cardTemplate.update({
+    where: { id: existing.id },
+    data: {
+      ...(data.name !== undefined ? { name: data.name } : {}),
+      ...(data.subtitle !== undefined ? { subtitle: data.subtitle } : {}),
+      ...(data.description !== undefined ? { description: data.description } : {}),
+      ...(data.pricingMode !== undefined ? { pricingMode: data.pricingMode } : {}),
+      ...(data.priceXOF !== undefined ? { priceXOF: Math.max(0, Math.round(data.priceXOF)) } : {}),
+      ...(data.defaultFree !== undefined ? { defaultFree: Boolean(data.defaultFree) } : {}),
+      ...(data.allowCustomPrice !== undefined ? { allowCustomPrice: Boolean(data.allowCustomPrice) } : {}),
+      ...(data.isPublic !== undefined ? { isPublic: Boolean(data.isPublic) } : {}),
+      ...(data.isActive !== undefined ? { isActive: Boolean(data.isActive) } : {}),
+      ...(data.sortOrder !== undefined ? { sortOrder: Number(data.sortOrder) } : {}),
+    },
+  });
+}
+
+export async function deleteCardTemplate(idOrKey: string): Promise<boolean> {
+  const existing = await prisma.cardTemplate.findFirst({
+    where: {
+      OR: [{ id: idOrKey }, { key: idOrKey }],
+    },
+  });
+  if (!existing) {
+    throw new Error("Template introuvable");
+  }
+  await prisma.cardTemplate.delete({ where: { id: existing.id } });
+  return true;
+}
+
+/**
+ * Resolve a valid existing User ID in PostgreSQL (handles service-key synthetic "usr_admin" IDs).
+ */
+export async function resolveOrCreateUserId(opts: {
+  userId?: string | null;
+  email?: string | null;
+  name?: string | null;
+}): Promise<string> {
+  if (opts.userId && opts.userId !== "usr_admin") {
+    const existingById = await prisma.user.findUnique({ where: { id: opts.userId } });
+    if (existingById) return existingById.id;
+  }
+
+  if (opts.email && opts.email.trim()) {
+    const cleanEmail = opts.email.toLowerCase().trim();
+    const existingByEmail = await prisma.user.findUnique({ where: { email: cleanEmail } });
+    if (existingByEmail) return existingByEmail.id;
+
+    const cryptoMod = await import("crypto");
+    const { hashPassword } = await import("./auth");
+    const created = await prisma.user.create({
+      data: {
+        email: cleanEmail,
+        name: (opts.name || cleanEmail.split("@")[0]).trim(),
+        passwordHash: hashPassword(cryptoMod.randomBytes(16).toString("hex")),
+        role: "USER",
+      },
+    });
+    return created.id;
+  }
+
+  const adminUser = await prisma.user.findFirst({
+    where: { role: "ADMIN" },
+    orderBy: { createdAt: "asc" },
+  });
+  if (adminUser) return adminUser.id;
+
+  const fallbackEmail = "admin@asukaspirit.com";
+  const existingFallback = await prisma.user.findUnique({ where: { email: fallbackEmail } });
+  if (existingFallback) return existingFallback.id;
+
+  const cryptoMod = await import("crypto");
+  const { hashPassword } = await import("./auth");
+  const createdAdmin = await prisma.user.create({
+    data: {
+      email: fallbackEmail,
+      name: "Administrateur Asuka Spirit",
+      passwordHash: hashPassword(cryptoMod.randomBytes(16).toString("hex")),
+      role: "ADMIN",
+    },
+  });
+  return createdAdmin.id;
+}
 
 // Physical NFC Card Catalog
 export { CARD_PRODUCTS, type CardProduct } from "./products";
@@ -130,7 +354,7 @@ export function generateSecureSlug(): string {
 
 export async function isSlugAvailable(slug: string, excludeCardId?: string): Promise<boolean> {
   const normalized = slug.trim().toLowerCase();
-  const reserved = ["api", "login", "register", "dashboard", "create", "favicon.ico", "uploads", "_next", "c", "admin"];
+  const reserved = ["api", "login", "register", "dashboard", "create", "favicon.ico", "uploads", "_next", "c", "admin", "preview"];
   if (reserved.includes(normalized)) return false;
 
   const existingCard = await prisma.card.findFirst({
@@ -274,7 +498,7 @@ export async function createOrder(data: {
     },
     include: {
       user: { select: { id: true, name: true, email: true } },
-      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
+      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
     },
   });
 }
@@ -304,7 +528,7 @@ export async function updateOrderPayment(
     },
     include: {
       user: { select: { id: true, name: true, email: true } },
-      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
+      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
     },
   });
 }
@@ -314,7 +538,7 @@ export async function getOrdersByUserId(userId: string) {
     where: { userId },
     orderBy: { createdAt: "desc" },
     include: {
-      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
+      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
     },
   });
 }
@@ -324,7 +548,7 @@ export async function getAllOrders() {
     orderBy: { createdAt: "desc" },
     include: {
       user: { select: { id: true, name: true, email: true } },
-      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
+      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
     },
   });
 }
@@ -335,7 +559,7 @@ export async function getOrderById(id: string) {
     where: isOrderNumber ? { orderNumber: id } : { id },
     include: {
       user: { select: { id: true, name: true, email: true } },
-      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
+      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
     },
   });
 }
@@ -347,7 +571,7 @@ export async function updateOrder(id: string, data: any) {
     data,
     include: {
       user: { select: { id: true, name: true, email: true } },
-      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true } },
+      card: { select: { id: true, slug: true, firstName: true, lastName: true, company: true, template: true } },
     },
   });
 }

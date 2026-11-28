@@ -47,6 +47,18 @@ export async function POST(req: Request) {
         fedapayId: transactionId,
         fedapayStatus: "approved",
       });
+
+      if (targetOrder.cardId) {
+        await prisma.order.updateMany({
+          where: {
+            cardId: targetOrder.cardId,
+            id: { not: targetOrder.id },
+            paymentStatus: { not: "PAID" },
+            status: "PENDING",
+          },
+          data: { status: "CANCELLED", fedapayStatus: "superseded" },
+        });
+      }
       notifyBackofficeRealtime({
         type: "CARD_ORDER_PAID",
         title: `Paiement reçu — ${targetOrder.orderNumber}`,

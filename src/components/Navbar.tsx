@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, X, LogOut, Plus, Shield } from "lucide-react";
+import { Menu, X, LogOut, Plus } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -49,7 +49,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
     }
   };
 
-  const isDashboard = pathname?.startsWith("/dashboard") || pathname?.startsWith("/admin");
+  const isDashboard = pathname?.startsWith("/dashboard");
   const isFunnelPage =
     isDashboard ||
     pathname?.startsWith("/commander") ||
@@ -79,7 +79,7 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
             </Link>
             {isDashboard && (
               <span className="hidden sm:inline-flex items-center text-[11px] font-semibold text-neutral-400 tracking-wide uppercase px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10">
-                {pathname?.startsWith("/admin") ? "Console Admin" : "Espace Client"}
+                Espace Client
               </span>
             )}
           </div>
@@ -133,65 +133,37 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-2">
-                {user.role === "ADMIN" ? (
-                  <>
-                    <Link
-                      href="/admin"
-                      className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full border border-orange-500/40 bg-[#FF6B00]/10 text-[#FF6B00] hover:bg-[#FF6B00]/20 transition shadow-xs"
-                      title="Console d'administration des commandes et paiements"
-                    >
-                      <Shield className="w-3.5 h-3.5" />
-                      <span>Console Admin</span>
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      disabled={isLoggingOut}
-                      className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
-                        isDark
-                          ? "text-neutral-400 hover:text-white border-neutral-700 bg-neutral-900/60"
-                          : "text-neutral-600 hover:text-black border-neutral-200 bg-white"
-                      }`}
-                      title="Se déconnecter"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Déconnexion</span>
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-4">
-                    <Link
-                      href="/dashboard"
-                      className={`text-xs font-medium tracking-tight transition-colors ${
-                        isDark
-                          ? "text-neutral-300 hover:text-white"
-                          : "text-[#1d1d1f] hover:text-[#6e6e73]"
-                      }`}
-                    >
-                      Mes cartes
-                    </Link>
-                    <Link
-                      href="/create"
-                      className="flex items-center gap-1 text-xs font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Créer</span>
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      disabled={isLoggingOut}
-                      className={`p-1.5 rounded-full transition-colors ${
-                        isDark
-                          ? "text-neutral-400 hover:text-white hover:bg-neutral-800"
-                          : "text-neutral-500 hover:text-black hover:bg-neutral-100"
-                      }`}
-                      title="Se déconnecter"
-                      aria-label="Se déconnecter"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/dashboard"
+                  className={`text-xs font-medium tracking-tight transition-colors ${
+                    isDark
+                      ? "text-neutral-300 hover:text-white"
+                      : "text-[#1d1d1f] hover:text-[#6e6e73]"
+                  }`}
+                >
+                  Mes cartes
+                </Link>
+                <Link
+                  href="/create"
+                  className="flex items-center gap-1 text-xs font-medium text-white bg-[#FF6B00] hover:bg-[#E55F00] px-3.5 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Créer</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className={`p-1.5 rounded-full transition-colors ${
+                    isDark
+                      ? "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                      : "text-neutral-500 hover:text-black hover:bg-neutral-100"
+                  }`}
+                  title="Se déconnecter"
+                  aria-label="Se déconnecter"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
@@ -290,54 +262,33 @@ export default function Navbar({ theme = "light" }: NavbarProps) {
           )}
           <div className={`space-y-2 ${!isFunnelPage ? `pt-3 border-t ${isDark ? "border-white/10" : "border-black/[0.08]"}` : ""}`}>
             {user ? (
-              user.role === "ADMIN" ? (
-                <>
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block px-3 py-2 rounded-lg text-sm font-bold bg-[#FF6B00]/15 text-[#FF6B00] border border-[#FF6B00]/30"
-                  >
-                    Console Administrateur
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-lg text-sm text-[#6e6e73]"
-                  >
-                    Se déconnecter
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isDark ? "text-white hover:bg-white/5" : "text-[#1d1d1f] hover:bg-black/5"
-                    }`}
-                  >
-                    Mes cartes
-                  </Link>
-                  <Link
-                    href="/create"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block text-center px-3 py-2.5 rounded-full text-sm font-medium text-white bg-[#FF6B00]"
-                  >
-                    Créer une carte
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-lg text-sm text-[#6e6e73]"
-                  >
-                    Se déconnecter
-                  </button>
-                </>
-              )
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isDark ? "text-white hover:bg-white/5" : "text-[#1d1d1f] hover:bg-black/5"
+                  }`}
+                >
+                  Mes cartes
+                </Link>
+                <Link
+                  href="/create"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block text-center px-3 py-2.5 rounded-full text-sm font-medium text-white bg-[#FF6B00]"
+                >
+                  Créer une carte
+                </Link>
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm text-[#6e6e73]"
+                >
+                  Se déconnecter
+                </button>
+              </>
             ) : (
               <div className="flex flex-col gap-2 pt-1">
                 <Link

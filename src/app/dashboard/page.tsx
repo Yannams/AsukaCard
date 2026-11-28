@@ -89,10 +89,6 @@ export default function DashboardPage() {
           router.push("/login");
           return;
         }
-        if (data.user.role === "ADMIN") {
-          router.replace("/admin");
-          return;
-        }
         setCurrentUser(data.user);
         fetchCards();
       })
