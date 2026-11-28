@@ -1,10 +1,10 @@
 {
   "name": "asuka-card",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push && prisma generate && next build --webpack",
+    "build": "prisma db push && prisma generate && node scripts/seed.js && next build --webpack",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
