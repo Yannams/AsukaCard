@@ -49,13 +49,16 @@ export default function PublicCardClient({ card, isPreviewMode = false }: Public
   };
 
   const fullName = `${card.firstName} ${card.lastName}`;
+  const isGovernment = card.template === "government";
   const isPremium = card.template === "premium" || card.template === "executive";
   const isCreative = card.template === "creative";
 
   return (
     <div
       className={`min-h-screen flex flex-col justify-between relative overflow-hidden ${
-        isPremium
+        isGovernment
+          ? "bg-neutral-50 text-neutral-950 py-0 sm:py-6 px-0 sm:px-4"
+          : isPremium
           ? "bg-[#0A0A0A] text-white py-0 sm:py-6 px-0 sm:px-4"
           : isCreative
           ? "bg-[#F8F9FA] text-neutral-900 py-3 sm:py-8 px-2 sm:px-4"
@@ -87,14 +90,24 @@ export default function PublicCardClient({ card, isPreviewMode = false }: Public
       <footer className="max-w-md w-full mx-auto text-center pt-4 pb-3 relative z-10">
         <div
           className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-[11px] font-medium tracking-wide ${
-            isPremium
+            isGovernment
+              ? "bg-white border-neutral-200 text-neutral-500"
+              : isPremium
               ? "bg-neutral-900 border-neutral-800 text-neutral-400"
               : isCreative
               ? "bg-white border-neutral-200 text-neutral-500"
               : "bg-white border-neutral-200 text-neutral-500"
           }`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
+          {isGovernment ? (
+            <span className="inline-flex w-3 h-1.5 rounded-xs overflow-hidden">
+              <span className="flex-1 bg-[#008751]" />
+              <span className="flex-1 bg-[#FCD116]" />
+              <span className="flex-1 bg-[#E8112D]" />
+            </span>
+          ) : (
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
+          )}
           <span>Asuka Card • AS WORLD TECH</span>
         </div>
       </footer>

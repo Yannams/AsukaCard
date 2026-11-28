@@ -22,6 +22,7 @@ import {
 import { Card } from "@/lib/db";
 import { formatSocialUrl } from "@/lib/socials";
 import AppleInvitationCard from "./AppleInvitationCard";
+import GovernmentCard from "./GovernmentCard";
 
 // Minimalist SVG for LinkedIn
 function LinkedInIcon({ className }: { className?: string }) {
@@ -328,6 +329,19 @@ export default function CardPreview({
 
   // Avatar initials fallback
   const initials = `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase() || "AC";
+
+  // GOVERNMENT MEMBER TEMPLATE
+  if (template === "government") {
+    return (
+      <GovernmentCard
+        card={card}
+        interactive={interactive}
+        onContactClick={onContactClick}
+        onShareClick={onShareClick}
+        onQrCodeClick={onQrCodeClick}
+      />
+    );
+  }
 
   // APPLE INVITATION TEMPLATE
   if (template === "apple_invitation") {

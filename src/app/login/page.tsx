@@ -35,8 +35,6 @@ function LoginForm() {
 
       if (redirectParam) {
         router.push(redirectParam);
-      } else if (data.user?.role === "ADMIN") {
-        router.push("/admin");
       } else {
         router.push("/dashboard");
       }

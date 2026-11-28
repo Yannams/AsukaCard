@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import RetryPaymentButton from "@/components/RetryPaymentButton";
 import { getOrderById } from "@/lib/db";
 import { CARD_PRODUCTS, CARD_COLORS } from "@/lib/products";
 
@@ -208,6 +209,21 @@ export default async function OrderConfirmationPage({
               <strong className="text-neutral-900">Modalités de retrait :</strong> Notre équipe vous contactera directement par WhatsApp au <strong>{order.customerPhone}</strong> dès que votre gravure laser sera terminée. Présentez simplement votre numéro de commande <strong>{order.orderNumber}</strong> lors de votre passage.
             </div>
           </div>
+
+          {/* Payment Retry CTA when unpaid and not cancelled */}
+          {!isPaid && order.status !== "CANCELLED" && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 sm:p-5 space-y-3">
+              <div className="text-center space-y-1">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-800">
+                  Paiement en attente
+                </p>
+                <p className="text-xs text-amber-700">
+                  Votre commande <span className="font-mono font-bold">{order.orderNumber}</span> est enregistrée. Vous pouvez relancer le règlement sans créer de nouvelle commande.
+                </p>
+              </div>
+              <RetryPaymentButton orderId={order.id} amount={order.totalAmount} />
+            </div>
+          )}
 
           {/* Navigation Actions - Soft Apple Style */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
